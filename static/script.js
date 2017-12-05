@@ -71,7 +71,7 @@ trendy.App = function(mapType, polygonIds) {
  */
 trendy.App.prototype.createMap = function(mapType) {
   var mapOptions = {
-    backgroundColor: '#000000',
+    backgroundColor: 'white',
     center: trendy.App.DEFAULT_CENTER,
     disableDefaultUI: true,
     zoom: trendy.App.DEFAULT_ZOOM
@@ -96,8 +96,9 @@ trendy.App.prototype.addPolygons = function(polygonIds) {
   this.map.data.setStyle(function(feature) {
     return {
       fillColor: 'white',
+      fillOpacity: '0.1'
       strokeColor: 'white',
-      strokeWeight: 3
+      strokeWeight: 1
     };
   });
 };
@@ -212,7 +213,7 @@ trendy.App.EE_URL = 'https://earthengine.googleapis.com';
 
 
 /** @type {number} The default zoom level for the map. */
-trendy.App.DEFAULT_ZOOM = 4;
+trendy.App.DEFAULT_ZOOM = 15;
 
 
 /** @type {Object} The default center of the map. */
@@ -227,6 +228,6 @@ trendy.App.BLACK_BASE_MAP_STYLES = [
   {
     featureType: 'road',
     elementType: 'labels',
-    stylers: [{visibility: 'off'}]
+    stylers: [{visibility: 'on'}]
   }
 ];

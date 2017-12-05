@@ -206,7 +206,7 @@ MEMCACHE_EXPIRATION = 60 * 60 * 24
 # The ImageCollection of the night-time lights dataset. See:
 # https://earthengine.google.org/#detail/NOAA%2FDMSP-OLS%2FNIGHTTIME_LIGHTS
 #IMAGE_COLLECTION_ID = 'NOAA/DMSP-OLS/NIGHTTIME_LIGHTS'
-IMAGE_COLLECTION_ID = 'users/adaniels/histwetness'
+IMAGE_COLLECTION_ID = 'users/kyletaylor/published/ks_ls5_wetness_1985_2012'
 
 # The file system folder path to the folder with GeoJSON polygon files.
 POLYGON_PATH = 'static/polygons/'

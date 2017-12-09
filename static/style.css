@@ -59,6 +59,27 @@ body,
   width: 300px;
 }
 
+.instructions {
+      position: absolute;
+      top:-5px;
+      right: 0;
+      padding: 10px;
+      margin: 10px;
+      background-color: white;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.6);
+      font-family: 'Roboto', sans-serif;
+      max-width: 400px;
+    }
+
+.instructions a {
+  color: #ff7204;
+}
+
+.instructions ol li {
+  line-height: 1.4rem;
+  padding-bottom: 0.4rem;
+}
+
 /* Small screens. */
 
 @media (max-width: 900px) {

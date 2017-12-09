@@ -48,7 +48,7 @@ trendy.App = function(mapType, polygonIds) {
   this.map = this.createMap(mapType);
 
   // Add the polygons to the map.
-  this.addPolygons(polygonIds);
+  // this.addPolygons(polygonIds);
 
   // Register a click handler to show a panel when the user clicks on a place.
   this.map.data.addListener('click', this.handlePolygonClick.bind(this));
@@ -71,14 +71,13 @@ trendy.App = function(mapType, polygonIds) {
  */
 trendy.App.prototype.createMap = function(mapType) {
   var mapOptions = {
-    backgroundColor: 'white',
+    backgroundColor: '#00000',
     center: trendy.App.DEFAULT_CENTER,
-    disableDefaultUI: true,
     zoom: trendy.App.DEFAULT_ZOOM
   };
   var mapEl = $('.map').get(0);
   var map = new google.maps.Map(mapEl, mapOptions);
-  map.setOptions({styles: trendy.App.BLACK_BASE_MAP_STYLES});
+  map.setOptions({styles: trendy.App.BASE_MAP_STYLE});
   map.overlayMapTypes.push(mapType);
   return map;
 };
@@ -96,7 +95,7 @@ trendy.App.prototype.addPolygons = function(polygonIds) {
   this.map.data.setStyle(function(feature) {
     return {
       fillColor: 'white',
-      fillOpacity: '0.1'
+      fillOpacity: '0.1',
       strokeColor: 'white',
       strokeWeight: 1
     };
@@ -213,21 +212,250 @@ trendy.App.EE_URL = 'https://earthengine.googleapis.com';
 
 
 /** @type {number} The default zoom level for the map. */
-trendy.App.DEFAULT_ZOOM = 15;
+trendy.App.DEFAULT_ZOOM = 10;
 
 
 /** @type {Object} The default center of the map. */
-trendy.App.DEFAULT_CENTER = {lng: -102.1091876, lat: 40.2976897};
+trendy.App.DEFAULT_CENTER = {lng: -101.1091876, lat: 38.2976897};
 
 /**
  * @type {Array} An array of Google Map styles. See:
  *     https://developers.google.com/maps/documentation/javascript/styling
  */
-trendy.App.BLACK_BASE_MAP_STYLES = [
-  {stylers: [{lightness: -100}]},
+//trendy.App.BLACK_BASE_MAP_STYLES = [
+//  {stylers: [{lightness: -100}]},
+//  {
+//    featureType: 'road',
+//    elementType: 'labels',
+//    stylers: [{visibility: 'off'}]
+//  }
+//];
+
+trendy.App.BASE_MAP_STYLE = [
   {
-    featureType: 'road',
-    elementType: 'labels',
-    stylers: [{visibility: 'on'}]
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#ebe3cd"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#523735"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#f5f1e6"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      {
+        "color": "#c9b2a6"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      {
+        "color": "#dcd2be"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#ae9e90"
+      }
+    ]
+  },
+  {
+    "featureType": "landscape.natural",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#dfd2ae"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#dfd2ae"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#93817c"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#a5b076"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#447530"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#f5f1e6"
+      }
+    ]
+  },
+  {
+    "featureType": "road.arterial",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#fdfcf8"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#f8c967"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      {
+        "color": "#e9bc62"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway.controlled_access",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#e98d58"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway.controlled_access",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      {
+        "color": "#db8555"
+      }
+    ]
+  },
+  {
+    "featureType": "road.local",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#806b63"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.line",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#dfd2ae"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.line",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#8f7d77"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.line",
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#ebe3cd"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.station",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#dfd2ae"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#b9d3c2"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#92998d"
+      }
+    ]
   }
 ];
+
+///////////////////////////////////////////////////////////////////////////////
+//                        Add-on Interface Elements
+///////////////////////////////////////////////////////////////////////////////
+
+var hideElementByName = function(divId) {
+  var x = document.getElementById(divId);
+    if (x.style.display === "none") {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
+}

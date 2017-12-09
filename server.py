@@ -121,6 +121,7 @@ def GetTrendyMapId():
   """Returns the MapID for the night-time lights trend map."""
   # collection = ee.ImageCollection(IMAGE_COLLECTION_ID)
   collection = ee.Image(IMAGE_COLLECTION_ID)
+  collection = collection.updateMask(collection.gte(0.1));
   # Add a band containing image date as years since 1991.
   # def CreateTimeBand(img):
   #   year = ee.Date(img.get('system:time_start')).get('year').subtract(1991)
@@ -135,6 +136,9 @@ def GetTrendyMapId():
       'max' : '1',
       # 'bands': 'scale,offset,scale',
       'bands' : 'b1',
+      # 'palette' : 'rgba(255, 255, 255, 0.1), rgba(0,51,204,1)',
+      'palette' : 'ffffff,0033cc',
+      'opacity' : '0.95',
   })
 
 

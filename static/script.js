@@ -464,6 +464,7 @@ carta.hideElement = function(id) {
     }
 };
 
+<<<<<<< HEAD
 carta.addMessage = function(text){
 
 };
@@ -473,5 +474,16 @@ carta.removeMessage = function(text){
 };
 
 carta.changeMessage = function(text){
+=======
+cartera.addMessage = function(text){
+
+};
+
+cartera.removeMessage = function(text){
+
+};
+
+cartera.changeMessage = function(text){
+>>>>>>> 2153d0b94d2d8755c5f05327b0d690238ff0557d
 
 };

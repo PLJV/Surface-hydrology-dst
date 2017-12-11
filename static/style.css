@@ -82,7 +82,10 @@ body,
 
 /* Small screens. */
 
-@media (max-width: 900px) {
+@media (max-width: 600px) {
+    font-size: 11px;
+  }
+
   .trendy h1 {
     top: 22px;
     font-size: 37px;
@@ -128,6 +131,10 @@ body,
 /* Large screens. */
 
 @media (min-width: 900px) {
+  body {
+    font-size: 13px;
+  }
+
   .trendy h1 {
     left: 40px;
     top: 30px;

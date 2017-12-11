@@ -19,7 +19,9 @@ trendy.boot = function(eeMapId, eeToken, serializedPolygonIds) {
   // Load external libraries.
   google.load('visualization', '1.0');
   google.load('jquery', '1');
-  google.load('maps', '3', {'other_params': 'key=AIzaSyDraxoLomEu1kNGyDFpb6K-SU4FSmAFZWc'});
+  google.load('maps', '3', {'other_params': 'key=AIzaSyD4wuFf8iTZZHiUznCAqPISanJkUjYhZ6k'})
+//  this key has domain restrictions associated with it
+//  google.load('maps', '3', {'other_params': 'key=AIzaSyDraxoLomEu1kNGyDFpb6K-SU4FSmAFZWc'});
 
   // Create the Trendy Lights app.
   google.setOnLoadCallback(function() {
@@ -451,11 +453,25 @@ trendy.App.BASE_MAP_STYLE = [
 //                        Add-on Interface Elements
 ///////////////////////////////////////////////////////////////////////////////
 
-var hideElementByName = function(divId) {
-  var x = document.getElementById(divId);
-    if (x.style.display === "none") {
-        x.style.display = "block";
+carta = { };
+
+carta.hideElement = function(id) {
+  var div = document.getElementById(id);
+    if (div.style.display === "none") {
+        div.style.display = "block";
     } else {
-        x.style.display = "none";
+        div.style.display = "none";
     }
-}
+};
+
+carta.addMessage = function(text){
+
+};
+
+carta.removeMessage = function(text){
+
+};
+
+carta.changeMessage = function(text){
+
+};

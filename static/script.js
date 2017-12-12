@@ -4,9 +4,7 @@
  * to the screen, and handles user interactions.
  */
 
-
 trendy = {};  // Our namespace.
-
 
 /**
  * Starts the Trendy Lights application. The main entry point for the app.
@@ -20,8 +18,8 @@ trendy.boot = function(eeMapId, eeToken, serializedPolygonIds) {
   google.load('visualization', '1.0');
   google.load('jquery', '1');
 //  this key has domain restrictions associated with it
-  google.load('maps', '3', {'other_params': 'key=AIzaSyDraxoLomEu1kNGyDFpb6K-SU4FSmAFZWc'});
-
+google.load('maps', '3', {'other_params': 'key=AIzaSyDraxoLomEu1kNGyDFpb6K-SU4FSmAFZWc'});
+//  this key does not have domain restrictions
   // Create the Trendy Lights app.
   google.setOnLoadCallback(function() {
     var mapType = trendy.App.getEeMapType(eeMapId, eeToken);
@@ -47,12 +45,12 @@ trendy.boot = function(eeMapId, eeToken, serializedPolygonIds) {
 trendy.App = function(mapType, polygonIds) {
   // Create and display the map.
   this.map = this.createMap(mapType);
-
+  this.panToLocation(this.map);
   // Add the polygons to the map.
   // this.addPolygons(polygonIds);
 
   // Register a click handler to show a panel when the user clicks on a place.
-  this.map.data.addListener('click', this.handlePolygonClick.bind(this));
+  // this.map.data.addListener('click', this.handlePolygonClick.bind(this));
 
   // Register a click handler to hide the panel when the user clicks close.
   $('.panel .close').click(this.hidePanel.bind(this));
@@ -76,14 +74,40 @@ trendy.App.prototype.createMap = function(mapType) {
     center: trendy.App.DEFAULT_CENTER,
     zoom: trendy.App.DEFAULT_ZOOM
   };
+
   var mapEl = $('.map').get(0);
   var map = new google.maps.Map(mapEl, mapOptions);
+
   map.setOptions({styles: trendy.App.BASE_MAP_STYLE});
   map.overlayMapTypes.push(mapType);
+
   return map;
 };
-
-
+/**
+ * Create a marker and pan the map to the user's current location
+ */
+trendy.App.prototype.panToLocation = function(map){
+  // Add the default 'go to my location' control
+  var myLocationIcon = new google.maps.Marker({
+    clickable: false,
+    icon: new google.maps.MarkerImage('//maps.gstatic.com/mapfiles/mobile/mobileimgs2.png',
+                                                    new google.maps.Size(22,22),
+                                                    new google.maps.Point(0,18),
+                                                    new google.maps.Point(11,11)),
+    shadow: null,
+    zIndex: 999,
+    map: map
+  });
+  if (navigator.geolocation) navigator.geolocation.getCurrentPosition(function(pos) {
+      var me = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+      myLocationIcon.setPosition(me);
+      map.panTo(me);
+      map.setZoom(17);
+      // this.map.setCenter(me);
+  }, function(error) {
+      console.log(error)
+  });
+}
 /**
  * Adds the polygons with the passed-in IDs to the map.
  * @param {Array<string>} polygonIds The IDs of the polygons to show on the map.

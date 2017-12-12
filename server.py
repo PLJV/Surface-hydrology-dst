@@ -135,7 +135,7 @@ def GetTrendyMapId():
       # 'max': '0.18,20,-0.18',
       'max' : '1',
       # 'bands': 'scale,offset,scale',
-      'bands' : 'b1',
+      # 'bands' : '0',
       # 'palette' : 'rgba(255, 255, 255, 0.1), rgba(0,51,204,1)',
       'palette' : 'ffffff,0033cc',
       'opacity' : '0.95',
@@ -212,7 +212,8 @@ MEMCACHE_EXPIRATION = 60 * 60 * 24
 # The ImageCollection of the night-time lights dataset. See:
 # https://earthengine.google.org/#detail/NOAA%2FDMSP-OLS%2FNIGHTTIME_LIGHTS
 #IMAGE_COLLECTION_ID = 'NOAA/DMSP-OLS/NIGHTTIME_LIGHTS'
-IMAGE_COLLECTION_ID = 'users/kyletaylor/published/ks_ls5_wetness_1985_2012'
+# IMAGE_COLLECTION_ID = 'users/kyletaylor/published/ks_ls5_wetness_1985_2012'
+IMAGE_COLLECTION_ID = 'users/adaniels/LC8dynamicwater'
 
 # The file system folder path to the folder with GeoJSON polygon files.
 POLYGON_PATH = 'static/polygons/'

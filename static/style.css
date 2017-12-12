@@ -83,7 +83,7 @@ body,
 /* Small screens. */
 
 @media (max-width: 600px) {
-    font-size: 11px;
+    font-size: 9px;
   }
 
   .trendy h1 {
@@ -126,15 +126,15 @@ body,
   .trendy .powered-by-ee {
     width: 180px;
   }
+
+  .instructions {
+    font-size: 11px;
+  }
 }
 
 /* Large screens. */
 
 @media (min-width: 900px) {
-  body {
-    font-size: 13px;
-  }
-
   .trendy h1 {
     left: 40px;
     top: 30px;
@@ -160,5 +160,9 @@ body,
 
   .trendy .panel .toggler {
     display: none;
+  }
+
+  .instructions {
+    font-size: 9px;
   }
 }

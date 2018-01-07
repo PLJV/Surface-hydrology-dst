@@ -473,12 +473,12 @@ trendy.App.BASE_MAP_STYLE = [
 ];
 
 ///////////////////////////////////////////////////////////////////////////////
-//                        Add-on Interface Elements
+//                        Add-On: Message Pane (Carta)
 ///////////////////////////////////////////////////////////////////////////////
 
 carta = { };
 
-carta.hideElement = function(id) {
+carta.hide = function(id) {
   var div = document.getElementById(id);
     if (div.style.display === "none") {
         div.style.display = "block";
@@ -498,3 +498,56 @@ carta.removeMessage = function(text){
 carta.changeMessage = function(text){
 
 };
+
+///////////////////////////////////////////////////////////////////////////////
+//                        Add-On: D3 Legend Interface 
+///////////////////////////////////////////////////////////////////////////////
+
+susie = { };
+
+susie.setLegendLinear = function(title){
+  if (typeof title === 'undefined') { title = ''; }
+  
+  var linear = d3.scaleLinear()
+    .domain([0,10])
+    .range(["rgba(200, 200, 255, 0.9)", "rgba(6, 0, 198, 0.9)"]);
+
+  var svg = d3.select("svg");
+
+  svg.append("g")
+    .attr("class", "legendLinear")
+    .attr("transform", "translate(20,20)")
+    .style("font-size","11px")
+    .style("font-family","Roboto");
+
+  var legend = d3.legendColor()
+    .shapeWidth(40)
+    .shapePadding(10)
+    .cells(2)
+    .shape("circle")
+    .orient('horizontal')
+    .title(title)
+    .titleWidth(300)
+    .labelWrap(30)
+    .labels(["not wet","wet"])
+    .labelAlign("start")
+    .scale(linear);
+
+  svg.select(".legendLinear")
+    .call(legend);
+}
+
+susie.show = function(id) {
+
+};
+
+susie.hide = function(id) {
+  var div = document.getElementById(id);
+    if (div.style.display === "none") {
+        div.style.display = "block";
+    } else {
+        div.style.display = "none";
+    }
+}
+
+susie.setLegendLinear(title="test");

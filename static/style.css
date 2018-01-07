@@ -80,6 +80,36 @@ body,
   padding-bottom: 0.4rem;
 }
 
+.legend {
+      position: absolute;
+      bottom:-5px;
+      left: 0;
+      padding: 10px;
+      margin: 10px;
+      background-color: white;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.6);
+      font-family: 'Roboto', sans-serif;
+      min-height:40px;
+      max-height:80px;
+      min-width: 300px;
+      max-width: 500px;
+    }
+
+.legend a {
+  color: #ff7204;
+}
+
+.legend ol li {
+  line-height: 1.4rem;
+  padding-bottom: 0.4rem;
+}
+
+.legend svg {
+ min-height:40px;
+ max-height:80px;
+ min-width: 300px;
+ max-width: 500px;
+}
 /* Small screens. */
 
 @media (max-width: 600px) {

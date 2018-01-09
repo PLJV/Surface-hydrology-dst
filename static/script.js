@@ -509,8 +509,8 @@ susie.setLegendLinear = function(title){
   if (typeof title === 'undefined') { title = ''; }
   
   var linear = d3.scaleLinear()
-    .domain([0,10])
-    .range(["rgba(200, 200, 255, 0.9)", "rgba(6, 0, 198, 0.9)"]);
+    .domain([0,1])
+    .range(["rgba(255, 255, 255, 0.9)", "rgba(6, 0, 198, 0.9)"]);
 
   var svg = d3.select("svg");
 
@@ -521,16 +521,16 @@ susie.setLegendLinear = function(title){
     .style("font-family","Roboto");
 
   var legend = d3.legendColor()
-    .shapeWidth(40)
-    .shapePadding(10)
+    .shapeWidth(20)
+    .shapePadding(5)
     .cells(2)
-    .shape("circle")
+    .shape("square")
     .orient('horizontal')
     .title(title)
     .titleWidth(300)
     .labelWrap(30)
-    .labels(["not wet","wet"])
-    .labelAlign("start")
+    .labels([undefined,"wet"])
+    .labelAlign("middle")
     .scale(linear);
 
   svg.select(".legendLinear")

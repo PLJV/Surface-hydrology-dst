@@ -15,6 +15,7 @@
   text-shadow: 0px 0px 20px black;
 }
 
+
 html,
 body,
 .trendy,
@@ -73,6 +74,13 @@ body,
 
 .instructions a {
   color: #ff7204;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.instructions .h4 {
+  padding: 0px;
+  margin: 0px;
 }
 
 .instructions ol li {
@@ -82,21 +90,26 @@ body,
 
 .legend {
       position: absolute;
-      bottom:10px;
+      bottom:0px;
       left: 0;
       padding: 10px;
       margin: 10px;
       background-color: white;
       box-shadow: 2px 2px 5px rgba(0,0,0,0.6);
       font-family: 'Roboto', sans-serif;
-      min-height:40px;
-      max-height:80px;
-      min-width: 300px;
-      max-width: 500px;
+      font-size: 11px;
+      height:180px;
+      min-height:150px;
+      max-height:220px;
+      width: 520px;
+      min-width: 520px;
+      max-width: 600px;
     }
 
 .legend a {
   color: #ff7204;
+  text-decoration: none;
+  font-weight: bold;
 }
 
 .legend ol li {
@@ -104,12 +117,73 @@ body,
   padding-bottom: 0.4rem;
 }
 
-.legend svg {
- min-height:40px;
- max-height:80px;
- min-width: 300px;
- max-width: 500px;
+.legend h4 {
+  padding: 0px;
+  margin: 0px;
 }
+
+.legend svg {
+  position: relative;
+  top: -15px;
+  left:-60px;
+  max-height: 100%;
+  min-width: 100%;
+}
+
+.legend .header {
+  position: relative;
+  box-shadow: none;
+  min-height: 0px;
+  max-height: 25%;
+  min-width: 0px;
+  max-width: 100%;
+  padding: 0px;
+  margin: 0px;
+}
+
+.legend .header .title {
+  position: relative;
+  float: left;
+  width: 70%;
+  height: 100%;
+}
+
+.legend .header .close {
+  position: relative;
+  float: right;
+  text-align: right;
+  display: inline-block;
+  width: 30%;
+  height: 100%;
+}
+
+.legend .body {
+  position: relative;
+  box-shadow: none;
+  min-height: 0px;
+  max-height: 75%;
+  min-width: 0px;
+  max-width: 100%;
+  padding: 0px;
+  margin: 0px;
+}
+
+.legend .body .layerToggle {
+  position: relative;
+  text-align: center;
+  display: inline-block;
+  float: left;
+  width: 29%;
+  height: 50%;
+}
+
+.legend .body .layerEntry {
+  position: relative;
+  float: right;
+  width: 69%;
+  height: 50%;
+}
+
 /* Small screens. */
 
 @media (max-width: 600px) {

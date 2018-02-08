@@ -500,19 +500,19 @@ carta.changeMessage = function(text){
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-//                        Add-On: D3 Legend Interface 
+//                        Add-On: D3 Legend Interface
 ///////////////////////////////////////////////////////////////////////////////
 
 susie = { };
 
-susie.setLegendLinear = function(title){
-  if (typeof title === 'undefined') { title = ''; }
-  
+susie.setLegendLinear = function(title=undefined, svgId=undefined){
+  if (typeof svgId === 'undefined') { svgId = 'svg'; }
+
   var linear = d3.scaleLinear()
     .domain([0,1])
     .range(["rgba(255, 255, 255, 0.9)", "rgba(6, 0, 198, 0.9)"]);
 
-  var svg = d3.select("svg");
+  var svg = d3.select(svgId);
 
   svg.append("g")
     .attr("class", "legendLinear")
@@ -549,5 +549,3 @@ susie.hide = function(id) {
         div.style.display = "none";
     }
 }
-
-susie.setLegendLinear(title="test");

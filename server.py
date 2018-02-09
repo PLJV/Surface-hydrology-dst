@@ -137,8 +137,8 @@ def GetTrendyMapId():
       # 'bands': 'scale,offset,scale',
       # 'bands' : '0',
       # 'palette' : 'rgba(255, 255, 255, 0.1), rgba(0,51,204,1)',
-      'palette' : 'ffffff,0033cc',
-      'opacity' : '0.95',
+      'palette' : 'ffffff,34548F',
+      'opacity' : '0.85',
   })
 
 

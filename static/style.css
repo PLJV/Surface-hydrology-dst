@@ -88,6 +88,63 @@ body,
   padding-bottom: 0.4rem;
 }
 
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 17px;
+  top: 30%;
+}
+
+.switch input {display:none;}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 13px;
+  width: 13px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #34548F;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #34548F;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(13px);
+  -ms-transform: translateX(13px);
+  transform: translateX(13px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 17px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
 .legend {
       position: absolute;
       bottom:0px;
@@ -101,9 +158,9 @@ body,
       height:180px;
       min-height:150px;
       max-height:220px;
-      width: 520px;
-      min-width: 520px;
-      max-width: 600px;
+      width: 400px;
+      min-width: 400px;
+      max-width: 500px;
     }
 
 .legend a {
@@ -124,8 +181,8 @@ body,
 
 .legend svg {
   position: relative;
-  top: -15px;
-  left:-60px;
+  top: 0px;
+  left: -5px;
   max-height: 100%;
   min-width: 100%;
 }
@@ -133,6 +190,7 @@ body,
 .legend .header {
   position: relative;
   box-shadow: none;
+  height: 15%;
   min-height: 0px;
   max-height: 25%;
   min-width: 0px;
@@ -160,8 +218,8 @@ body,
 .legend .body {
   position: relative;
   box-shadow: none;
+  height: 85%;
   min-height: 0px;
-  max-height: 75%;
   min-width: 0px;
   max-width: 100%;
   padding: 0px;
@@ -171,16 +229,17 @@ body,
 .legend .body .layerToggle {
   position: relative;
   text-align: center;
+  top: 10px;
   display: inline-block;
   float: left;
-  width: 29%;
+  width: 10%;
   height: 50%;
 }
 
 .legend .body .layerEntry {
   position: relative;
   float: right;
-  width: 69%;
+  width: 90%;
   height: 50%;
 }
 

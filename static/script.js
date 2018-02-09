@@ -17,9 +17,9 @@ trendy.boot = function(eeMapId, eeToken, serializedPolygonIds) {
   // Load external libraries.
   google.load('visualization', '1.0');
   google.load('jquery', '1');
-//  this key has domain restrictions associated with it
-google.load('maps', '3', {'other_params': 'key=AIzaSyDraxoLomEu1kNGyDFpb6K-SU4FSmAFZWc'});
-//  this key does not have domain restrictions
+  //  this key has domain restrictions associated with it
+  google.load('maps', '3', {'other_params': 'key=AIzaSyDraxoLomEu1kNGyDFpb6K-SU4FSmAFZWc'});
+  //  this key does not have domain restrictions
   // Create the Trendy Lights app.
   google.setOnLoadCallback(function() {
     var mapType = trendy.App.getEeMapType(eeMapId, eeToken);
@@ -44,9 +44,15 @@ google.load('maps', '3', {'other_params': 'key=AIzaSyDraxoLomEu1kNGyDFpb6K-SU4FS
  */
 trendy.App = function(mapType, polygonIds) {
   // Create and display the map.
-  this.map = this.createMap(mapType);
-  this.panToLocation(this.map);
-  // Add the polygons to the map.
+  trendy.App.map = this.createMap(mapType);
+  // Fix our default zoom levels
+  // Add a move listener to restrict the bounds range
+  trendy.App.map.addListener(trendy.App.map, "drag", function() {
+    trendy.App.checkBounds(trendy.App.map);
+  });
+  // Pan to the user's current location
+  //this.panToLocation(this.map);
+  // Add polygons to the map.
   // this.addPolygons(polygonIds);
 
   // Register a click handler to show a panel when the user clicks on a place.
@@ -72,9 +78,14 @@ trendy.App.prototype.createMap = function(mapType) {
   var mapOptions = {
     backgroundColor: '#00000',
     center: trendy.App.DEFAULT_CENTER,
-    zoom: trendy.App.DEFAULT_ZOOM
+    zoom: trendy.App.DEFAULT_ZOOM,
+    minZoom: 8,
+    maxZoom: 14
   };
-
+                                          //Lower, Left           //Upper, Right
+  //this.allowedBounds = new GLatLngBounds(new GLatLng(49.5,-10), new GLatLng(59,2.6));
+  trendy.App.allowedBounds = new google.maps.LatLngBounds(new google.maps.LatLng(37,-102), new google.maps.LatLng(40.1,-94.58));
+  
   var mapEl = $('.map').get(0);
   var map = new google.maps.Map(mapEl, mapOptions);
 
@@ -84,7 +95,33 @@ trendy.App.prototype.createMap = function(mapType) {
   return map;
 };
 /**
- * Create a marker and pan the map to the user's current location
+ * If the map position is out of range, move it back
+ */
+trendy.App.checkBounds = function(map) {
+      // Perform the check and return if OK
+      if (trendy.App.allowedBounds.contains(map.getCenter())) {
+        return;
+      }
+      // If it`s not OK, find the nearest allowed point and move there
+      var C = map.getCenter();
+      var X = C.lng();
+      var Y = C.lat();
+
+      var AmaxX = trendy.App.allowedBounds.getNorthEast().lng();
+      var AmaxY = trendy.App.allowedBounds.getNorthEast().lat();
+      var AminX = trendy.App.allowedBounds.getSouthWest().lng();
+      var AminY = trendy.App.allowedBounds.getSouthWest().lat();
+
+      if (X < AminX) {X = AminX;}
+      if (X > AmaxX) {X = AmaxX;}
+      if (Y < AminY) {Y = AminY;}
+      if (Y > AmaxY) {Y = AmaxY;}
+      //alert ("Restricting "+Y+" "+X);
+      map.panTo(new google.maps.LatLng(X,Y));
+}
+/**
+ * Create a marker from location services and pan the map to the user's current 
+ * location
  */
 trendy.App.prototype.panToLocation = function(map){
   // Add the default 'go to my location' control
@@ -102,7 +139,6 @@ trendy.App.prototype.panToLocation = function(map){
       var me = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
       myLocationIcon.setPosition(me);
       map.panTo(me);
-      map.setZoom(17);
       // this.map.setCenter(me);
   }, function(error) {
       console.log(error)
@@ -505,14 +541,19 @@ carta.changeMessage = function(text){
 
 susie = { };
 
-susie.setLegendLinear = function(title=undefined, svgId=undefined){
-  if (typeof svgId === 'undefined') { svgId = 'svg'; }
-
+susie.setLegendLinear = function(title=undefined, svgId='svg', domain=[0,1], labels=undefined, cells=2){
+  if(labels == null){
+    labels = d3.range.apply(this, domain.concat(domain[1]/cells)).concat(domain[1])
+    labels = labels.map(function(e){
+      return Number(e.toFixed(2));
+    });
+  }
   var linear = d3.scaleLinear()
-    .domain([0,1])
-    .range(["rgba(255, 255, 255, 0.9)", "rgba(6, 0, 198, 0.9)"]);
+    .domain(domain)
+    .range(["rgba(255, 255, 255, 0.9)", "rgba(52, 84, 143, 1)"]);
 
   var svg = d3.select(svgId);
+
 
   svg.append("g")
     .attr("class", "legendLinear")
@@ -523,13 +564,13 @@ susie.setLegendLinear = function(title=undefined, svgId=undefined){
   var legend = d3.legendColor()
     .shapeWidth(20)
     .shapePadding(5)
-    .cells(2)
+    .cells(cells)
     .shape("square")
     .orient('horizontal')
     .title(title)
     .titleWidth(300)
     .labelWrap(30)
-    .labels([undefined,"wet"])
+    .labels(labels)
     .labelAlign("middle")
     .scale(linear);
 

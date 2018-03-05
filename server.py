@@ -80,10 +80,14 @@ class MainHandler(webapp2.RequestHandler):
 
   def get(self, path=''):
     """Returns the main web page, populated with EE map and polygon info."""
-    mapid = GetTrendyMapId()
+    historicalMapId = GetTrendyMapId(HISTORICAL_IMAGE_COLLECTION_ID)
+    mostRecentMapId = GetTrendyMapId(MOST_RECENT_IMAGE_COLLECTION_ID)
+    
     template_values = {
-        'eeMapId': mapid['mapid'],
-        'eeToken': mapid['token'],
+        'historicalEeMapId': historicalMapId['mapid'],
+        'mostRecentEeMapId': mostRecentMapId['mapid'],
+        'historicalEeToken': historicalMapId['token'],
+        'mostRecentEeToken': mostRecentMapId['token'],
         'serializedPolygonIds': json.dumps(POLYGON_IDS)
     }
     template = JINJA2_ENVIRONMENT.get_template('index.html')
@@ -117,11 +121,10 @@ app = webapp2.WSGIApplication([
 ###############################################################################
 
 
-def GetTrendyMapId():
+def GetTrendyMapId(image_collection_id):
   """Returns the MapID for the night-time lights trend map."""
-  # collection = ee.ImageCollection(IMAGE_COLLECTION_ID)
-  collection = ee.Image(IMAGE_COLLECTION_ID)
-  collection = collection.updateMask(collection.gte(0.1));
+  collection = ee.Image(image_collection_id)
+  collection = collection.updateMask(collection.gte(0.01));
   # Add a band containing image date as years since 1991.
   # def CreateTimeBand(img):
   #   year = ee.Date(img.get('system:time_start')).get('year').subtract(1991)
@@ -164,9 +167,9 @@ def GetPolygonTimeSeries(polygon_id):
   return json.dumps(details)
 
 
-def ComputePolygonTimeSeries(polygon_id):
+def ComputePolygonTimeSeries(polygon_id, image_collection_id):
   """Returns a series of brightness over time for the polygon."""
-  collection = ee.ImageCollection(IMAGE_COLLECTION_ID)
+  collection = ee.ImageCollection(image_collection_id)
   collection = collection.select('stable_lights').sort('system:time_start')
   feature = GetFeature(polygon_id)
 
@@ -212,8 +215,9 @@ MEMCACHE_EXPIRATION = 60 * 60 * 24
 # The ImageCollection of the night-time lights dataset. See:
 # https://earthengine.google.org/#detail/NOAA%2FDMSP-OLS%2FNIGHTTIME_LIGHTS
 #IMAGE_COLLECTION_ID = 'NOAA/DMSP-OLS/NIGHTTIME_LIGHTS'
-# IMAGE_COLLECTION_ID = 'users/kyletaylor/published/ks_ls5_wetness_1985_2012'
-IMAGE_COLLECTION_ID = 'users/adaniels/LC8dynamicwater'
+#IMAGE_COLLECTION_ID = 'users/kyletaylor/published/ks_ls5_wetness_1985_2012'
+MOST_RECENT_IMAGE_COLLECTION_ID = 'users/adaniels/LC8dynamicwater'
+HISTORICAL_IMAGE_COLLECTION_ID = 'users/adaniels/histwetness'
 
 # The file system folder path to the folder with GeoJSON polygon files.
 POLYGON_PATH = 'static/polygons/'

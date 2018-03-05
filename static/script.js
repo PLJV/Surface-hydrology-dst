@@ -13,17 +13,20 @@ trendy = {};  // Our namespace.
  * @param {string} serializedPolygonIds A serialized array of the IDs of the
  *     polygons to show on the map. For example: "['poland', 'moldova']".
  */
-trendy.boot = function(eeMapId, eeToken, serializedPolygonIds) {
+trendy.boot = function(historicalEeMapId, mostRecentEeMapId, historicalEeToken, mostRecentEeToken, serializedPolygonIds) {
   // Load external libraries.
   google.load('visualization', '1.0');
   google.load('jquery', '1');
   //  this key has domain restrictions associated with it
   google.load('maps', '3', {'other_params': 'key=AIzaSyDraxoLomEu1kNGyDFpb6K-SU4FSmAFZWc'});
-  //  this key does not have domain restrictions
   // Create the Trendy Lights app.
   google.setOnLoadCallback(function() {
-    var mapType = trendy.App.getEeMapType(eeMapId, eeToken);
-    var app = new trendy.App(mapType, JSON.parse(serializedPolygonIds));
+    //var mapType = trendy.App.getEeMapType(historicalEeMapId, historicalEeToken);
+    trendy.App.historicalLayer = trendy.App.getEeMapType(historicalEeMapId, historicalEeToken);
+    trendy.App.mostRecentLayer = trendy.App.getEeMapType(mostRecentEeMapId, mostRecentEeToken);
+    // calls createMap() with our historical layer
+    trendy.App(trendy.App.historicalLayer, JSON.parse(serializedPolygonIds));
+    trendy.App.addLayer(trendy.App.mostRecentLayer, id='mostRecent');
   });
 };
 
@@ -44,11 +47,11 @@ trendy.boot = function(eeMapId, eeToken, serializedPolygonIds) {
  */
 trendy.App = function(mapType, polygonIds) {
   // Create and display the map.
-  trendy.App.map = this.createMap(mapType);
+  trendy.App.createMap(mapType);
   // Fix our default zoom levels
   // Add a move listener to restrict the bounds range
   trendy.App.map.addListener(trendy.App.map, "drag", function() {
-    trendy.App.checkBounds(trendy.App.map);
+    trendy.App.checkBounds();
   });
   // Pan to the user's current location
   //this.panToLocation(this.map);
@@ -59,7 +62,7 @@ trendy.App = function(mapType, polygonIds) {
   // this.map.data.addListener('click', this.handlePolygonClick.bind(this));
 
   // Register a click handler to hide the panel when the user clicks close.
-  $('.panel .close').click(this.hidePanel.bind(this));
+  $('.panel .close').click(trendy.App.hidePanel.bind(this));
 
   // Register a click handler to expand the panel when the user taps on toggle.
   $('.panel .toggler').click((function() {
@@ -74,8 +77,10 @@ trendy.App = function(mapType, polygonIds) {
  * @param {google.maps.ImageMapType} mapType The map type to include on the map.
  * @return {google.maps.Map} A map instance with the map type rendered.
  */
-trendy.App.prototype.createMap = function(mapType) {
-  var mapOptions = {
+trendy.App.createMap = function(mapType) {
+  // initialize our layers stack
+  trendy.App.numLayers = 0;
+  trendy.App.defaultMapOptions = {
     backgroundColor: '#00000',
     center: trendy.App.DEFAULT_CENTER,
     zoom: trendy.App.DEFAULT_ZOOM,
@@ -83,23 +88,51 @@ trendy.App.prototype.createMap = function(mapType) {
     maxZoom: 14
   };
                                           //Lower, Left           //Upper, Right
-  //this.allowedBounds = new GLatLngBounds(new GLatLng(49.5,-10), new GLatLng(59,2.6));
   trendy.App.allowedBounds = new google.maps.LatLngBounds(new google.maps.LatLng(37,-102), new google.maps.LatLng(40.1,-94.58));
   
   var mapEl = $('.map').get(0);
-  var map = new google.maps.Map(mapEl, mapOptions);
+  trendy.App.map = new google.maps.Map(mapEl, trendy.App.defaultMapOptions);
 
-  map.setOptions({styles: trendy.App.BASE_MAP_STYLE});
-  map.overlayMapTypes.push(mapType);
-
-  return map;
+  trendy.App.map.setOptions({styles: trendy.App.BASE_MAP_STYLE});
+  trendy.App.addLayer(mapType, is='historical');
 };
+/**
+ * Add an additional layer to an existing map object
+ */
+ trendy.App.addLayer = function(mapType, id){
+    trendy.App.map.overlayMapTypes.push(mapType);
+    trendy.App.numLayers += 1
+    if(id.includes("istor")){
+      trendy.App.historicalLayer.at = (trendy.App.numLayers-1)
+    } else if(id.includes("ecent")) {
+      trendy.App.mostRecentLayer.at = (trendy.App.numLayers-1)
+    } 
+ }
+ trendy.App.removeLayer = function(id){
+   if(id.includes("historical")){
+     trendy.App.map.overlayMapTypes.removeAt(trendy.App.historicalLayer.at);
+     trendy.App.historicalLayer.at = null
+     trendy.App.numLayers -= 1
+     // if we still have the other layer on the map, adjust it's array pos
+     if(trendy.App.mostRecentLayer.at){
+       trendy.App.mostRecentLayer.at -= 1
+     }
+   } else if(id.includes("ecent")){
+     trendy.App.map.overlayMapTypes.removeAt(trendy.App.mostRecentLayer.at);
+     trendy.App.mostRecentLayer.at = null
+     trendy.App.numLayers -= 1
+     // if we still have the other layer on the map, adjust it's array pos
+     if(trendy.App.historicalLayer.at){
+       trendy.App.historicalLayer.at -= 1
+     }
+   }
+ }
 /**
  * If the map position is out of range, move it back
  */
-trendy.App.checkBounds = function(map) {
+trendy.App.checkBounds = function() {
       // Perform the check and return if OK
-      if (trendy.App.allowedBounds.contains(map.getCenter())) {
+      if (trendy.App.allowedBounds.contains(trendy.App.map.getCenter())) {
         return;
       }
       // If it`s not OK, find the nearest allowed point and move there
@@ -117,13 +150,13 @@ trendy.App.checkBounds = function(map) {
       if (Y < AminY) {Y = AminY;}
       if (Y > AmaxY) {Y = AmaxY;}
       //alert ("Restricting "+Y+" "+X);
-      map.panTo(new google.maps.LatLng(X,Y));
+      trendy.App.map.panTo(new google.maps.LatLng(X,Y));
 }
 /**
  * Create a marker from location services and pan the map to the user's current 
  * location
  */
-trendy.App.prototype.panToLocation = function(map){
+trendy.App.panToLocation = function(){
   // Add the default 'go to my location' control
   var myLocationIcon = new google.maps.Marker({
     clickable: false,
@@ -133,12 +166,12 @@ trendy.App.prototype.panToLocation = function(map){
                                                     new google.maps.Point(11,11)),
     shadow: null,
     zIndex: 999,
-    map: map
+    map: trendy.App.map
   });
   if (navigator.geolocation) navigator.geolocation.getCurrentPosition(function(pos) {
       var me = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
       myLocationIcon.setPosition(me);
-      map.panTo(me);
+      trendy.App.map.panTo(me);
       // this.map.setCenter(me);
   }, function(error) {
       console.log(error)
@@ -149,11 +182,11 @@ trendy.App.prototype.panToLocation = function(map){
  * @param {Array<string>} polygonIds The IDs of the polygons to show on the map.
  *     For example ['poland', 'moldova'].
  */
-trendy.App.prototype.addPolygons = function(polygonIds) {
+trendy.App.addPolygons = function(polygonIds) {
   polygonIds.forEach((function(polygonId) {
-    this.map.data.loadGeoJson('static/polygons/' + polygonId + '.json');
+    trendy.App.map.data.loadGeoJson('static/polygons/' + polygonId + '.json');
   }).bind(this));
-  this.map.data.setStyle(function(feature) {
+  trendy.App.map.data.setStyle(function(feature) {
     return {
       fillColor: 'white',
       fillOpacity: '0.1',
@@ -170,12 +203,12 @@ trendy.App.prototype.addPolygons = function(polygonIds) {
  * @param {Object} event The event object, which contains details about the
  *     polygon clicked.
  */
-trendy.App.prototype.handlePolygonClick = function(event) {
-  this.clear();
+trendy.App.handlePolygonClick = function(event) {
+  trendy.App.clear();
   var feature = event.feature;
 
   // Instantly higlight the polygon and show the title of the polygon.
-  this.map.data.overrideStyle(feature, {strokeWeight: 8});
+  trendy.App.map.data.overrideStyle(feature, {strokeWeight: 8});
   var title = feature.getProperty('title');
   $('.panel').show();
   $('.panel .title').show().text(title);
@@ -187,27 +220,27 @@ trendy.App.prototype.handlePolygonClick = function(event) {
       $('.panel .error').show().html(data['error']);
     } else {
       $('.panel .wiki-url').show().attr('href', data['wikiUrl']);
-      this.showChart(data['timeSeries']);
+      trendy.App.showChart(data['timeSeries']);
     }
   }).bind(this));
 };
 
 
 /** Clears the details panel and selected polygon. */
-trendy.App.prototype.clear = function() {
+trendy.App.clear = function() {
   $('.panel .title').empty().hide();
   $('.panel .wiki-url').hide().attr('href', '');
   $('.panel .chart').empty().hide();
   $('.panel .error').empty().hide();
   $('.panel').hide();
-  this.map.data.revertStyle();
+  trendy.App.map.data.revertStyle();
 };
 
 
 /** Hides the details panel. */
-trendy.App.prototype.hidePanel = function() {
+trendy.App.hidePanel = function() {
   $('.panel').hide();
-  this.clear();
+  trendy.App.clear();
 };
 
 
@@ -216,7 +249,7 @@ trendy.App.prototype.hidePanel = function() {
  * @param {Array<Array<number>>} timeseries The timeseries data
  *     to plot in the chart.
  */
-trendy.App.prototype.showChart = function(timeseries) {
+trendy.App.showChart = function(timeseries) {
   timeseries.forEach(function(point) {
     point[0] = new Date(parseInt(point[0], 10));
   });
@@ -543,14 +576,17 @@ susie = { };
 
 susie.setLegendLinear = function(title=undefined, svgId='svg', domain=[0,1], labels=undefined, cells=2){
   if(labels == null){
-    labels = d3.range.apply(this, domain.concat(domain[1]/cells)).concat(domain[1])
+    labels = d3.range.apply(this, domain.concat(domain[1]/cells))
+    labels = labels.concat(domain[1])
+    // transparently adjust our "cells" values to account for taking on a tail
+    cells=cells+1
     labels = labels.map(function(e){
       return Number(e.toFixed(2));
     });
   }
   var linear = d3.scaleLinear()
     .domain(domain)
-    .range(["rgba(255, 255, 255, 0.9)", "rgba(52, 84, 143, 1)"]);
+    .range(["rgba(255, 255, 255, 0.0)", "rgba(52, 84, 143, 1)"]);
 
   var svg = d3.select(svgId);
 
@@ -589,4 +625,21 @@ susie.hide = function(id) {
     } else {
         div.style.display = "none";
     }
-}
+};
+
+susie.toggleEeLayerById = function(id) {
+ var checkbox = document.getElementById(id);
+ if(checkbox.checked){
+   if(id.includes('ist')){
+     trendy.App.addLayer(trendy.App.historicalLayer, id='historical');
+   } else {
+     trendy.App.addLayer(trendy.App.mostRecentLayer, id='mostRecent');
+   }
+ } else {
+   if(id.includes('ist')){
+     trendy.App.removeLayer(id='historical');
+   } else {
+     trendy.App.removeLayer(id='recent');
+   }
+ }   
+};

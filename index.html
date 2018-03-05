@@ -26,7 +26,7 @@
     <script src="/static/script.js"></script>
 
   </head>
-  <body onload="susie.setLegendLinear(title='Surface Wetness of Most Recent (LS8) Scene',svgId='#legendSvgLastScene',domain=[0,1], labels=[0,1],cells=2); susie.setLegendLinear(title='Surface Wetness Over Previous Ten Years (LS7)',svgId='#legendSvgHistorical', domain=[0,10],labels=undefined,cells=10)">
+  <body onload="susie.setLegendLinear(title='Surface Wetness of Most Recent (LS8) Scene',svgId='#legendSvgLastScene',domain=[0,1],labels=[0,1],cells=2); susie.setLegendLinear(title='Surface Wetness Over Previous Ten Years (LS7)',svgId='#legendSvgHistorical',domain=[0,1],labels=undefined,cells=10)">
 
     <!-- The DOM of our application. -->
     <div class="trendy">
@@ -54,7 +54,7 @@
             <!-- <label for="last_valid_scene">Wetness Frequency of Last Scene</label> -->
             <!-- <input name="last_valid_scene" id="most_recent_checkbox" type="checkbox" checked="checked"> -->
             <label class="switch">
-              <input type="checkbox" checked="checked" id="most_recent_checkbox">
+              <input type="checkbox" checked="checked" id="most_recent_checkbox" onchange="javascript:susie.toggleEeLayerById('most_recent_checkbox')">
               <span class="slider"></span>
             </label>
           </div>
@@ -65,7 +65,7 @@
             <!-- <label for="last_valid_scene">Wetness Frequency Over the Last Ten Years</label> -->
             <!-- <input name="last_valid_scene" id="most_recent_checkbox" type="checkbox" checked="checked"> -->
               <label class="switch">
-                <input type="checkbox" checked="checked" id="historical_checkbox">
+                <input type="checkbox" checked="checked" id="historical_checkbox" onchange="javascript:susie.toggleEeLayerById('historical_checkbox')">
               <span class="slider"></span>
             </label>
           </div>
@@ -106,8 +106,10 @@
     <!-- Boot our JavaScript once the body has loaded. -->
     <script>
       trendy.boot(
-          '{{ eeMapId | safe }}',
-          '{{ eeToken | safe }}',
+          '{{ historicalEeMapId | safe }}',
+          '{{ mostRecentEeMapId | safe }}',
+          '{{ historicalEeToken | safe }}',
+          '{{ mostRecentEeToken | safe }}',
           '{{ serializedPolygonIds | safe }}');
     </script>
 

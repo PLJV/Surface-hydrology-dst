@@ -217,7 +217,7 @@ MEMCACHE_EXPIRATION = 60 * 60 * 24
 #IMAGE_COLLECTION_ID = 'NOAA/DMSP-OLS/NIGHTTIME_LIGHTS'
 #IMAGE_COLLECTION_ID = 'users/kyletaylor/published/ks_ls5_wetness_1985_2012'
 MOST_RECENT_IMAGE_COLLECTION_ID = 'users/adaniels/shared/LC8dynamicwater'
-HISTORICAL_IMAGE_COLLECTION_ID = 'users/adaniels/shared/histwetness'
+HISTORICAL_IMAGE_COLLECTION_ID = 'users/adaniels/histwetness'
 
 # The file system folder path to the folder with GeoJSON polygon files.
 POLYGON_PATH = 'static/polygons/'

@@ -75,6 +75,6 @@ kansas = ee.FeatureCollection('ft:1fRY18cjsHzDgGiJiS2nnpUU3v9JPDc2HNaR7Xk8').fil
 # export the resulting "water 
 exportImageToAsset(
     water(imagefromcollection('LANDSAT/LC08/C01/T1', eethen, eenow)).clipToCollection(kansas), 
-    'users/adaniels/shared/LC8dynamicwater'
+    'LC8dynamicwater'
   )  
 

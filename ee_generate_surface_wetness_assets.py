@@ -37,12 +37,6 @@ def water(plandsatimage):
   return output.updateMask(output);
 
 def exportImageToAsset(image, assetId):
-    task_config = {
-      'description':'dynamic water over the last 10 months',
-      'scale':30,  
-      'maxPixels':400000000
-    }
-    #task = ee.batch.Export.image(image, assetId, task_config)
     task = ee.batch.Export.image.toAsset(
         image=image, 
         assetId=assetId, 
@@ -51,7 +45,17 @@ def exportImageToAsset(image, assetId):
         description='dynamic water over the last 10 months'
       )
     task.start()
-      
+
+def exportImageToDrive(image, name):
+    task_config = {
+      'description':'dynamic water over the last 10 months',
+      'scale':30,  
+      'maxPixels':400000000
+    }
+    task = ee.batch.Export.image(image, assetId, task_config)      
+    task.start()
+    
+    
 # MAIN
 
 # Use our App Engine service account's credentials.
@@ -68,22 +72,9 @@ eethen = now_minus_n_months(10);
 # import the geometry for Kansas
 kansas = ee.FeatureCollection('ft:1fRY18cjsHzDgGiJiS2nnpUU3v9JPDc2HNaR7Xk8').filter(ee.Filter.eq('Name', 'Kansas'));
 
-
-# copy over our water surface as an asset, caching the previous version so that 
-# users that are currently on the website will be able to view the last copy
-# if they are literally browsing while we are updating the assets
-try:
-  ee.data.deleteAsset('LC8dynamicwater_cached')
-except Exception as e:
-  pass
-
+# export the resulting "water 
 exportImageToAsset(
     water(imagefromcollection('LANDSAT/LC08/C01/T1', eethen, eenow)).clipToCollection(kansas), 
     'users/adaniels/shared/LC8dynamicwater'
   )  
-
-try: 
-  ee.data.deleteAsset('users/adaniels/shared/LC8dynamicwater_cached');
-except Exception as e:
-  pass
 

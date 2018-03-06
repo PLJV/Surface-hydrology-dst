@@ -36,14 +36,20 @@ def water(plandsatimage):
   output = blank.where(b6.lte(b4),1);
   return output.updateMask(output);
 
-def exportImageToAsset(image, assetId, region):
+def exportImageToAsset(image, assetId):
     task_config = {
       'description':'dynamic water over the last 10 months',
       'scale':30,  
-      'region':region,
       'maxPixels':400000000
     }
-    task = ee.batch.Export.image(image, assetId, task_config)
+    #task = ee.batch.Export.image(image, assetId, task_config)
+    task = ee.batch.Export.image.toAsset(
+        image=image, 
+        assetId=assetId, 
+        scale=30, 
+        maxPixels=400000000,
+        description='dynamic water over the last 10 months'
+      )
     task.start()
       
 # MAIN
@@ -71,10 +77,10 @@ try:
 except Exception as e:
   pass
 
-value = water(imagefromcollection('LANDSAT/LC08/C01/T1', eethen, eenow)).clipToCollection(kansas)
-
-exportImageToAsset(value, 'LC8dynamicwater', kansas)  
-
+exportImageToAsset(
+    water(imagefromcollection('LANDSAT/LC08/C01/T1', eethen, eenow)).clipToCollection(kansas), 
+    'users/adaniels/shared/LC8dynamicwater'
+  )  
 
 try: 
   ee.data.deleteAsset('users/adaniels/shared/LC8dynamicwater_cached');

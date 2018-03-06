@@ -21,9 +21,11 @@ def now_minus_n_months(*args):
 
 def imagefromcollection(pcollection, eethen, eenow):
   '''The image collection and sorting that all out. Get the most recent image from a given collection'''
-  collection = ee.ImageCollection(pcollection).filterDate(eethen).filterMetadata('CLOUD_COVER', 'less_than', .3);
-  recent = collection.sort('system:time_start', False).limit(1);
-  return collection.mosaic();
+  collection = ee.ImageCollection(pcollection)
+  collection = collection.filterDate(eethen)
+  collection = collection.filterMetadata('CLOUD_COVER', 'less_than', .3)
+  recent = collection.sort('system:time_start', False).limit(1)
+  return collection.mosaic()
 
 def water(plandsatimage):
   # extract band4 from image and assign that to variable b4
@@ -36,13 +38,12 @@ def water(plandsatimage):
 
 def exportImageToAsset(image, assetId, region):
     task_config = {
-      'description': 'dynamic water over the last 10 months',
-      'scale': 30,  
-      'region': region,
-      'maxPixels' : 400000000,
-      'assetId' : assetId
+      'description':'dynamic water over the last 10 months',
+      'scale':30,  
+      'region':region,
+      'maxPixels':400000000
     }
-    task = ee.batch.Export.image(image, 'LC8dynamicwater', task_config)
+    task = ee.batch.Export.image(image, assetId, task_config)
     task.start()
       
 # MAIN
@@ -66,24 +67,14 @@ kansas = ee.FeatureCollection('ft:1fRY18cjsHzDgGiJiS2nnpUU3v9JPDc2HNaR7Xk8').fil
 # users that are currently on the website will be able to view the last copy
 # if they are literally browsing while we are updating the assets
 try:
-  ee.data.deleteAsset('users/adaniels/shared/LC8dynamicwater_cached');
+  ee.data.deleteAsset('LC8dynamicwater_cached')
 except Exception as e:
   pass
 
 value = water(imagefromcollection('LANDSAT/LC08/C01/T1', eethen, eenow)).clipToCollection(kansas)
-  
-ee.data.copyAsset('users/adaniels/shared/LC8dynamicwater','users/kyletaylor/shared/LC8dynamicwater_cached');
-ee.data.deleteAsset('users/kyletaylor/shared/LC8dynamicwater');
-ee.data.createAsset({
-  'image': water(imagefromcollection('LANDSAT/LC08/C01/T1', eethen, eenow)).clipToCollection(kansas),
-  'description': 'dynamic water over the last 10 months',
-  'assetId': 'users/kyletaylor/shared/LC8dynamicwater',
-  'scale': 30,
-  'region': kansas,
-  'maxPixels': 400000000
-  })
 
-ee.data.createAsset(value, 'users/kyletaylor/shared/LC8dynamicwater')
+exportImageToAsset(value, 'LC8dynamicwater', kansas)  
+
 
 try: 
   ee.data.deleteAsset('users/adaniels/shared/LC8dynamicwater_cached');

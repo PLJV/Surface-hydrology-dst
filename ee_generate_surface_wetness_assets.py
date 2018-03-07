@@ -1,4 +1,4 @@
-""" This script pulls from the Landsat 8 satellite to generate an estimate of 
+""" This script pulls from the Landsat 8 satellite to generate an estimate of
 recent surface wetness """
 
 import config
@@ -14,8 +14,8 @@ def now_minus_n_months(*args):
     dst_day   = now.day
     if dst_month < 0:
       dst_year = dst_year - 1
-      dst_month = dst_month + 12 
-    return(ee.datetime.datetime(dst_year, dst_month, dst_day))  
+      dst_month = dst_month + 12
+    return(ee.datetime.datetime(dst_year, dst_month, dst_day))
   except Exception as e:
     raise e
 
@@ -38,43 +38,42 @@ def water(plandsatimage):
 
 def exportImageToAsset(image, assetId):
     task = ee.batch.Export.image.toAsset(
-        image=image, 
-        assetId=assetId, 
-        scale=30, 
+        image=image,
+        assetId=assetId,
+        scale=30,
         maxPixels=400000000,
         description='dynamic water over the last 10 months'
       )
     task.start()
+    return task
 
 def exportImageToDrive(image, name):
     task_config = {
       'description':'dynamic water over the last 10 months',
-      'scale':30,  
+      'scale':30,
       'maxPixels':400000000
     }
-    task = ee.batch.Export.image(image, assetId, task_config)      
+    task = ee.batch.Export.image(image, assetId, task_config)
     task.start()
-    
-    
-# MAIN
 
-# Use our App Engine service account's credentials.
-EE_CREDENTIALS = ee.ServiceAccountCredentials(
-    config.EE_ACCOUNT, config.EE_PRIVATE_KEY_FILE)
-    
-ee.Initialize(EE_CREDENTIALS)
 
-# define our time-series information
-  
-eenow = ee.datetime.datetime.now();
-eethen = now_minus_n_months(10);
+if __name__ == "__main__":
 
-# import the geometry for Kansas
-kansas = ee.FeatureCollection('ft:1fRY18cjsHzDgGiJiS2nnpUU3v9JPDc2HNaR7Xk8').filter(ee.Filter.eq('Name', 'Kansas'));
+    # Use our App Engine service account's credentials.
+    EE_CREDENTIALS = ee.ServiceAccountCredentials(
+        config.EE_ACCOUNT, config.EE_PRIVATE_KEY_FILE)
 
-# export the resulting "water 
-exportImageToAsset(
-    water(imagefromcollection('LANDSAT/LC08/C01/T1', eethen, eenow)).clipToCollection(kansas), 
-    'LC8dynamicwater'
-  )  
+    ee.Initialize(EE_CREDENTIALS)
 
+    # define our time-series information
+
+    eenow = ee.datetime.datetime.now()
+    eethen = now_minus_n_months(10)
+
+    # import the geometry for Kansas
+    kansas = ee.FeatureCollection('ft:1fRY18cjsHzDgGiJiS2nnpUU3v9JPDc2HNaR7Xk8').filter(ee.Filter.eq('Name', 'Kansas'))
+
+    # export the resulting "water
+    status = exportImageToAsset(
+        water(imagefromcollection('LANDSAT/LC08/C01/T1', eethen, eenow)).clipToCollection(kansas),
+        'users/adaniels/shared/LC8dynamicwater'

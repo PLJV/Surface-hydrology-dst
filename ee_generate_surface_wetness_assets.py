@@ -1,60 +1,68 @@
-""" This script pulls from the Landsat 8 satellite to generate an estimate of
-recent surface wetness """
+""" This script pulls from the Landsat 8 satellite to generate an estimate of recent surface wetness """
 
 import config
 import ee
 
+
 def now_minus_n_months(*args):
-  """ accept a single positional argument (month) specifying how far from now
+    """ accept a single positional argument (month) specifying how far from now
   to go back in our landsat imagery"""
-  try:
     now = ee.datetime.datetime.now()
-    dst_year  = now.year
+    dst_year = now.year
     dst_month = now.month - args[0]
-    dst_day   = now.day
+    dst_day = now.day
     if dst_month < 0:
-      dst_year = dst_year - 1
-      dst_month = dst_month + 12
-    return(ee.datetime.datetime(dst_year, dst_month, dst_day))
-  except Exception as e:
-    raise e
+        dst_year = dst_year - 1
+        dst_month = dst_month + 12
+    return str(dst_year) + '-' + str(dst_month) + '-' + str(dst_day)
 
-def imagefromcollection(pcollection, eethen, eenow):
-  '''The image collection and sorting that all out. Get the most recent image from a given collection'''
-  collection = ee.ImageCollection(pcollection)
-  collection = collection.filterDate(eethen)
-  collection = collection.filterMetadata('CLOUD_COVER', 'less_than', .3)
-  recent = collection.sort('system:time_start', False).limit(1)
-  return collection.mosaic()
 
-def water(plandsatimage):
-  # extract band4 from image and assign that to variable b4
-  b4 = plandsatimage.select('B4');
-  # extract band6 from image and assign that to variable b6
-  b6 = plandsatimage.select('B6');
-  blank = ee.Image(0);
-  output = blank.where(b6.lte(b4),1);
-  return output.updateMask(output);
+def image_from_ls8_collection(collection_id="LANDSAT/LC08/C01/T1", hist_date=None, cloud_mask=0.3):
+    """The image collection and sorting that all out. Get the most recent image from a given collection"""
+    return ee.ImageCollection(collection_id). \
+        filterDate(hist_date, str(ee.datetime.datetime.now().date())). \
+        filterMetadata('CLOUD_COVER', 'less_than', cloud_mask). \
+        filterBounds(kansas). \
+        mosaic()
 
-def exportImageToAsset(image, assetId):
+
+def simple_water_algorithm(image):
+    band_magic = {
+        'B4': image.select(4),
+        'B6': image.select(6),
+        'blank': ee.Image(0)
+    }
+    ret = band_magic['blank'].where(band_magic['B6'].lte(band_magic['B4']), 1)
+    return ret.updateMask(ret)
+
+
+def get_fc_coordinates(collection):
+    collection.geometry().getInfo()['coordinates']
+
+
+def exportImageToAsset(image, assetId, region):
     task = ee.batch.Export.image.toAsset(
         image=image,
         assetId=assetId,
         scale=30,
         maxPixels=400000000,
+        region=region,
         description='dynamic water over the last 10 months'
-      )
+    )
+    # start the task and then return status object to the user
     task.start()
-    return task
+    return (task)
 
-def exportImageToDrive(image, name):
+
+def exportImageToDrive(image, assetId):
     task_config = {
-      'description':'dynamic water over the last 10 months',
-      'scale':30,
-      'maxPixels':400000000
+        'description': 'dynamic water over the last 10 months',
+        'scale': 30,
+        'maxPixels': 400000000
     }
     task = ee.batch.Export.image(image, assetId, task_config)
     task.start()
+    return (task)
 
 
 if __name__ == "__main__":
@@ -65,15 +73,26 @@ if __name__ == "__main__":
 
     ee.Initialize(EE_CREDENTIALS)
 
-    # define our time-series information
-
-    eenow = ee.datetime.datetime.now()
-    eethen = now_minus_n_months(10)
-
     # import the geometry for Kansas
     kansas = ee.FeatureCollection('ft:1fRY18cjsHzDgGiJiS2nnpUU3v9JPDc2HNaR7Xk8').filter(ee.Filter.eq('Name', 'Kansas'))
 
+    # define our time-series information
+    last_wet_scene = simple_water_algorithm(image_from_ls8_collection(hist_date=now_minus_n_months(10)))
+
+    # something = ee.ImageCollection("LANDSAT/LC08/C01/T1"). \
+    #     filterDate(eethen, str(eenow.date())). \
+    #     filterMetadata('CLOUD_COVER', 'less_than', 0.3). \
+    #     filterBounds(kansas). \
+    #     mosaic()
+
+
+    # surface_water = imagefromcollection('LANDSAT/LC08/C01/T1', eethen)
+    # surface_water = water(surface_water)
+    # surface_water = surface_water.clipToCollection(kansas)
+
     # export the resulting "water
     status = exportImageToAsset(
-        water(imagefromcollection('LANDSAT/LC08/C01/T1', eethen, eenow)).clipToCollection(kansas),
-        'users/adaniels/shared/LC8dynamicwater'
+        last_wet_scene,
+        'users/kyletaylor/shared/b4',
+        region=kansas.geometry().getInfo()['coordinates']
+    )

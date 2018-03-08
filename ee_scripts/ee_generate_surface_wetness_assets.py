@@ -76,10 +76,14 @@ if __name__ == "__main__":
 
     # define our time-series information
     last_wet_scene = simple_water_algorithm(image_from_ls8_collection(hist_date=now_minus_n_months(10)))
+    last_wet_scene = last_wet_scene.updateMask(last_wet_scene.neq(0))
+
+    ee.batch.data.deleteAsset('users/kyletaylor/shared/LC8dynamicwater')
 
     # export the resulting "water
     status = exportImageToAsset(
         last_wet_scene,
-        'users/kyletaylor/shared/b4',
+        'users/kyletaylor/shared/LC8dynamicwater',
         region=get_fc_coordinates(kansas)
     )
+

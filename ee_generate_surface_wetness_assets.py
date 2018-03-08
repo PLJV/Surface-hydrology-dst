@@ -22,22 +22,20 @@ def image_from_ls8_collection(collection_id="LANDSAT/LC08/C01/T1", hist_date=Non
     return ee.ImageCollection(collection_id). \
         filterDate(hist_date, str(ee.datetime.datetime.now().date())). \
         filterMetadata('CLOUD_COVER', 'less_than', cloud_mask). \
-        filterBounds(kansas). \
         mosaic()
 
 
 def simple_water_algorithm(image):
     band_magic = {
-        'B4': image.select(4),
-        'B6': image.select(6),
+        'B4': image.select('B4'),
+        'B6': image.select('B6'),
         'blank': ee.Image(0)
     }
-    ret = band_magic['blank'].where(band_magic['B6'].lte(band_magic['B4']), 1)
-    return ret.updateMask(ret)
+    return band_magic['blank'].where(band_magic['B6'].lte(band_magic['B4']), 1)
 
 
-def get_fc_coordinates(collection):
-    collection.geometry().getInfo()['coordinates']
+def get_fc_coordinates(collection=None):
+    return collection.geometry().getInfo()['coordinates']
 
 
 def exportImageToAsset(image, assetId, region):
@@ -79,20 +77,9 @@ if __name__ == "__main__":
     # define our time-series information
     last_wet_scene = simple_water_algorithm(image_from_ls8_collection(hist_date=now_minus_n_months(10)))
 
-    # something = ee.ImageCollection("LANDSAT/LC08/C01/T1"). \
-    #     filterDate(eethen, str(eenow.date())). \
-    #     filterMetadata('CLOUD_COVER', 'less_than', 0.3). \
-    #     filterBounds(kansas). \
-    #     mosaic()
-
-
-    # surface_water = imagefromcollection('LANDSAT/LC08/C01/T1', eethen)
-    # surface_water = water(surface_water)
-    # surface_water = surface_water.clipToCollection(kansas)
-
     # export the resulting "water
     status = exportImageToAsset(
         last_wet_scene,
         'users/kyletaylor/shared/b4',
-        region=kansas.geometry().getInfo()['coordinates']
+        region=get_fc_coordinates(kansas)
     )

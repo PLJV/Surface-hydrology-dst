@@ -1,7 +1,8 @@
 /**
- * @fileoverview Runs the Trendy Lights application. The code is executed in the
- * user's browser. It communicates with the App Engine backend, renders output
- * to the screen, and handles user interactions.
+ * @fileoverview Runs the Surface Hydrology Viewer application
+ * Author(s): Kyle Taylor (kyle.taylor@pljv.org)
+ * License: All PLJV additions are released as GPL v3
+ * Copyright: Playa Lakes Joint Venture (2017)
  */
 
 trendy = {};  // Our namespace.
@@ -87,8 +88,9 @@ trendy.App.createMap = function(mapType) {
     minZoom: 8,
     maxZoom: 14
   };
-                                          //Lower, Left           //Upper, Right
-  trendy.App.allowedBounds = new google.maps.LatLngBounds(new google.maps.LatLng(37,-102), new google.maps.LatLng(40.1,-94.58));
+                                 //Lower, Left                    //Upper, Right
+  trendy.App.allowedBounds = new google.maps.
+    LatLngBounds(new google.maps.LatLng(37,-102), new google.maps.LatLng(40.1,-94.58));
   
   var mapEl = $('.map').get(0);
   trendy.App.map = new google.maps.Map(mapEl, trendy.App.defaultMapOptions);
@@ -156,8 +158,16 @@ trendy.App.checkBounds = function() {
  * Create a marker from location services and pan the map to the user's current 
  * location
  */
-trendy.App.panToLocation = function(){
-  // Add the default 'go to my location' control
+trendy.App.addMyLocationControl = function(controlDiv){
+  var myLocationControl = document.createElement('div');
+  myLocationControl.title = 'Click to recenter the map';
+  controlDiv.appendChild(myLocationControl);
+  var controlText = document.createElement('div');
+  controlText.innerHTML = 'Center Map';
+  controlUI.appendChild(controlText);
+}
+trendy.App.addLocationMarker = function(panTo=true){
+  // Add a marker and pan for the default 'go to my location' action
   var myLocationIcon = new google.maps.Marker({
     clickable: false,
     icon: new google.maps.MarkerImage('//maps.gstatic.com/mapfiles/mobile/mobileimgs2.png',
@@ -171,8 +181,10 @@ trendy.App.panToLocation = function(){
   if (navigator.geolocation) navigator.geolocation.getCurrentPosition(function(pos) {
       var me = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
       myLocationIcon.setPosition(me);
-      trendy.App.map.panTo(me);
-      // this.map.setCenter(me);
+      if(panTo){
+        trendy.App.map.panTo(me);
+        trendy.App.map.setZoom(14)
+      }
   }, function(error) {
       console.log(error)
   });

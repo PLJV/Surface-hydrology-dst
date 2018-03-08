@@ -136,6 +136,26 @@ input:checked + .slider:before {
   transform: translateX(13px);
 }
 
+/* go to my location ui */
+.myLocationControl {
+      position: absolute;
+      border-radius: 2px;
+      display: block;
+      border: 0px none;
+      bottom: 115px;
+      right: 0px;
+      padding: 0px;
+      margin: 10px;
+      background-color: white;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+      font-family: 'Roboto', Arial, sans-serif;
+      width: 28px;
+      height: 28px;
+      max-width: 28px;
+      max-height: 28px;
+      background-image: url('my_location_black_192x192.png');
+      background-size: contain;
+    }
 /* Rounded sliders */
 .slider.round {
   border-radius: 17px;

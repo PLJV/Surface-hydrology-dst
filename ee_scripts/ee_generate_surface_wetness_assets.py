@@ -7,6 +7,8 @@ import ee
 import json
 import time
 
+_SLEEP_TIME_SECONDS = 30
+
 def now_minus_n_months(*args):
     """ accept a single positional argument (month) specifying how far from now
   to go back in our landsat imagery"""
@@ -62,10 +64,10 @@ def exportImageToAsset(image=None, assetId=None, region=None, timeout_minutes=30
       pass
     # start the task and monitor our progress
     task.start()
-    time.sleep(30) # give ourselves a healthy amount of burn-in so Google can assign a start_timestamp
+    time.sleep(_SLEEP_TIME_SECONDS) # give ourselves a healthy amount of burn-in so Google can assign a start_timestamp
     task_start_time = int(task.status()['start_timestamp_ms'])
     while str(task.status()['state']) != 'COMPLETED':
-      time.sleep(5)
+      time.sleep(_SLEEP_TIME_SECONDS)
       task_runtime = (int(task.status()['update_timestamp_ms']) - task_start_time ) / 1000
       # if we take longer than 30 minutes, throw an error
       if task_runtime > (60 * timeout_minutes):

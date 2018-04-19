@@ -7,7 +7,6 @@ import ee
 import json
 import time
 
-
 def now_minus_n_months(*args):
     """ accept a single positional argument (month) specifying how far from now
   to go back in our landsat imagery"""
@@ -41,13 +40,11 @@ def simple_water_algorithm(image):
 def get_fc_coordinates(collection=None):
     return collection.geometry().getInfo()['coordinates']
 
-
 def setAssetGloballyReadable(assetId="users/kyletaylor/shared/LC8dynamicwater"):
-    acl = ee.data.getAssetAcl(assetId)
-    acl['all_users_can_read'] = True
-    acl.pop('owners')
-    ee.data.setAssetAcl(assetId, json.dumps(acl))
-
+   acl = ee.data.getAssetAcl(assetId)
+   acl['all_users_can_read'] = True
+   acl.pop('owners')
+   ee.data.setAssetAcl(assetId, json.dumps(acl))
 
 def exportImageToAsset(image=None, assetId=None, region=None, timeout_minutes=30):
     task = ee.batch.Export.image.toAsset(
@@ -60,23 +57,21 @@ def exportImageToAsset(image=None, assetId=None, region=None, timeout_minutes=30
     )
     # delete the asset if it exists
     try:
-        ee.batch.data.deleteAsset(assetId)
+      ee.batch.data.deleteAsset(assetId)
     except ee.ee_exception.EEException:
-        pass
+      pass
     # start the task and monitor our progress
     task.start()
     while str(task.status()['state']) != 'COMPLETED':
-        time.sleep(5)
-        task_runtime = (int(task.status()['update_timestamp_ms']) -
-                        int(task.status()['start_timestamp_ms'])) / 1000
-        # if we take longer than 30 minutes, throw an error
-        if task_runtime > (60 * timeout_minutes):
-            raise ee_exception.EEException('EE task timed out')
-        if task.status()['state'] == 'FAILED':
-            raise ee_exception.EEException('EE task FAILED')
+      time.sleep(5)
+      task_runtime = (int(task.status()['update_timestamp_ms']) - int(task.status()['start_timestamp_ms'])) / 1000
+      # if we take longer than 30 minutes, throw an error
+      if task_runtime > (60 * timeout_minutes):
+        raise ee_exception.EEException('EE task timed out')
+      if task.status()['state'] == 'FAILED':
+        raise ee_exception.EEException('EE task FAILED')
     # if we succeeded, let's set the asset to globally readable
-    if task.status():
-        setAssetGloballyReadable(assetId)
+    setAssetGloballyReadable(assetId)
     # return the task to the user for inspection
     return (task)
 
@@ -93,15 +88,12 @@ def exportImageToDrive(image, assetId):
 
 
 if __name__ == "__main__":
-    # Use our App Engine service account's credentials.
-    EE_CREDENTIALS = ee.ServiceAccountCredentials(
-        config.EE_ACCOUNT, config.EE_PRIVATE_KEY_FILE)
 
-    ee.Initialize(EE_CREDENTIALS)
+    # Use our App Engine service account's credentials.
+    ee.Initialize()
 
     # import the geometry for Kansas
-    kansas = ee.FeatureCollection('ft:1fRY18cjsHzDgGiJiS2nnpUU3v9JPDc2HNaR7Xk8'). \
-        filter(ee.Filter.eq('Name', 'Kansas'))
+    kansas = ee.FeatureCollection('ft:1fRY18cjsHzDgGiJiS2nnpUU3v9JPDc2HNaR7Xk8').filter(ee.Filter.eq('Name', 'Kansas'))
 
     # define our time-series information
     last_wet_scene = simple_water_algorithm(image_from_ls8_collection(hist_date=now_minus_n_months(10)))

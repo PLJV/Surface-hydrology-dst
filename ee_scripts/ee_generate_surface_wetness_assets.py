@@ -62,15 +62,18 @@ def exportImageToAsset(image=None, assetId=None, region=None, timeout_minutes=30
       pass
     # start the task and monitor our progress
     task.start()
+    time.sleep(30) # give ourselves a healthy amount of burn-in so Google can assign a start_timestamp
+    task_start_time = int(task.status()['start_timestamp_ms'])
     while str(task.status()['state']) != 'COMPLETED':
       time.sleep(5)
-      task_runtime = (int(task.status()['update_timestamp_ms']) - int(task.status()['start_timestamp_ms'])) / 1000
+      task_runtime = (int(task.status()['update_timestamp_ms']) - task_start_time ) / 1000
       # if we take longer than 30 minutes, throw an error
       if task_runtime > (60 * timeout_minutes):
         raise ee_exception.EEException('EE task timed out')
       if task.status()['state'] == 'FAILED':
         raise ee_exception.EEException('EE task FAILED')
     # if we succeeded, let's set the asset to globally readable
+    time.sleep(3)
     setAssetGloballyReadable(assetId)
     # return the task to the user for inspection
     return (task)

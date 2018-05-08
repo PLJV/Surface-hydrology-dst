@@ -598,7 +598,7 @@ susie.setLegendLinear = function(title=undefined, svgId='svg', domain=[0,1], lab
   }
   var linear = d3.scaleLinear()
     .domain(domain)
-    .range(["rgba(237, 248, 177, 0.5)", "rgba(8, 29, 88, 1)"]);
+    .range(["rgba(237, 248, 177, 0.98)", "rgba(8, 29, 88, 0.98)"]);
 
   var svg = d3.select(svgId);
 

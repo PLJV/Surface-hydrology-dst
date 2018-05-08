@@ -97,6 +97,7 @@ trendy.App.createMap = function(mapType) {
 
   trendy.App.map.setOptions({styles: trendy.App.BASE_MAP_STYLE});
   trendy.App.addLayer(mapType, is='historical');
+  trendy.App.addDrawingManager();
 };
 /**
  * Add an additional layer to an existing map object
@@ -154,6 +155,27 @@ trendy.App.checkBounds = function() {
       //alert ("Restricting "+Y+" "+X);
       trendy.App.map.panTo(new google.maps.LatLng(X,Y));
 }
+trendy.App.addDrawingManager = function(){
+    trendy.App.drawingManager = new google.maps.drawing.DrawingManager({
+      drawingMode: google.maps.drawing.OverlayType.MARKER,
+      drawingControl: true,
+      drawingControlOptions: {
+        position: google.maps.ControlPosition.TOP_CENTER,
+        drawingModes: ['marker', 'circle', 'polygon', 'polyline', 'rectangle']
+      },
+      markerOptions: {icon: 'http:// google.com/mapfiles/ms/micons/orange-dot.png'},
+      circleOptions: {
+        fillColor: '#ffff00',
+        fillOpacity: 1,
+        strokeWeight: 5,
+        clickable: false,
+        editable: true,
+        zIndex: 1
+      }
+    });
+    trendy.App.drawingManager.setMap(trendy.App.map);
+  }
+}
 /**
  * Create a marker from location services and pan the map to the user's current 
  * location
@@ -166,6 +188,7 @@ trendy.App.addMyLocationControl = function(controlDiv){
   controlText.innerHTML = 'Center Map';
   controlUI.appendChild(controlText);
 }
+
 trendy.App.addLocationMarker = function(panTo=true){
   // Add a marker and pan for the default 'go to my location' action
   var myLocationIcon = new google.maps.Marker({

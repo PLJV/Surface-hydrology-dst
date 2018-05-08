@@ -174,7 +174,6 @@ trendy.App.addDrawingManager = function(){
       }
     });
     trendy.App.drawingManager.setMap(trendy.App.map);
-  }
 }
 /**
  * Create a marker from location services and pan the map to the user's current 

@@ -141,7 +141,7 @@ def GetTrendyMapId(image_collection_id):
       # 'bands' : '0',
       # 'palette' : 'rgba(255, 255, 255, 0.1), rgba(0,51,204,1)',
       'palette' : 'ffffd9, edf8b1, c7e9b4, 7fcdbb, 41b6c4, 1d91c0, 225ea8, 253494, 081d58',
-      'opacity' : '0.85',
+      'opacity' : '0.95',
   })
 
 

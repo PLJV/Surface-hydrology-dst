@@ -124,7 +124,7 @@ app = webapp2.WSGIApplication([
 def GetTrendyMapId(image_collection_id):
   """Returns the MapID for the night-time lights trend map."""
   collection = ee.Image(image_collection_id)
-  collection = collection.updateMask(collection.gte(0.01));
+  collection = collection.updateMask(collection.gte(0.1));
   # Add a band containing image date as years since 1991.
   # def CreateTimeBand(img):
   #   year = ee.Date(img.get('system:time_start')).get('year').subtract(1991)
@@ -134,7 +134,7 @@ def GetTrendyMapId(image_collection_id):
   # Fit a linear trend to the nighttime lights collection.
   # fit = collection.reduce(ee.Reducer.linearFit())
   return collection.getMapId({
-      'min': '0.02',
+      'min': '0',
       # 'max': '0.18,20,-0.18',
       'max' : '1',
       # 'bands': 'scale,offset,scale',

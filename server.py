@@ -134,7 +134,7 @@ def GetTrendyMapId(image_collection_id):
   # Fit a linear trend to the nighttime lights collection.
   # fit = collection.reduce(ee.Reducer.linearFit())
   return collection.getMapId({
-      'min': '0',
+      'min': '0.02',
       # 'max': '0.18,20,-0.18',
       'max' : '1',
       # 'bands': 'scale,offset,scale',

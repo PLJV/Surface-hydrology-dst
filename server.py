@@ -82,7 +82,7 @@ class MainHandler(webapp2.RequestHandler):
     """Returns the main web page, populated with EE map and polygon info."""
     historicalMapId = GetTrendyMapId(HISTORICAL_IMAGE_COLLECTION_ID)
     mostRecentMapId = GetTrendyMapId(MOST_RECENT_IMAGE_COLLECTION_ID)
-    
+
     template_values = {
         'historicalEeMapId': historicalMapId['mapid'],
         'mostRecentEeMapId': mostRecentMapId['mapid'],
@@ -217,7 +217,7 @@ MEMCACHE_EXPIRATION = 60 * 60 * 24
 #IMAGE_COLLECTION_ID = 'NOAA/DMSP-OLS/NIGHTTIME_LIGHTS'
 #IMAGE_COLLECTION_ID = 'users/kyletaylor/published/ks_ls5_wetness_1985_2012'
 MOST_RECENT_IMAGE_COLLECTION_ID = 'users/kyletaylor/shared/LC8dynamicwater'
-HISTORICAL_IMAGE_COLLECTION_ID = 'users/adaniels/histwetness'
+HISTORICAL_IMAGE_COLLECTION_ID = 'users/adaniels/shared/LC5historicwetness_10m'
 
 # The file system folder path to the folder with GeoJSON polygon files.
 POLYGON_PATH = 'static/polygons/'

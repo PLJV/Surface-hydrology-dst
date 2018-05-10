@@ -86,8 +86,13 @@ trendy.App.createMap = function(mapType) {
     center: trendy.App.DEFAULT_CENTER,
     zoom: trendy.App.DEFAULT_ZOOM,
     minZoom: 8,
-    maxZoom: 14,
+    maxZoom: 17,
     scaleControl: true,
+    drawingControl: true,
+    drawingControlOptions: {
+        position: google.maps.ControlPosition.LEFT_TOP,
+        drawingModes: ['marker','polygon','rectangle']
+    },
     mapTypeControlOptions: {
       style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
               position: google.maps.ControlPosition.LEFT_TOP
@@ -102,7 +107,6 @@ trendy.App.createMap = function(mapType) {
 
   trendy.App.map.setOptions({styles: trendy.App.BASE_MAP_STYLE});
   trendy.App.addLayer(mapType, is='historical');
-  trendy.App.addDrawingManager();
 };
 /**
  * Add an additional layer to an existing map object
@@ -159,18 +163,6 @@ trendy.App.checkBounds = function() {
       if (Y > AmaxY) {Y = AmaxY;}
       //alert ("Restricting "+Y+" "+X);
       trendy.App.map.panTo(new google.maps.LatLng(X,Y));
-}
-trendy.App.addDrawingManager = function(){
-    trendy.App.drawingManager = new google.maps.drawing.DrawingManager({
-      drawingMode: google.maps.drawing.OverlayType.MARKER,
-      drawingControl: true,
-      drawingControlOptions: {
-        position: google.maps.ControlPosition.TOP_LEFT,
-        drawingModes: ['marker','polygon','rectangle']
-      },
-      markerOptions: {icon: 'http:// google.com/mapfiles/ms/micons/orange-dot.png'}
-    });
-    trendy.App.drawingManager.setMap(trendy.App.map);
 }
 /**
  * Create a marker from location services and pan the map to the user's current 

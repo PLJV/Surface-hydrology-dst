@@ -23,23 +23,29 @@
 
   </head>
   <body onload="
-    susie.setLegendLinear(title='Surface Wetness of Most Recent Scene',svgId='#legendSvgLastScene',domain=[0,1],labels=[0,1],cells=2);
-    susie.setLegendLinear(title='Surface Wetness Over Previous Ten Years',svgId='#legendSvgHistorical',domain=[1,10],labels=undefined,cells=10)"
-  >
-
+    susie.setLegendLinear(
+        title='Surface Wetness of Most Recent Scene',
+        svgId='#legendSvgLastScene',domain=[0,1],
+        labels=[0,1],cells=2
+      );
+    susie.setLegendLinear(
+        title='Surface Wetness Over Previous Ten Years',
+        svgId='#legendSvgHistorical',
+        domain=[1,10],
+        labels=[1,2,3,4,5,6,7,8,9],
+        cells=10
+      );">
     <!-- The DOM of our application. -->
     <div class="trendy">
-
-      <!-- The title of the application. -->
-      <!--<h1>Surface Hydrology Viewer Demo</h1>-->
-
       <!-- A container which the Maps API will populate with a map. -->
       <div class="map"></div>
       <div class="myLocationControl" id="myLocationControl" onclick="javascript:trendy.App.addLocationMarker()"></div>
       <!-- A pop-out messaging system for user i/o -->
       <div class="instructions" id="instructionsPopout">
         <h4>Surface Hydrology Viewer</h4>
-        This map displays the current and historic distribution of surface water in the State of Kansas. Data from the Landsat 8 satellite is used to map the current surface water extent in the state. Data from the Landsat 5 platform was used to map the frequency of historic wetness from 1985 to 2012.
+        This map displays the current and historic distribution of surface water in the State of Kansas. Data from\
+        the Landsat 8 satellite is used to map the current surface water extent in the state. Data from the Landsat\
+        5 platform was used to map the frequency of historic wetness from 1985 to 2012.
         <br><br>
         <a href="javascript:carta.hide('instructionsPopout');">hide</a>
       </div>
@@ -54,7 +60,8 @@
             <!-- <label for="last_valid_scene">Wetness Frequency of Last Scene</label> -->
             <!-- <input name="last_valid_scene" id="most_recent_checkbox" type="checkbox" checked="checked"> -->
             <label class="switch">
-              <input type="checkbox" checked="checked" id="most_recent_checkbox" onchange="javascript:susie.toggleEeLayerById('most_recent_checkbox')">
+              <input type="checkbox" checked="checked" id="most_recent_checkbox"
+                     onchange="javascript:susie.toggleEeLayerById('most_recent_checkbox')">
               <span class="slider"></span>
             </label>
           </div>
@@ -65,7 +72,9 @@
             <!-- <label for="last_valid_scene">Wetness Frequency Over the Last Ten Years</label> -->
             <!-- <input name="last_valid_scene" id="most_recent_checkbox" type="checkbox" checked="checked"> -->
               <label class="switch">
-                <input type="checkbox" checked="checked" id="historical_checkbox" onchange="javascript:susie.toggleEeLayerById('historical_checkbox')">
+                <input type="checkbox"
+                       checked="checked" id="historical_checkbox"
+                       onchange="javascript:susie.toggleEeLayerById('historical_checkbox')">
               <span class="slider"></span>
             </label>
           </div>

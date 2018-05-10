@@ -19,7 +19,7 @@ trendy.boot = function(historicalEeMapId, mostRecentEeMapId, historicalEeToken, 
   google.load('visualization', '1.0');
   google.load('jquery', '1');
   //  this key has domain restrictions associated with it
-  google.load('maps', '3', {'other_params': 'key=AIzaSyDraxoLomEu1kNGyDFpb6K-SU4FSmAFZWc&libraries=drawing&sensor=false'});
+  google.load('maps', '3', {'other_params': 'key=AIzaSyDraxoLomEu1kNGyDFpb6K-SU4FSmAFZWc&libraries=drawing'});
   // Create the Trendy Lights app.
   google.setOnLoadCallback(function() {
     //var mapType = trendy.App.getEeMapType(historicalEeMapId, historicalEeToken);
@@ -90,7 +90,7 @@ trendy.App.createMap = function(mapType) {
     scaleControl: true,
     drawingControl: true,
     drawingControlOptions: {
-        position: google.maps.ControlPosition.LEFT_TOP,
+        position: google.maps.ControlPosition.TOP_LEFT,
         drawingModes: ['marker','polygon','rectangle']
     },
     mapTypeControlOptions: {

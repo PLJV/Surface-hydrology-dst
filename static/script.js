@@ -88,7 +88,7 @@ trendy.App.createMap = function(mapType) {
     minZoom: 8,
     maxZoom: 17,
     scaleControl: true,
-    drawingControl: true,
+    drawingControl: false,
     drawingControlOptions: {
         position: google.maps.ControlPosition.TOP_LEFT,
         drawingModes: ['marker','polygon','rectangle']
@@ -166,12 +166,28 @@ trendy.App.checkBounds = function() {
       trendy.App.map.panTo(new google.maps.LatLng(X,Y));
 }
 
-trendy.App.addDrawingManagerControl = function(){
+trendy.App.addDrawingManagerControl = function(show=false){
   trendy.App.drawingManager = new google.maps.drawing.DrawingManager({
     drawingMode: google.maps.drawing.OverlayType.MARKER
   });
+  // show method
+  trendy.App.drawingManager.show = function(){
+    trendy.App.map.setOptions({drawingControl: true});
+  }
+  // hide method
+  trendy.App.drawingManager.hide = function(){
+    trendy.App.map.setOptions({drawingControl: false});
+  }
+  // by default, the drawing manager is hidden
   trendy.App.drawingManager.setMap(trendy.App.map);
+  if(show){
+    trendy.App.drawingManager.show();
+  }
 }
+
+
+
+
 
 /**
  * Create a marker from location services and pan the map to the user's current 

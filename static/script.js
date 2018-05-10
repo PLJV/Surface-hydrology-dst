@@ -95,7 +95,7 @@ trendy.App.createMap = function(mapType) {
     },
     mapTypeControlOptions: {
       style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-              position: google.maps.ControlPosition.LEFT_TOP
+              position: google.maps.ControlPosition.TOP_CENTER
     }
   };
                                  //Lower, Left                    //Upper, Right
@@ -107,6 +107,7 @@ trendy.App.createMap = function(mapType) {
 
   trendy.App.map.setOptions({styles: trendy.App.BASE_MAP_STYLE});
   trendy.App.addLayer(mapType, is='historical');
+  trendy.App.addDrawingManagerControl();
 };
 /**
  * Add an additional layer to an existing map object
@@ -164,6 +165,14 @@ trendy.App.checkBounds = function() {
       //alert ("Restricting "+Y+" "+X);
       trendy.App.map.panTo(new google.maps.LatLng(X,Y));
 }
+
+trendy.App.addDrawingManagerControl = function(){
+  trendy.App.drawingManager = new google.maps.drawing.DrawingManager({
+    drawingMode: google.maps.drawing.OverlayType.MARKER
+  });
+  trendy.App.drawingManager.setMap(trendy.App.map);
+}
+
 /**
  * Create a marker from location services and pan the map to the user's current 
  * location

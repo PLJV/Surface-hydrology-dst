@@ -7,7 +7,7 @@ import ee
 import json
 import time
 
-_SLEEP_TIME_SECONDS = 30
+_SLEEP_TIME_SECONDS = 30 # Usually takes about 9 minutes to generate this asset
 
 def now_minus_n_months(*args):
     """ accept a single positional argument (month) specifying how far from now

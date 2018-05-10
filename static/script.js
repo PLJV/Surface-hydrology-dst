@@ -160,7 +160,7 @@ trendy.App.addDrawingManager = function(){
       drawingMode: google.maps.drawing.OverlayType.MARKER,
       drawingControl: true,
       drawingControlOptions: {
-        position: google.maps.ControlPosition.TOP_LEFT,
+        position: google.maps.ControlPosition.LEFT_TOP,
         drawingModes: ['marker','polygon', 'rectangle']
       },
       markerOptions: {icon: 'http:// google.com/mapfiles/ms/micons/orange-dot.png'},

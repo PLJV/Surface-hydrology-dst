@@ -86,7 +86,12 @@ trendy.App.createMap = function(mapType) {
     center: trendy.App.DEFAULT_CENTER,
     zoom: trendy.App.DEFAULT_ZOOM,
     minZoom: 8,
-    maxZoom: 14
+    maxZoom: 14,
+    scaleControl: true,
+    mapTypeControlOptions: {
+      style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+              position: google.maps.ControlPosition.LEFT_TOP
+    }
   };
                                  //Lower, Left                    //Upper, Right
   trendy.App.allowedBounds = new google.maps.

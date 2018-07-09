@@ -595,6 +595,36 @@ trendy.App.BASE_MAP_STYLE = [
 
 carta = { };
 
+// excuse the hackish circa 1996 HTML formatting - KT
+
+carta.DEFAULT_ABOUT_HTML = 
+    "<h4>Surface Hydrology Viewer</h4>" + 
+    "This map displays the current and historic distribution of surface water in the State of Kansas. Data from" +
+    "the Landsat 8 satellite is used to map the current surface water extent in the state. Data from the Landsat" +
+    "5 platform was used to map the frequency of historic wetness from 1985 to 2012." +
+    "<br><br>" + 
+    "<button type='button' onclick='javascript:carta.hide(\"instructionsPopout\");'>hide</button>" +
+    "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML);'>download raw data</button>" +
+    "<button type='button' onclick='window.open(\"http://pljv.org/about\",\"_blank\")'>about PLJV</button>";
+
+carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML = 
+    "<h4>Download Processed Imagery</h4>" + 
+    "You can download imagery as GeoTIFF files at the following URLs<br><br>" +
+    "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;<a target='_blank' href='https://drive.google.com/a/pljv.org/file/d/1efkVeaf8PRt-YCKStTM1JZiYB9GEMVnF/view?usp=sharing'>Most Recent Wet Scene</a> (Google Drive)<br>" +
+    "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;<a target='_blank' href='https://drive.google.com/a/pljv.org/file/d/1efkVeaf8PRt-YCKStTM1JZiYB9GEMVnF/view?usp=sharing'>30 Year Historical Surface Wetness</a> (Google Drive)<br><br>" +
+    "<small><code>/* JV staff maintain these imagery assets and they are</code><br>" +
+    "<code>* globally readable on Earth Engine. Feel free to import them</code><br>" +
+    "<code>* and use them in your own projects. Here is an example import:</code><br>" +
+    "<code>*/</code><br>" +
+    "<code>var last_wet_scene_product = </code><br>" +
+    "<code> ee.Image('users/kyletaylor/shared/LC8dynamicwater');</code><br>" +
+    "<code>var historical_wetness_product = </code><br>" + 
+    "<code> ee.Image('users/adaniels/shared/LC5historicwetness_10m');</code></small>" +
+    "<br><br>" + 
+    "<button type='button' onclick='javascript:carta.hide(\"instructionsPopout\");'>hide</button>" +
+    "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.DEFAULT_ABOUT_HTML);'>back to help</button>" +
+    "<button type='button' onclick='window.open(\"http://pljv.org/about\",\"_blank\")'>about PLJV</button>";
+
 carta.hide = function(id) {
   var div = document.getElementById(id);
     if (div.style.display === "none") {
@@ -604,17 +634,18 @@ carta.hide = function(id) {
     }
 };
 
-carta.addMessage = function(text){
-
+carta.changeMessage = function(id, text){
+  if(id === "none") {
+      id='instructionsPopout'
+  }
+  var div = document.getElementById(id);
+  if(text === "none") {
+    div.innerHTML =  carta.DEFAULT_ABOUT_HTML;
+  } else {
+    div.innerHTML = text  
+  }
 };
 
-carta.removeMessage = function(text){
-
-};
-
-carta.changeMessage = function(text){
-
-};
 
 ///////////////////////////////////////////////////////////////////////////////
 //                        Add-On: D3 Legend Interface

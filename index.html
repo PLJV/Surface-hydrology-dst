@@ -48,7 +48,9 @@
         the Landsat 8 satellite is used to map the current surface water extent in the state. Data from the Landsat
         5 platform was used to map the frequency of historic wetness from 1985 to 2012.
         <br><br>
-        <a href="javascript:carta.hide('instructionsPopout');">hide</a> - download raw data
+        <button type="button" onclick="javascript:carta.hide('instructionsPopout');" >hide</button>
+        <button type="button" onclick="javascript:carta.changeMessage('instructionsPopout', carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML);" >download raw data</button>
+        <button type="button" onclick="window.open('http://pljv.org/about','_blank')" >about PLJV</button>
       </div>
       <!-- A map legend pop-out -->
       <div class="legend" id="legendPopout">

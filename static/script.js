@@ -599,8 +599,8 @@ carta = { };
 
 carta.DEFAULT_ABOUT_HTML = 
     "<h4>Surface Hydrology Viewer</h4>" + 
-    "This map displays the current and historic distribution of surface water in the State of Kansas. Data from" +
-    "the Landsat 8 satellite is used to map the current surface water extent in the state. Data from the Landsat" +
+    "This map displays the current and historic distribution of surface water in the State of Kansas. Data from " +
+    "the Landsat 8 satellite is used to map the current surface water extent in the state. Data from the Landsat " +
     "5 platform was used to map the frequency of historic wetness from 1985 to 2012." +
     "<br><br>" + 
     "<button type='button' onclick='javascript:carta.hide(\"instructionsPopout\");'>hide</button>" +
@@ -612,15 +612,10 @@ carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML =
     "You can download imagery as GeoTIFF files at the following URLs<br><br>" +
     "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;<a target='_blank' href='https://drive.google.com/a/pljv.org/file/d/1efkVeaf8PRt-YCKStTM1JZiYB9GEMVnF/view?usp=sharing'>Most Recent Wet Scene</a> (Google Drive)<br>" +
     "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;<a target='_blank' href='https://drive.google.com/a/pljv.org/file/d/1efkVeaf8PRt-YCKStTM1JZiYB9GEMVnF/view?usp=sharing'>30 Year Historical Surface Wetness</a> (Google Drive)<br><br>" +
-    "<small><code>/* JV staff maintain these imagery assets and they are</code><br>" +
-    "<code>* globally readable on Earth Engine. Feel free to import them</code><br>" +
-    "<code>* and use them in your own projects. Here is an example import:</code><br>" +
-    "<code>*/</code><br>" +
-    "<code>var last_wet_scene_product = </code><br>" +
-    "<code> ee.Image('users/kyletaylor/shared/LC8dynamicwater');</code><br>" +
-    "<code>var historical_wetness_product = </code><br>" + 
-    "<code> ee.Image('users/adaniels/shared/LC5historicwetness_10m');</code></small>" +
-    "<br><br>" + 
+    "We maintain these products as Google Earth Engine assets. If you'd just like to <a target='_blank' href='https://developers.google.com/earth-engine/asset_manager#importing-assets-to-your-script'>import the assets</a> " + "directly into your code, here are the asset ID's:<br><br>" +
+    "Asset ID for Most Recent Wet Scene product: '<a href='https://code.earthengine.google.com/?asset=users/kyletaylor/shared/LC8dynamicwater' target='_blank'>users/kyletaylor/shared/LC8dynamicwater</a>'<br><br>" +
+    "Asset ID for 30 Year Historical Surface Wetness product: '<a href='https://code.earthengine.google.com/?asset=users/adaniels/shared/LC5historicwetness_10m' target='_blank'>users/adaniels/shared/LC5historicwetness_10m</a>'<br>" +
+    "<br>" + 
     "<button type='button' onclick='javascript:carta.hide(\"instructionsPopout\");'>hide</button>" +
     "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.DEFAULT_ABOUT_HTML);'>back to help</button>" +
     "<button type='button' onclick='window.open(\"http://pljv.org/about\",\"_blank\")'>about PLJV</button>";

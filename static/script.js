@@ -51,7 +51,7 @@ trendy.App = function(mapType, polygonIds) {
   trendy.App.createMap(mapType);
   // Fix our default zoom levels
   // Add a move listener to restrict the bounds range
-  trendy.App.map.addListener(trendy.App.map, "drag", function() {
+  trendy.App.map.addListener('center_changed', function() {
     trendy.App.checkBounds();
   });
   // Pan to the user's current location
@@ -85,23 +85,20 @@ trendy.App.createMap = function(mapType) {
     backgroundColor: '#00000',
     center: trendy.App.DEFAULT_CENTER,
     zoom: trendy.App.DEFAULT_ZOOM,
-    minZoom: 8,
+    mapTypeId: google.maps.MapTypeId.TERRAIN,
+    minZoom: 4,
     maxZoom: 17,
     scaleControl: true,
     drawingControl: false,
-    drawingControlOptions: {
-        position: google.maps.ControlPosition.TOP_LEFT,
-        drawingModes: ['marker','polygon','rectangle']
-    },
     mapTypeControlOptions: {
       style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-              position: google.maps.ControlPosition.TOP_CENTER
+              position: google.maps.ControlPosition.TOP_LEFT
     }
   };
                                  //Lower, Left                    //Upper, Right
   trendy.App.allowedBounds = new google.maps.
     LatLngBounds(new google.maps.LatLng(37,-102), new google.maps.LatLng(40.1,-94.58));
-  
+
   var mapEl = $('.map').get(0);
   trendy.App.map = new google.maps.Map(mapEl, trendy.App.defaultMapOptions);
 
@@ -119,7 +116,7 @@ trendy.App.createMap = function(mapType) {
       trendy.App.historicalLayer.at = (trendy.App.numLayers-1)
     } else if(id.includes("ecent")) {
       trendy.App.mostRecentLayer.at = (trendy.App.numLayers-1)
-    } 
+    }
  }
  trendy.App.removeLayer = function(id){
    if(id.includes("historical")){
@@ -149,7 +146,7 @@ trendy.App.checkBounds = function() {
         return;
       }
       // If it`s not OK, find the nearest allowed point and move there
-      var C = map.getCenter();
+      var C = trendy.App.map.getCenter();
       var X = C.lng();
       var Y = C.lat();
 
@@ -163,20 +160,24 @@ trendy.App.checkBounds = function() {
       if (Y < AminY) {Y = AminY;}
       if (Y > AmaxY) {Y = AmaxY;}
       //alert ("Restricting "+Y+" "+X);
-      trendy.App.map.panTo(new google.maps.LatLng(X,Y));
+      trendy.App.map.panTo(new google.maps.LatLng(Y,X));
 }
 
 trendy.App.addDrawingManagerControl = function(show=false){
   trendy.App.drawingManager = new google.maps.drawing.DrawingManager({
-    drawingMode: google.maps.drawing.OverlayType.MARKER
+    drawingMode: google.maps.drawing.OverlayType.MARKER,
+    drawingControlOptions: {
+      drawingModes: ['marker','polygon','rectangle'],
+      position: google.maps.ControlPosition.TOP_CENTER
+    }
   });
   // show method
   trendy.App.drawingManager.show = function(){
-    trendy.App.map.setOptions({drawingControl: true});
+    trendy.App.map.setOptions({ drawingControl: true });
   }
   // hide method
   trendy.App.drawingManager.hide = function(){
-    trendy.App.map.setOptions({drawingControl: false});
+    trendy.App.map.setOptions({ drawingControl: false });
   }
   // by default, the drawing manager is hidden
   trendy.App.drawingManager.setMap(trendy.App.map);
@@ -190,7 +191,7 @@ trendy.App.addDrawingManagerControl = function(show=false){
 
 
 /**
- * Create a marker from location services and pan the map to the user's current 
+ * Create a marker from location services and pan the map to the user's current
  * location
  */
 trendy.App.addMyLocationControl = function(controlDiv){
@@ -354,11 +355,11 @@ trendy.App.EE_URL = 'https://earthengine.googleapis.com';
 
 
 /** @type {number} The default zoom level for the map. */
-trendy.App.DEFAULT_ZOOM = 10;
+trendy.App.DEFAULT_ZOOM = 9;
 
 
 /** @type {Object} The default center of the map. */
-trendy.App.DEFAULT_CENTER = {lng: -101.1091876, lat: 38.2976897};
+trendy.App.DEFAULT_CENTER = {lng: -98.38, lat: 38.48};
 
 /**
  * @type {Array} An array of Google Map styles. See:
@@ -597,25 +598,25 @@ carta = { };
 
 // excuse the hackish circa 1996 HTML formatting - KT
 
-carta.DEFAULT_ABOUT_HTML = 
-    "<h4>Surface Hydrology Viewer</h4>" + 
+carta.DEFAULT_ABOUT_HTML =
+    "<h3>Surface Hydrology Viewer</h3>" +
     "This map displays the current and historic distribution of surface water in the State of Kansas. Data from " +
     "the Landsat 8 satellite is used to map the current surface water extent in the state. Data from the Landsat " +
     "5 platform was used to map the frequency of historic wetness from 1985 to 2012." +
-    "<br><br>" + 
+    "<br><br>" +
     "<button type='button' onclick='javascript:carta.hide(\"instructionsPopout\");'>hide</button>" +
     "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML);'>download raw data</button>" +
     "<button type='button' onclick='window.open(\"http://pljv.org/about\",\"_blank\")'>about PLJV</button>";
 
-carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML = 
-    "<h4>Download Processed Imagery</h4>" + 
-    "You can download imagery as GeoTIFF files at the following URLs<br><br>" +
-    "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;<a target='_blank' href='https://drive.google.com/a/pljv.org/file/d/1efkVeaf8PRt-YCKStTM1JZiYB9GEMVnF/view?usp=sharing'>Most Recent Wet Scene</a> (Google Drive)<br>" +
-    "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;<a target='_blank' href='https://drive.google.com/a/pljv.org/file/d/1efkVeaf8PRt-YCKStTM1JZiYB9GEMVnF/view?usp=sharing'>30 Year Historical Surface Wetness</a> (Google Drive)<br><br>" +
-    "We maintain these products as Google Earth Engine assets. If you'd just like to <a target='_blank' href='https://developers.google.com/earth-engine/asset_manager#importing-assets-to-your-script'>import the assets</a> " + "directly into your code, here are the asset ID's:<br><br>" +
-    "Asset ID for Most Recent Wet Scene product: '<a href='https://code.earthengine.google.com/?asset=users/kyletaylor/shared/LC8dynamicwater' target='_blank'>users/kyletaylor/shared/LC8dynamicwater</a>'<br><br>" +
-    "Asset ID for 30 Year Historical Surface Wetness product: '<a href='https://code.earthengine.google.com/?asset=users/adaniels/shared/LC5historicwetness_10m' target='_blank'>users/adaniels/shared/LC5historicwetness_10m</a>'<br>" +
-    "<br>" + 
+carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML =
+    "<h3>Download Processed Imagery</h3>" +
+    "PLJV provides static and dynamic copies of the imagery data as GeoTIFF files that you can use in a GIS at the following URLs<br><br>" +
+    "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;<a target='_blank' href='https://drive.google.com/a/pljv.org/file/d/1efkVeaf8PRt-YCKStTM1JZiYB9GEMVnF/view?usp=sharing'>Most Recent Wet Scene</a> (Google Drive)<br>" +
+    "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;<a target='_blank' href='https://drive.google.com/a/pljv.org/file/d/1efkVeaf8PRt-YCKStTM1JZiYB9GEMVnF/view?usp=sharing'>30 Year Historical Surface Wetness</a> (Google Drive)<br><br>" +
+    "The source data for the web app are maintained as Google Earth Engine assets. If you use Google Earth Engine and you'd just like to <a target='_blank' href='https://developers.google.com/earth-engine/asset_manager#importing-assets-to-your-script'>import the assets</a> " + "directly into your code, here are the asset ID's:<br><br>" +
+    "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;'<a href='https://code.earthengine.google.com/?asset=users/kyletaylor/shared/LC8dynamicwater' target='_blank'>users/kyletaylor/shared/LC8dynamicwater</a>' (Most Recent Scene)<br>" +
+    "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;'<a href='https://code.earthengine.google.com/?asset=users/adaniels/shared/LC5historicwetness_10m' target='_blank'>users/adaniels/shared/LC5historicwetness_10m</a>' (30 Year Historical)<br>" +
+    "<br>" +
     "<button type='button' onclick='javascript:carta.hide(\"instructionsPopout\");'>hide</button>" +
     "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.DEFAULT_ABOUT_HTML);'>back to help</button>" +
     "<button type='button' onclick='window.open(\"http://pljv.org/about\",\"_blank\")'>about PLJV</button>";
@@ -637,7 +638,7 @@ carta.changeMessage = function(id, text){
   if(text === "none") {
     div.innerHTML =  carta.DEFAULT_ABOUT_HTML;
   } else {
-    div.innerHTML = text  
+    div.innerHTML = text
   }
 };
 
@@ -715,5 +716,5 @@ susie.toggleEeLayerById = function(id) {
    } else {
      trendy.App.removeLayer(id='recent');
    }
- }   
+ }
 };

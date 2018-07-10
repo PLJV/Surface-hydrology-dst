@@ -79,9 +79,9 @@ body,
   font-weight: bold;
 }
 
-.instructions .h4 {
-  padding: 0px;
-  margin: 0px;
+.instructions h3 {
+  padding: 5px;
+  margin: 1px;
 }
 
 .instructions button{
@@ -185,9 +185,7 @@ input:checked + .slider:before {
       height:180px;
       min-height:150px;
       max-height:220px;
-      width: 400px;
-      min-width: 400px;
-      max-width: 500px;
+      max-width: 400px;
     }
 
 .legend a {
@@ -201,9 +199,9 @@ input:checked + .slider:before {
   padding-bottom: 0.4rem;
 }
 
-.legend h4 {
-  padding: 0px;
-  margin: 0px;
+.legend h3 {
+  padding: 2px;
+  margin: 2px;
 }
 
 .legend svg {

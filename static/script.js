@@ -103,7 +103,17 @@ trendy.App.createMap = function(mapType) {
   trendy.App.map = new google.maps.Map(mapEl, trendy.App.defaultMapOptions);
 
   trendy.App.map.setOptions({styles: trendy.App.BASE_MAP_STYLE});
+  // add our 30 year historical imagery by default
   trendy.App.addLayer(mapType, is='historical');
+  // now add the boundary for the state of Kansas
+  trendy.App.map.data.loadGeoJson('static/kansas.json');
+  trendy.App.map.data.setStyle({
+    fillColor: 'white',
+    fillOpacity:0,
+    strokeColor: "#f7f7f7",
+    strokeOpacity: 0.9,
+    strokeWeight: 1
+  })
   trendy.App.addDrawingManagerControl();
 };
 /**

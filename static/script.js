@@ -54,21 +54,6 @@ trendy.App = function(mapType, polygonIds) {
   trendy.App.map.addListener('center_changed', function() {
     trendy.App.checkBounds();
   });
-  // Pan to the user's current location
-  //this.panToLocation(this.map);
-  // Add polygons to the map.
-  // this.addPolygons(polygonIds);
-
-  // Register a click handler to show a panel when the user clicks on a place.
-  // this.map.data.addListener('click', this.handlePolygonClick.bind(this));
-
-  // Register a click handler to hide the panel when the user clicks close.
-  $('.panel .close').click(trendy.App.hidePanel.bind(this));
-
-  // Register a click handler to expand the panel when the user taps on toggle.
-  $('.panel .toggler').click((function() {
-    $('.panel').toggleClass('expanded');
-  }).bind(this));
 };
 
 
@@ -114,6 +99,7 @@ trendy.App.createMap = function(mapType) {
     strokeOpacity: 0.9,
     strokeWeight: 1
   })
+  // add the drawing manager control
   trendy.App.addDrawingManagerControl();
 };
 /**
@@ -178,8 +164,11 @@ trendy.App.addDrawingManagerControl = function(show=false){
     drawingMode: google.maps.drawing.OverlayType.MARKER,
     drawingControlOptions: {
       drawingModes: ['marker','polygon','rectangle'],
-      position: google.maps.ControlPosition.TOP_CENTER
-    }
+      position: google.maps.ControlPosition.TOP_CENTER,
+    },
+    markerOptions: { editable: true},
+    polygonOptions: { editable: true},
+    rectangleOptions: { editable: true}
   });
   // show method
   trendy.App.drawingManager.show = function(){
@@ -189,7 +178,7 @@ trendy.App.addDrawingManagerControl = function(show=false){
   trendy.App.drawingManager.hide = function(){
     trendy.App.map.setOptions({ drawingControl: false });
   }
-  // by default, the drawing manager is hidden
+  // by default, the drawing manager is hidden -- let's show it
   trendy.App.drawingManager.setMap(trendy.App.map);
   if(show){
     trendy.App.drawingManager.show();
@@ -256,101 +245,7 @@ trendy.App.addLocationMarker = function(panTo=true){
       console.log(error)
   });
 }
-/**
- * Adds the polygons with the passed-in IDs to the map.
- * @param {Array<string>} polygonIds The IDs of the polygons to show on the map.
- *     For example ['poland', 'moldova'].
- */
-trendy.App.addPolygons = function(polygonIds) {
-  polygonIds.forEach((function(polygonId) {
-    trendy.App.map.data.loadGeoJson('static/polygons/' + polygonId + '.json');
-  }).bind(this));
-  trendy.App.map.data.setStyle(function(feature) {
-    return {
-      fillColor: 'white',
-      fillOpacity: '0.1',
-      strokeColor: 'white',
-      strokeWeight: 1
-    };
-  });
-};
 
-
-/**
- * Handles a on click a polygon. Highlights the polygon and shows details about
- * it in a panel.
- * @param {Object} event The event object, which contains details about the
- *     polygon clicked.
- */
-trendy.App.handlePolygonClick = function(event) {
-  trendy.App.clear();
-  var feature = event.feature;
-
-  // Instantly higlight the polygon and show the title of the polygon.
-  trendy.App.map.data.overrideStyle(feature, {strokeWeight: 8});
-  var title = feature.getProperty('title');
-  $('.panel').show();
-  $('.panel .title').show().text(title);
-
-  // Asynchronously load and show details about the polygon.
-  var id = feature.getProperty('id');
-  $.get('/details?polygon_id=' + id).done((function(data) {
-    if (data['error']) {
-      $('.panel .error').show().html(data['error']);
-    } else {
-      $('.panel .wiki-url').show().attr('href', data['wikiUrl']);
-      trendy.App.showChart(data['timeSeries']);
-    }
-  }).bind(this));
-};
-
-
-/** Clears the details panel and selected polygon. */
-trendy.App.clear = function() {
-  $('.panel .title').empty().hide();
-  $('.panel .wiki-url').hide().attr('href', '');
-  $('.panel .chart').empty().hide();
-  $('.panel .error').empty().hide();
-  $('.panel').hide();
-  trendy.App.map.data.revertStyle();
-};
-
-
-/** Hides the details panel. */
-trendy.App.hidePanel = function() {
-  $('.panel').hide();
-  trendy.App.clear();
-};
-
-
-/**
- * Shows a chart with the given timeseries.
- * @param {Array<Array<number>>} timeseries The timeseries data
- *     to plot in the chart.
- */
-trendy.App.showChart = function(timeseries) {
-  timeseries.forEach(function(point) {
-    point[0] = new Date(parseInt(point[0], 10));
-  });
-  var data = new google.visualization.DataTable();
-  data.addColumn('date');
-  data.addColumn('number');
-  data.addRows(timeseries);
-  var wrapper = new google.visualization.ChartWrapper({
-    chartType: 'LineChart',
-    dataTable: data,
-    options: {
-      title: 'Brightness over time',
-      curveType: 'function',
-      legend: {position: 'none'},
-      titleTextStyle: {fontName: 'Roboto'}
-    }
-  });
-  $('.panel .chart').show();
-  var chartEl = $('.chart').get(0);
-  wrapper.setContainerId(chartEl);
-  wrapper.draw();
-};
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -774,13 +669,27 @@ susie.toggleEeLayerById = function(id) {
 ///////////////////////////////////////////////////////////////////////////////
 // Right-click context menu stuff
 ///////////////////////////////////////////////////////////////////////////////
-if (document.addEventListener) { // IE >= 9; other browsers
-    document.addEventListener('contextmenu', function(e) {
-        alert("You've tried to open context menu"); //here you draw your own menu
-        e.preventDefault();
-    }, false);
-} else { // IE < 9
-    document.attachEvent('oncontextmenu', function() {
-        window.event.returnValue = false;
-    });
-}
+menu = { }
+
+menu.menuDisplayed = false;
+menu.menuBox = null;
+
+window.addEventListener("contextmenu", function() {
+  var left = arguments[0].clientX;
+  var top = arguments[0].clientY;
+
+  menu.menuBox = window.document.querySelector(".menu");
+  menu.menuBox.style.left = left + "px";
+  menu.menuBox.style.top = top + "px";
+  menu.menuBox.style.display = "block";
+
+  arguments[0].preventDefault();
+
+  menu.menuDisplayed = true;
+}, false);
+
+window.addEventListener("click", function() {
+  if(menu.menuDisplayed == true){
+      menu.menuBox.style.display = "none";
+  }
+}, true);

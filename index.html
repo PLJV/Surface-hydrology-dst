@@ -17,7 +17,6 @@
     <!-- D3 Legend -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.12.2/d3.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.4/d3-legend.js"></script>
-
     <!-- Our custom JavaScript for Trendy Lights. -->
     <script src="/static/script.js"></script>
 
@@ -91,21 +90,22 @@
           <div class="legend body layerEntry">
             <svg id="legendSvgHistorical"></svg>
           </div>
+          <div class="menu">
+            <div class="menu-item">Export Features (Spreadsheet)</div>
+            <hr>
+            <div class="menu-item">Help</div>
+          </div>
         </div>
       </div>
       </div>
     </div>
-
-
-
     <!-- Boot our JavaScript once the body has loaded. -->
     <script>
+    // boot our map interface through trendy
       trendy.boot(
           '{{ historicalEeMapId | safe }}',
           '{{ mostRecentEeMapId | safe }}',
-          '{{ historicalEeToken | safe }}',
-          '{{ mostRecentEeToken | safe }}');
+          '{{ historicalEeToken | safe }}',);    
     </script>
-
   </body>
 </html>

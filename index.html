@@ -41,6 +41,7 @@
       <!-- A container which the Maps API will populate with a map. -->
       <div class="map"></div>
       <div class="myLocationControl" id="myLocationControl" onclick="javascript:trendy.App.addLocationMarker()"></div>
+      <div class="infoboxControl" id="infoboxControl" onclick="javascript:trendy.App.toggleInfobox()"></div>
       <!-- A pop-out messaging system for user i/o -->
       <div class="instructions" id="instructionsPopout">
         <h3>Surface Hydrology Viewer</h3>
@@ -101,15 +102,6 @@
 
         <!-- The title of the place for which details are being shown. -->
         <h2 class="title"></h2>
-
-        <!-- A scrollable container for details about the polygon. -->
-        <div class="details">
-
-          <!-- A container which the Charts API will populate. -->
-          <div class="chart"></div>
-
-          <!-- The link to the polygon's Wikipedia page. -->
-          <a class="wiki-url">Wikipedia article</a>
 
           <!-- The element to hold the error message. -->
           <p class="error"></p>

@@ -196,10 +196,29 @@ trendy.App.addDrawingManagerControl = function(show=false){
   }
 }
 
+/**
+ * Create a marker from location services and pan the map to the user's current
+ * location
+ */
+trendy.App.addInfoboxControl = function(controlDiv){
+  var infoboxControl = document.createElement('div');
+  myLocationControl.title = 'information';
+  controlDiv.appendChild(infoboxControl);
+  var controlText = document.createElement('div');
+  controlText.innerHTML = 'information';
+  controlUI.appendChild(controlText);
+}
 
-
-
-
+trendy.App.toggleInfobox= function(id='instructionsPopout'){
+  // is the infobox currently displayed?
+  if( document.getElementById(id).style.display === "" | document.getElementById(id).style.display === "block" ){
+    // hide it
+    document.getElementById(id).style.display = "none"
+  // else: show it
+  } else {
+    document.getElementById(id).style.display = "block"
+  }
+}
 /**
  * Create a marker from location services and pan the map to the user's current
  * location
@@ -218,12 +237,13 @@ trendy.App.addLocationMarker = function(panTo=true){
   var myLocationIcon = new google.maps.Marker({
     clickable: false,
     icon: new google.maps.MarkerImage('//maps.gstatic.com/mapfiles/mobile/mobileimgs2.png',
-                                                    new google.maps.Size(22,22),
-                                                    new google.maps.Point(0,18),
-                                                    new google.maps.Point(11,11)),
-    shadow: null,
-    zIndex: 999,
-    map: trendy.App.map
+        new google.maps.Size(22,22),
+        new google.maps.Point(0,18),
+        new google.maps.Point(11,11)
+      ),
+      shadow: null,
+      zIndex: 999,
+      map: trendy.App.map
   });
   if (navigator.geolocation) navigator.geolocation.getCurrentPosition(function(pos) {
       var me = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
@@ -653,6 +673,15 @@ carta.hide = function(id) {
     }
 };
 
+carta.show = function(id) {
+  var div = document.getElementById(id);
+    if (div.style.display === "none") {
+        div.style.display = "block";
+    } else {
+        div.style.display = "block";
+    }
+};
+
 carta.changeMessage = function(id, text){
   if(id === "none") {
       id='instructionsPopout'
@@ -741,3 +770,17 @@ susie.toggleEeLayerById = function(id) {
    }
  }
 };
+
+///////////////////////////////////////////////////////////////////////////////
+// Right-click context menu stuff
+///////////////////////////////////////////////////////////////////////////////
+if (document.addEventListener) { // IE >= 9; other browsers
+    document.addEventListener('contextmenu', function(e) {
+        alert("You've tried to open context menu"); //here you draw your own menu
+        e.preventDefault();
+    }, false);
+} else { // IE < 9
+    document.attachEvent('oncontextmenu', function() {
+        window.event.returnValue = false;
+    });
+}

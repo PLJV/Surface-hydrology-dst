@@ -379,7 +379,7 @@ input:checked + .slider:before {
 {
     font-family: 'Roboto', sans-serif;
     font-size: 11px;
-    width: 150px;
+    width: 180px;
     background-color: #FFFFFF;
     opacity: 0.8;
     box-shadow: 3px 3px 5px #888888;

@@ -160,6 +160,10 @@ trendy.App.checkBounds = function() {
 }
 
 trendy.App.addDrawingManagerControl = function(show=false){
+  // create some array space for any markers or polygons
+  trendy.App.markers = [];
+  trendy.App.polygons = [];
+  // load our drawing manager interface
   trendy.App.drawingManager = new google.maps.drawing.DrawingManager({
     drawingMode: google.maps.drawing.OverlayType.MARKER,
     drawingControlOptions: {
@@ -178,6 +182,13 @@ trendy.App.addDrawingManagerControl = function(show=false){
   trendy.App.drawingManager.hide = function(){
     trendy.App.map.setOptions({ drawingControl: false });
   }
+  google.maps.event.addListener(trendy.App.drawingManager, 'overlaycomplete', function(event) {
+    if(event.type == google.maps.drawing.OverlayType.POLYGON | event.type == google.maps.drawing.OverlayType.RECTANGLE) {
+      trendy.App.polygons.push(event.overlay);
+    } else if(event.type == google.maps.drawing.OverlayType.MARKER) {
+      trendy.App.markers.push(event.overlay);
+    }
+  });
   // by default, the drawing manager is hidden -- let's show it
   trendy.App.drawingManager.setMap(trendy.App.map);
   if(show){
@@ -185,6 +196,14 @@ trendy.App.addDrawingManagerControl = function(show=false){
   }
 }
 
+trendy.App.removeAllFeatures = function(){
+  for (var i = 0; i < trendy.App.markers.length; i++) {
+     trendy.App.markers[i].setMap(null);
+  }
+  for (var i = 0; i < trendy.App.polygons.length; i++) {
+     trendy.App.polygons[i].setMap(null);
+  }
+}
 /**
  * Create a marker from location services and pan the map to the user's current
  * location
@@ -559,7 +578,7 @@ carta.ABOUT_CONTACT_INFORMATION_HTML =
     "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML);'>download data</button>" +
     "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.DEFAULT_ABOUT_HTML);'>back to help</button>";
 
-carta.hide = function(id) {
+carta.hide = function(id='instructionsPopout') {
   var div = document.getElementById(id);
     if (div.style.display === "none") {
         div.style.display = "block";
@@ -568,7 +587,7 @@ carta.hide = function(id) {
     }
 };
 
-carta.show = function(id) {
+carta.show = function(id='instructionsPopout') {
   var div = document.getElementById(id);
     if (div.style.display === "none") {
         div.style.display = "block";
@@ -577,10 +596,18 @@ carta.show = function(id) {
     }
 };
 
-carta.changeMessage = function(id, text){
-  if(id === "none") {
-      id='instructionsPopout'
+carta.toggle = function(id='instructionsPopout'){
+  // is the infobox currently displayed?
+  if( document.getElementById(id).style.display === "" | document.getElementById(id).style.display === "block" ){
+    // hide it
+    carta.hide(id)
+  // else: show it
+  } else {
+    carta.show(id)
   }
+}
+
+carta.changeMessage = function(id='instructionsPopout', text){
   var div = document.getElementById(id);
   if(text === "none") {
     div.innerHTML =  carta.DEFAULT_ABOUT_HTML;
@@ -634,19 +661,35 @@ susie.setLegendLinear = function(title=undefined, svgId='svg', domain=[0,1], lab
 
   svg.select(".legendLinear")
     .call(legend);
-}
-
-susie.show = function(id) {
-
 };
 
-susie.hide = function(id) {
+susie.hide = function(id='legendPopout') {
   var div = document.getElementById(id);
     if (div.style.display === "none") {
         div.style.display = "block";
     } else {
         div.style.display = "none";
     }
+};
+
+susie.show = function(id='legendPopout') {
+  var div = document.getElementById(id);
+    if (div.style.display === "none") {
+        div.style.display = "block";
+    } else {
+        div.style.display = "block";
+    }
+};
+
+susie.toggle = function(id='legendPopout'){
+  // is the infobox currently displayed?
+  if( document.getElementById(id).style.display === "" | document.getElementById(id).style.display === "block" ){
+    // hide it
+    susie.hide(id)
+  // else: show it
+  } else {
+    susie.show(id)
+  }
 };
 
 susie.toggleEeLayerById = function(id) {
@@ -669,11 +712,14 @@ susie.toggleEeLayerById = function(id) {
 ///////////////////////////////////////////////////////////////////////////////
 // Right-click context menu stuff
 ///////////////////////////////////////////////////////////////////////////////
-menu = { }
+menu = { };
 
 menu.menuDisplayed = false;
 menu.menuBox = null;
 
+/* DOM click event handlers */
+
+// bind to the DOM right-click context menu event
 window.addEventListener("contextmenu", function() {
   var left = arguments[0].clientX;
   var top = arguments[0].clientY;
@@ -687,9 +733,29 @@ window.addEventListener("contextmenu", function() {
 
   menu.menuDisplayed = true;
 }, false);
-
-window.addEventListener("click", function() {
+/* UI Handlers */
+menu.hide = function(){
   if(menu.menuDisplayed == true){
       menu.menuBox.style.display = "none";
   }
-}, true);
+}
+menu.toggle_legend = function(){
+  susie.toggle();
+  menu.hide();
+}
+menu.toggle_help = function(){
+  carta.toggle();
+  menu.hide();
+}
+/* GEE processing methods */
+menu.export_features = function(){
+  alert("exporting")
+  // hide the menu
+  if(menu.menuDisplayed == true){
+      menu.menuBox.style.display = "none";
+  }
+}
+menu.remove_all_features = function(){
+  trendy.App.removeAllFeatures();
+  menu.hide();
+}

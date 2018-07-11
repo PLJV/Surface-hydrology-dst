@@ -43,6 +43,14 @@
       <div class="map"></div>
       <div class="myLocationControl" id="myLocationControl" onclick="javascript:trendy.App.addLocationMarker()"></div>
       <div class="infoboxControl" id="infoboxControl" onclick="javascript:trendy.App.toggleInfobox()"></div>
+      <!-- contextmenu contents -->
+      <div class="menu">
+        <div class="menu-item" onclick="javascript:menu.export_features();">Export Features (Spreadsheet)</div>
+        <div class="menu-item" onclick="javascript:menu.remove_all_features();">Removal All Features</div>
+        <hr>
+        <div class="menu-item" onclick="javascript:menu.toggle_help();">Toggle Help</div>
+        <div class="menu-item" onclick="javascript:menu.toggle_legend();">Toggle Legend</div>
+      </div>
       <!-- A pop-out messaging system for user i/o -->
       <div class="instructions" id="instructionsPopout">
         <h3>Surface Hydrology Viewer</h3>
@@ -54,7 +62,7 @@
         the Landsat 8 satellite is used to map the current surface water extent in the state. Data from the Landsat
         5 platform was used to map the frequency of historic wetness from 1985 to 2012.
         <br><br>
-        <button type="button" onclick="javascript:carta.hide('instructionsPopout');" >hide</button>
+        <button type="button" onclick="javascript:carta.hide();" >hide</button>
         <button type="button" onclick="javascript:carta.changeMessage('instructionsPopout', carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML);" >download data</button>
         <button type='button' onclick="javascript:carta.changeMessage('instructionsPopout',carta.ABOUT_CONTACT_INFORMATION_HTML);">about</button>
       </div>
@@ -78,8 +86,6 @@
             <svg id="legendSvgLastScene"></svg>
           </div>
           <div class="legend body layerToggle">
-            <!-- <label for="last_valid_scene">Wetness Frequency Over the Last Ten Years</label> -->
-            <!-- <input name="last_valid_scene" id="most_recent_checkbox" type="checkbox" checked="checked"> -->
               <label class="switch">
                 <input type="checkbox"
                        checked="checked" id="historical_checkbox"
@@ -89,11 +95,6 @@
           </div>
           <div class="legend body layerEntry">
             <svg id="legendSvgHistorical"></svg>
-          </div>
-          <div class="menu">
-            <div class="menu-item">Export Features (Spreadsheet)</div>
-            <hr>
-            <div class="menu-item">Help</div>
           </div>
         </div>
       </div>
@@ -105,7 +106,7 @@
       trendy.boot(
           '{{ historicalEeMapId | safe }}',
           '{{ mostRecentEeMapId | safe }}',
-          '{{ historicalEeToken | safe }}',);    
+          '{{ historicalEeToken | safe }}',);
     </script>
   </body>
 </html>

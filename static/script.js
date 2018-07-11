@@ -110,12 +110,12 @@ trendy.App.createMap = function(mapType) {
     trendy.App.numLayers += 1
     if(id.includes("istor")){
       trendy.App.historicalLayer.at = (trendy.App.numLayers-1)
-    } else if(id.includes("ecent")) {
+    } else if(id.includes("ost")) {
       trendy.App.mostRecentLayer.at = (trendy.App.numLayers-1)
     }
  }
  trendy.App.removeLayer = function(id){
-   if(id.includes("historical")){
+   if(id.includes("istor")){
      trendy.App.map.overlayMapTypes.removeAt(trendy.App.historicalLayer.at);
      trendy.App.historicalLayer.at = null
      trendy.App.numLayers -= 1
@@ -123,7 +123,7 @@ trendy.App.createMap = function(mapType) {
      if(trendy.App.mostRecentLayer.at){
        trendy.App.mostRecentLayer.at -= 1
      }
-   } else if(id.includes("ecent")){
+   } else if(id.includes("ost")){
      trendy.App.map.overlayMapTypes.removeAt(trendy.App.mostRecentLayer.at);
      trendy.App.mostRecentLayer.at = null
      trendy.App.numLayers -= 1

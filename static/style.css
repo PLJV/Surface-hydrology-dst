@@ -95,6 +95,12 @@ body,
   padding-bottom: 0.4rem;
 }
 
+.instructions .scroll-box {
+    max-height: 200px; /* maximum height of the box, feel free to change this! */
+    overflow-y: auto;
+    margin-left: 0px;
+    margin-right: 4px;
+}
 .switch {
   position: relative;
   display: inline-block;

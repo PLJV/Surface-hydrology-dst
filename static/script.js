@@ -548,9 +548,11 @@ carta.DEFAULT_ABOUT_HTML =
     "<img src='static/nrcs_logo.png' height=50></img>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
     "<img src='static/pljv_logo.jpg' height=62></img>" +
     "<br><br>" +
+    "<div class='scroll-box'>" +
     "This map displays the current and historic distribution of surface water in the State of Kansas. Data from " +
     "the Landsat 8 satellite is used to map the current surface water extent in the state. Data from the Landsat " +
     "5 platform was used to map the frequency of historic wetness from 1985 to 2012." +
+    "</div>" +
     "<br><br>" +
     "<button type='button' onclick='javascript:carta.hide(\"instructionsPopout\");'>hide</button>" +
     "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML);'>download data</button>" +

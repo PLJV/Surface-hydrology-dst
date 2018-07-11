@@ -14,7 +14,7 @@ trendy = {};  // Our namespace.
  * @param {string} serializedPolygonIds A serialized array of the IDs of the
  *     polygons to show on the map. For example: "['poland', 'moldova']".
  */
-trendy.boot = function(historicalEeMapId, mostRecentEeMapId, historicalEeToken, mostRecentEeToken, serializedPolygonIds) {
+trendy.boot = function(historicalEeMapId, mostRecentEeMapId, historicalEeToken, mostRecentEeToken) {
   // Load external libraries.
   google.load('visualization', '1.0');
   google.load('jquery', '1');
@@ -26,7 +26,7 @@ trendy.boot = function(historicalEeMapId, mostRecentEeMapId, historicalEeToken, 
     trendy.App.historicalLayer = trendy.App.getEeMapType(historicalEeMapId, historicalEeToken);
     trendy.App.mostRecentLayer = trendy.App.getEeMapType(mostRecentEeMapId, mostRecentEeToken);
     // calls createMap() with our historical layer
-    trendy.App(trendy.App.historicalLayer, JSON.parse(serializedPolygonIds));
+    trendy.App(trendy.App.historicalLayer);
     trendy.App.addLayer(trendy.App.mostRecentLayer, id='mostRecent');
   });
 };
@@ -639,7 +639,7 @@ carta.DEFAULT_ABOUT_HTML =
     "5 platform was used to map the frequency of historic wetness from 1985 to 2012." +
     "<br><br>" +
     "<button type='button' onclick='javascript:carta.hide(\"instructionsPopout\");'>hide</button>" +
-    "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML);'>download raw data</button>" +
+    "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML);'>download data</button>" +
     "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.ABOUT_CONTACT_INFORMATION_HTML);'>about</button>";
 
 carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML =
@@ -661,7 +661,7 @@ carta.ABOUT_CONTACT_INFORMATION_HTML =
     "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;<a target='_blank' href='http://pljv.org/about'>About NRCS</a> (External Site)<br>" +
     "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;<a target='_blank' href='http://pljv.org/about'>About Playa Lakes Joint Venture</a> (External Site)<br><br>" +
     "<button type='button' onclick='javascript:carta.hide(\"instructionsPopout\");'>hide</button>" +
-    "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML);'>download raw data</button>" +
+    "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML);'>download data</button>" +
     "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.DEFAULT_ABOUT_HTML);'>back to help</button>";
 
 carta.hide = function(id) {
@@ -701,7 +701,7 @@ carta.changeMessage = function(id, text){
 
 susie = { };
 
-susie.setLegendLinear = function(title=undefined, svgId='svg', domain=[0,1], labels=undefined, cells=2){
+susie.setLegendLinear = function(title=undefined, svgId='svg', domain=[0,1], labels=undefined, cells=2, startColor="rgba(237, 248, 177, 0.98)", endColor="rgba(8, 29, 88, 0.98)"){
   if(labels == null){
     labels = d3.range.apply(this, domain.concat(domain[1]/cells))
     labels = labels.concat(domain[1])
@@ -713,7 +713,7 @@ susie.setLegendLinear = function(title=undefined, svgId='svg', domain=[0,1], lab
   }
   var linear = d3.scaleLinear()
     .domain(domain)
-    .range(["rgba(237, 248, 177, 0.98)", "rgba(8, 29, 88, 0.98)"]);
+    .range([startColor, endColor]);
 
   var svg = d3.select(svgId);
 

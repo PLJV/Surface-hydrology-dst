@@ -81,14 +81,18 @@ class MainHandler(webapp2.RequestHandler):
   def get(self, path=''):
     """Returns the main web page, populated with EE map and polygon info."""
     historicalMapId = GetTrendyMapId(HISTORICAL_IMAGE_COLLECTION_ID)
-    mostRecentMapId = GetTrendyMapId(MOST_RECENT_IMAGE_COLLECTION_ID)
+    mostRecentMapId = GetTrendyMapId(MOST_RECENT_IMAGE_COLLECTION_ID, options = {
+        'min': '0',
+        'max': '1',
+        'palette' : 'edf8b1, 081d58',
+        'opacity' : '0.95',
+    })
 
     template_values = {
         'historicalEeMapId': historicalMapId['mapid'],
         'mostRecentEeMapId': mostRecentMapId['mapid'],
         'historicalEeToken': historicalMapId['token'],
-        'mostRecentEeToken': mostRecentMapId['token'],
-        'serializedPolygonIds': json.dumps(POLYGON_IDS)
+        'mostRecentEeToken': mostRecentMapId['token']
     }
     template = JINJA2_ENVIRONMENT.get_template('index.html')
     self.response.out.write(template.render(template_values))
@@ -121,10 +125,22 @@ app = webapp2.WSGIApplication([
 ###############################################################################
 
 
-def GetTrendyMapId(image_collection_id):
+def GetTrendyMapId(image_collection_id, options=None):
+  # if no pallet options were specified, assume some sane defaults
+  if (options == None):
+      options = {
+        'min': '0.1',
+        # 'max': '0.18,20,-0.18',
+        'max' : '1',
+        # 'bands': 'scale,offset,scale',
+        # 'bands' : '0',
+        # 'palette' : 'rgba(255, 255, 255, 0.1), rgba(0,51,204,1)',
+        'palette' : 'edf8b1, c7e9b4, 7fcdbb, 41b6c4, 1d91c0, 225ea8, 253494, 081d58',
+        'opacity' : '0.95',
+      }
   """Returns the MapID for the night-time lights trend map."""
   collection = ee.Image(image_collection_id)
-  collection = collection.updateMask(collection.gte(0.1));
+  collection = collection.updateMask(collection.gte(0.1))
   # Add a band containing image date as years since 1991.
   # def CreateTimeBand(img):
   #   year = ee.Date(img.get('system:time_start')).get('year').subtract(1991)
@@ -133,74 +149,7 @@ def GetTrendyMapId(image_collection_id):
 
   # Fit a linear trend to the nighttime lights collection.
   # fit = collection.reduce(ee.Reducer.linearFit())
-  return collection.getMapId({
-      'min': '0.1',
-      # 'max': '0.18,20,-0.18',
-      'max' : '1',
-      # 'bands': 'scale,offset,scale',
-      # 'bands' : '0',
-      # 'palette' : 'rgba(255, 255, 255, 0.1), rgba(0,51,204,1)',
-      'palette' : 'edf8b1, c7e9b4, 7fcdbb, 41b6c4, 1d91c0, 225ea8, 253494, 081d58',
-      'opacity' : '0.95',
-  })
-
-
-def GetPolygonTimeSeries(polygon_id):
-  """Returns details about the polygon with the passed-in ID."""
-  details = memcache.get(polygon_id)
-
-  # If we've cached details for this polygon, return them.
-  if details is not None:
-    return details
-
-  details = {'wikiUrl': WIKI_URL + polygon_id.replace('-', '%20')}
-
-  try:
-    details['timeSeries'] = ComputePolygonTimeSeries(polygon_id)
-    # Store the results in memcache.
-    memcache.add(polygon_id, json.dumps(details), MEMCACHE_EXPIRATION)
-  except ee.EEException as e:
-    # Handle exceptions from the EE client library.
-    details['error'] = str(e)
-
-  # Send the results to the browser.
-  return json.dumps(details)
-
-
-def ComputePolygonTimeSeries(polygon_id, image_collection_id):
-  """Returns a series of brightness over time for the polygon."""
-  collection = ee.ImageCollection(image_collection_id)
-  collection = collection.select('stable_lights').sort('system:time_start')
-  feature = GetFeature(polygon_id)
-
-  # Compute the mean brightness in the region in each image.
-  def ComputeMean(img):
-    reduction = img.reduceRegion(
-        ee.Reducer.mean(), feature.geometry(), REDUCTION_SCALE_METERS)
-    return ee.Feature(None, {
-        'stable_lights': reduction.get('stable_lights'),
-        'system:time_start': img.get('system:time_start')
-    })
-  chart_data = collection.map(ComputeMean).getInfo()
-
-  # Extract the results as a list of lists.
-  def ExtractMean(feature):
-    return [
-        feature['properties']['system:time_start'],
-        feature['properties']['stable_lights']
-    ]
-  return map(ExtractMean, chart_data['features'])
-
-
-def GetFeature(polygon_id):
-  """Returns an ee.Feature for the polygon with the given ID."""
-  # Note: The polygon IDs are read from the filesystem in the initialization
-  # section below. "sample-id" corresponds to "static/polygons/sample-id.json".
-  path = POLYGON_PATH + polygon_id + '.json'
-  path = os.path.join(os.path.split(__file__)[0], path)
-  with open(path) as f:
-    return ee.Feature(json.load(f))
-
+  return collection.getMapId(options)
 
 ###############################################################################
 #                                   Constants.                                #
@@ -238,7 +187,7 @@ EE_CREDENTIALS = ee.ServiceAccountCredentials(
     config.EE_ACCOUNT, config.EE_PRIVATE_KEY_FILE)
 
 # Read the polygon IDs from the file system.
-POLYGON_IDS = [name.replace('.json', '') for name in os.listdir(POLYGON_PATH)]
+#POLYGON_IDS = [name.replace('.json', '') for name in os.listdir(POLYGON_PATH)]
 
 # Create the Jinja templating system we use to dynamically generate HTML. See:
 # http://jinja.pocoo.org/docs/dev/

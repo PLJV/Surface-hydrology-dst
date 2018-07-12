@@ -7,7 +7,7 @@ import ee
 import json
 import time
 
-_SLEEP_TIME_SECONDS = 30 # Usually takes about 9 minutes to generate this asset
+_SLEEP_TIME_SECONDS = 60 # Usually takes about 9 minutes to generate this asset
 
 def now_minus_n_months(*args):
     """ accept a single positional argument (month) specifying how far from now
@@ -65,15 +65,19 @@ def exportImageToAsset(image=None, assetId=None, region=None, timeout_minutes=30
     # start the task and monitor our progress
     task.start()
     time.sleep(_SLEEP_TIME_SECONDS) # give ourselves a healthy amount of burn-in so Google can assign a start_timestamp
-    task_start_time = int(task.status()['start_timestamp_ms'])
+    try:
+      task_start_time = int(task.status()['start_timestamp_ms'])
+    except Exception as e:
+      print("Task initiation failed completely -- perhaps we have this task duplicated on the server-side")
+      raise(e)
     while str(task.status()['state']) != 'COMPLETED':
       time.sleep(_SLEEP_TIME_SECONDS)
       task_runtime = (int(task.status()['update_timestamp_ms']) - task_start_time ) / 1000
       # if we take longer than 30 minutes, throw an error
       if task_runtime > (60 * timeout_minutes):
-        raise ee_exception.EEException('EE task timed out')
+        raise Exception('EE task timed out')
       if task.status()['state'] == 'FAILED':
-        raise ee_exception.EEException('EE task FAILED')
+        raise Exception('EE task FAILED')
     # if we succeeded, let's set the asset to globally readable
     time.sleep(3)
     setAssetGloballyReadable(assetId)
@@ -102,6 +106,9 @@ if __name__ == "__main__":
 
     # define our time-series information
     last_wet_scene = simple_water_algorithm(image_from_ls8_collection(hist_date=now_minus_n_months(10)))
+
+    # mask out pixels that have never been wet over a 30 year period
+    last_wet_scene = last_wet_scene.multiply(ee.Image("users/kyletaylor/shared/long_run_surface_wetness_mask"))
     last_wet_scene = last_wet_scene.updateMask(last_wet_scene.neq(0))
 
     # export the resulting "water

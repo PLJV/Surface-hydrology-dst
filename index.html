@@ -3,7 +3,6 @@
   <head>
     <title>Surface Hydrology Viewer</title>
     <meta charset="utf-8">
-
     <!-- Support for browsers on mobile phones. -->
     <meta name="viewport"
           content="width=device-width, initial-scale=1, user-scalable=no">
@@ -19,7 +18,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.4/d3-legend.js"></script>
     <!-- Our custom JavaScript for Trendy Lights. -->
     <script src="/static/script.js"></script>
-
   </head>
   <body onload="
     susie.setLegendLinear(
@@ -55,8 +53,8 @@
       <div class="instructions" id="instructionsPopout">
         <h3>Surface Hydrology Viewer</h3>
         <br>
-        <img src="static/nrcs_logo.png" height=50></img>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <img src="static/pljv_logo.jpg" height=62></img>
+        <img src="static/usda_logo.jpg" height=62></img>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <img src="static/pljv_logo.jpg" height=64></img>
         <br><br>
         <div class="scroll-box">
         This map displays the current and historic distribution of surface water in the State of Kansas. Data from
@@ -66,7 +64,7 @@
         <br><br>
         <button type="button" onclick="javascript:carta.hide();" >hide</button>
         <button type="button" onclick="javascript:carta.changeMessage('instructionsPopout', carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML);" >download data</button>
-        <button type='button' onclick="javascript:carta.changeMessage('instructionsPopout',carta.ABOUT_CONTACT_INFORMATION_HTML);">about</button>
+        <button type='button' onclick="javascript:carta.changeMessage('instructionsPopout', carta.ABOUT_CONTACT_INFORMATION_HTML);">about</button>
       </div>
       <!-- A map legend pop-out -->
       <div class="legend" id="legendPopout">

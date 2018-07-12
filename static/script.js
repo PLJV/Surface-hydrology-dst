@@ -545,8 +545,8 @@ carta = { };
 carta.DEFAULT_ABOUT_HTML =
     "<h3>Surface Hydrology Viewer</h3>" +
     "<br>" +
-    "<img src='static/nrcs_logo.png' height=50></img>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
-    "<img src='static/pljv_logo.jpg' height=62></img>" +
+    "<img src='static/usda_logo.jpg' height=62></img>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+    "<img src='static/pljv_logo.jpg' height=64></img>" +
     "<br><br>" +
     "<div class='scroll-box'>" +
     "This map displays the current and historic distribution of surface water in the State of Kansas. Data from " +

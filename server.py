@@ -168,14 +168,6 @@ MEMCACHE_EXPIRATION = 60 * 60 * 24
 MOST_RECENT_IMAGE_COLLECTION_ID = 'users/kyletaylor/shared/LC8dynamicwater'
 HISTORICAL_IMAGE_COLLECTION_ID = 'users/adaniels/shared/LC5historicwetness_10m'
 
-# The file system folder path to the folder with GeoJSON polygon files.
-POLYGON_PATH = 'static/polygons/'
-
-# The scale at which to reduce the polygons for the brightness time series.
-REDUCTION_SCALE_METERS = 20000
-
-# The Wikipedia URL prefix.
-WIKI_URL = 'http://en.wikipedia.org/wiki/'
 
 ###############################################################################
 #                               Initialization.                               #

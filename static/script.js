@@ -697,16 +697,16 @@ susie.toggle = function(id='legendPopout'){
 susie.toggleEeLayerById = function(id) {
  var checkbox = document.getElementById(id);
  if(checkbox.checked){
-   if(id.includes('ist')){
+   if(id.includes('historical')){
      trendy.App.addLayer(trendy.App.historicalLayer, id='historical');
    } else {
-     trendy.App.addLayer(trendy.App.mostRecentLayer, id='mostRecent');
+     trendy.App.addLayer(trendy.App.mostRecentLayer, id='most_recent');
    }
  } else {
-   if(id.includes('ist')){
+   if(id.includes('historical')){
      trendy.App.removeLayer(id='historical');
    } else {
-     trendy.App.removeLayer(id='recent');
+     trendy.App.removeLayer(id='most_recent');
    }
  }
 };

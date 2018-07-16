@@ -37,7 +37,7 @@ def image_from_ls8_collection(collection_id='LANDSAT/LC08/C01/T1_RT', cloud_mask
     collection = ee.ImageCollection(collection_id). \
         filterMetadata('CLOUD_COVER', 'less_than', cloud_mask). \
         filterMetadata('CLOUD_COVER', 'greater_than', -0.1). \
-        filterBounds(ee.FeatureCollection('users/adaniels/shared/PLJV_BCR_States'))
+        filterBounds(ee.FeatureCollection('ft:1fRY18cjsHzDgGiJiS2nnpUU3v9JPDc2HNaR7Xk8').filter(ee.Filter.eq('Name','Kansas')))
     # map the qa function over the collection to clean out snow, shadows, clouds
     collection_qa = collection.map(qa)
     # add a temporal band to the collection to sort by later

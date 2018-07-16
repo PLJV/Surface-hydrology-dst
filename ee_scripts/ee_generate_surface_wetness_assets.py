@@ -90,7 +90,7 @@ def exportImageToAsset(image=None, assetId=None, region=None, timeout_minutes=30
         scale=30,
         maxPixels=400000000,
         region=region,
-        description='(LS8) Last wet scene calculation'
+        description='Generating LS8 last wet scene product'
     )
     # delete the asset if it exists
     try:
@@ -123,7 +123,7 @@ def exportImageToAsset(image=None, assetId=None, region=None, timeout_minutes=30
 
 def exportImageToDrive(image, assetId):
     task_config = {
-        'description': 'Generating last wet scene product',
+        'description': 'Generating LS8 last wet scene product',
         'scale': 30,
         'maxPixels': 400000000
     }
@@ -149,6 +149,6 @@ if __name__ == "__main__":
     # export the resulting "water
     status = exportImageToAsset(
         last_wet_scene,
-        'users/kyletaylor/shared/LC8dynamicwater_test',
+        'users/kyletaylor/shared/LC8dynamicwater',
         region=get_fc_coordinates(kansas)
     )

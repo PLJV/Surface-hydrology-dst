@@ -309,14 +309,6 @@ trendy.App.DEFAULT_CENTER = {lng: -98.38, lat: 38.48};
  * @type {Array} An array of Google Map styles. See:
  *     https://developers.google.com/maps/documentation/javascript/styling
  */
-//trendy.App.BLACK_BASE_MAP_STYLES = [
-//  {stylers: [{lightness: -100}]},
-//  {
-//    featureType: 'road',
-//    elementType: 'labels',
-//    stylers: [{visibility: 'off'}]
-//  }
-//];
 
 trendy.App.BASE_MAP_STYLE = [
   {

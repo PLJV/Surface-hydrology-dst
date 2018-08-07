@@ -215,7 +215,7 @@ input:checked + .slider:before {
       height:180px;
       min-height:150px;
       max-height:220px;
-      max-width: 400px;
+      max-width: 25%;
     }
 
 .legend a {

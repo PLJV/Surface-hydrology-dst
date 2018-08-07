@@ -70,7 +70,10 @@ body,
       box-shadow: 2px 2px 5px rgba(0,0,0,0.6);
       font-family: 'Roboto', sans-serif;
       font-size: 11px;
+      width: 400px;
       max-width: 400px;
+      height: 67%;
+      max-height: 67%;
     }
 
 .instructions a {
@@ -96,7 +99,8 @@ body,
 }
 
 .instructions .scroll-box {
-    max-height: 200px; /* maximum height of the box, feel free to change this! */
+    max-height: 80%;
+    height: 80%;
     overflow-y: auto;
     margin-left: 0px;
     margin-right: 4px;

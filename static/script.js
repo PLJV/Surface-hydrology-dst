@@ -535,21 +535,24 @@ carta = { };
 // excuse the hackish circa 1996 HTML formatting - KT
 
 carta.DEFAULT_ABOUT_HTML =
-    "<h3>Surface Hydrology Viewer <sup><font color=\"#d89f22\">ALPHA</font></sup></h3>" +
-    "<br>" +
-    "<div class='scroll-box'>" +
-    "This map displays the current and historic distribution of surface water in the State of Kansas. Data from " +
-    "the Landsat 8 satellite is used to map the current surface water extent in the state. Data from the Landsat " +
+    "<div class=\"bottom-buttons\">" +
+    "  <h3>Surface Hydrology Viewer <sup><font color=\"#d89f22\">ALPHA</font></sup></h3>" +
+    " </div>" +
+    "<div class=\"scroll-box\">" +
+    "This map displays the current and historic distribution of surface water in the State of Kansas. Data from" +
+    "the Landsat 8 satellite is used to map the current surface water extent in the state. Data from the Landsat" +
     "5 platform was used to map the frequency of historic wetness from 1985 to 2012." +
     "</div>" +
-    "<br><br>" +
-    "<button type='button' onclick='javascript:carta.hide(\"instructionsPopout\");'>hide</button>" +
-    "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML);'>download data</button>" +
-    "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.ABOUT_CONTACT_INFORMATION_HTML);'>about</button>";
+    "<div class=\"bottom-buttons\">"+
+    "<button type=\"button\" onclick=\"javascript:carta.hide();\" >hide</button>" +
+    "<button type=\"button\" onclick=\"javascript:carta.changeMessage('instructionsPopout', carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML);\" >download data</button>" +
+    "<button type='button' onclick=\"javascript:carta.changeMessage('instructionsPopout', carta.ABOUT_CONTACT_INFORMATION_HTML);\">about</button>" +
+    "</div>";
 
 carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML =
+    "<div class=\"bottom-buttons\">" +
     "<h3>Download Processed Imagery</h3>" +
-    "<br>" +
+    "</div>" +
     "<div class='scroll-box'>" +
     "PLJV provides static and dynamic copies of the imagery data as GeoTIFF files that you can use in a GIS at the following URLs<br><br>" +
     "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;<a target='_blank' href='https://drive.google.com/a/pljv.org/file/d/1DTNVtQEdwe8IgRgHWW38tcSqV50wky_1/view?usp=sharing'>Most Recent Wet Scene</a> (Google Drive)<br>" +
@@ -558,14 +561,16 @@ carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML =
     "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;'<a href='https://code.earthengine.google.com/?asset=users/kyletaylor/shared/LC8dynamicwater' target='_blank'>users/kyletaylor/shared/LC8dynamicwater</a>' (Most Recent Scene)<br>" +
     "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;'<a href='https://code.earthengine.google.com/?asset=users/adaniels/shared/LC5historicwetness_10m' target='_blank'>users/adaniels/shared/LC5historicwetness_10m</a>' (30 Year Historical)<br>" +
     "</div>" +
-    "<br><br>" +
+    "<div class=\"bottom-buttons\">"+
     "<button type='button' onclick='javascript:carta.hide(\"instructionsPopout\");'>hide</button>" +
     "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.DEFAULT_ABOUT_HTML);'>back to help</button>" +
-    "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.ABOUT_CONTACT_INFORMATION_HTML);'>about</button>";
+    "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.ABOUT_CONTACT_INFORMATION_HTML);'>about</button>" +
+    "</div>";
 
 carta.ABOUT_CONTACT_INFORMATION_HTML =
+    "<div class=\"bottom-buttons\">" +
     "<h3>About</h3>" +
-    "<br>" +
+    "</div>" +
     "<div class='scroll-box'>" +
     "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
     "<img src=\"static/pljv_logo.jpg\" height=66></img>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
@@ -575,11 +580,11 @@ carta.ABOUT_CONTACT_INFORMATION_HTML =
     "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;<a target='_blank' href='http://pljv.org/about'>About NRCS</a> (External Site)<br>" +
     "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;<a target='_blank' href='http://pljv.org/about'>About Playa Lakes Joint Venture</a> (External Site)<br><br>" +
     "</div>" +
-    "<br><br>" +
+    "<div class=\"bottom-buttons\">"+
     "<button type='button' onclick='javascript:carta.hide(\"instructionsPopout\");'>hide</button>" +
     "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML);'>download data</button>" +
-    "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.DEFAULT_ABOUT_HTML);'>back to help</button>";
-
+    "<button type='button' onclick='javascript:carta.changeMessage(\"instructionsPopout\",carta.DEFAULT_ABOUT_HTML);'>back to help</button>" +
+    "</div>";
 carta.hide = function(id='instructionsPopout') {
   var div = document.getElementById(id);
     if (div.style.display === "none") {
@@ -648,14 +653,23 @@ susie.setLegendLinear = function(title=undefined, svgId='svg', domain=[0,1], lab
     .style("font-size","11px")
     .style("font-family","Roboto");
 
+  // determine a sane number of pixels for our legend SVG
+  if ( window.matchMedia("(orientation:portrait)").matches ) {
+    var shape_width = 15
+    var title_width = 250
+  } else {
+    var shape_width = 20
+    var title_width = 275
+  }
+
   var legend = d3.legendColor()
-    .shapeWidth(20)
+    .shapeWidth(shape_width)
     .shapePadding(5)
     .cells(cells)
     .shape("square")
     .orient('horizontal')
     .title(title)
-    .titleWidth(300)
+    .titleWidth(title_width)
     .labelWrap(30)
     .labels(labels)
     .labelAlign("middle")

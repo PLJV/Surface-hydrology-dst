@@ -535,7 +535,7 @@ carta = { };
 // excuse the hackish circa 1996 HTML formatting - KT
 
 carta.DEFAULT_ABOUT_HTML =
-    "<div class=\"bottom-buttons\">" +
+    "<div class=\"header-top\">" +
     "  <h3>Surface Hydrology Viewer <sup><font color=\"#d89f22\">ALPHA</font></sup></h3>" +
     " </div>" +
     "<div class=\"scroll-box\">" +
@@ -550,7 +550,7 @@ carta.DEFAULT_ABOUT_HTML =
     "</div>";
 
 carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML =
-    "<div class=\"bottom-buttons\">" +
+    "<div class=\"header-top\">" +
     "<h3>Download Processed Imagery</h3>" +
     "</div>" +
     "<div class='scroll-box'>" +
@@ -568,7 +568,7 @@ carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML =
     "</div>";
 
 carta.ABOUT_CONTACT_INFORMATION_HTML =
-    "<div class=\"bottom-buttons\">" +
+    "<div class=\"header-top\">" +
     "<h3>About</h3>" +
     "</div>" +
     "<div class='scroll-box'>" +

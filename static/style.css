@@ -72,9 +72,11 @@ body,
       font-family: 'Roboto', sans-serif;
       font-size: 11px;
       width: 25%;
-      max-width: 25%;
-      height: 66%;
-      max-height: 66%;
+      min-width: 340px;
+      max-width: 440px;
+      height: 70%;
+      min-height: 30px;
+      max-height: 420px;
     }
 }
 @media screen and (orientation:portrait) {
@@ -89,9 +91,11 @@ body,
       font-family: 'Roboto', sans-serif;
       font-size: 11px;
       width: 90%;
-      max-width: 90%;
-      height: 62%;
-      max-height: 62%;
+      min-width: 340px;
+      max-width: 440px;
+      height: 60%;
+      min-height: 30px;
+      max-height: 400px;
     }
 
 }
@@ -118,15 +122,28 @@ body,
 }
 
 .instructions .scroll-box {
-    max-height: 85%;
-    height: 85%;
+    height: 88%;
+    min-height: 20px;
+    max-height: 400px;
     overflow-y: auto;
     margin-left: 0px;
     margin-right: 4px;
+    margin-bottom: -3%;
+}
+.instructions .header-top {
+    height: 5.5%;
+    min-height: 30px;
+    max-height: 50px;
+    min-width: 200px;
+    vertical-align: top;
 }
 .instructions .bottom-buttons {
-    height: 7.5%;
+    height: 5.5%;
+    min-height: 20px;
+    max-height: 30px;
+    min-width: 185px;
     vertical-align: bottom;
+    margin-bottom: -3%;
 }
 .switch {
   position: relative;
@@ -229,7 +246,7 @@ input:checked + .slider:before {
 @media screen and (orientation:portrait) {
   .legend {
     position: absolute;
-    bottom:0px;
+    bottom: 0;
     left: 0;
     padding: 10px;
     margin: 10px;
@@ -237,10 +254,12 @@ input:checked + .slider:before {
     box-shadow: 2px 2px 5px rgba(0,0,0,0.6);
     font-family: 'Roboto', sans-serif;
     font-size: 11px;
-    height:180%;
-    min-height:180px;
-    max-height:180px;
-    width: 78%;
+    height: 30%;
+    min-height: 165px;
+    max-height: 300px;
+    width: 75%;
+    min-width: 290px;
+    max-width: 350px;
   }
 }
 
@@ -255,11 +274,12 @@ input:checked + .slider:before {
     box-shadow: 2px 2px 5px rgba(0,0,0,0.6);
     font-family: 'Roboto', sans-serif;
     font-size: 11px;
-    height:180%;
-    min-height:100px;
-    max-height:190px;
+    height: 30%;
+    min-height: 210px;
+    max-height: 300px;
     width: 20%;
-    max-width: 25%;
+    min-width: 365px;
+    max-width: 26%;
   }
 }
 

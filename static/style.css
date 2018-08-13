@@ -274,9 +274,9 @@ input:checked + .slider:before {
     box-shadow: 2px 2px 5px rgba(0,0,0,0.6);
     font-family: 'Roboto', sans-serif;
     font-size: 11px;
-    height: 30%;
-    min-height: 210px;
-    max-height: 300px;
+    height: 20%;
+    min-height: 180px;
+    max-height: 250px;
     width: 20%;
     min-width: 365px;
     max-width: 26%;

@@ -29,6 +29,8 @@ trendy.boot = function(historicalEeMapId, mostRecentEeMapId, historicalEeToken, 
     trendy.App(trendy.App.historicalLayer);
     trendy.App.addLayer(trendy.App.mostRecentLayer, id='mostRecent');
   });
+  // initialize any lurking div elements for controls
+  trendy.App.addGeocoderControl();
 };
 
 
@@ -217,7 +219,7 @@ trendy.App.addInfoboxControl = function(controlDiv){
   controlUI.appendChild(controlText);
 }
 
-trendy.App.toggleInfobox= function(id='instructionsPopout'){
+trendy.App.toggleInfobox = function(id='instructionsPopout'){
   // is the infobox currently displayed?
   if( document.getElementById(id).style.display === "" | document.getElementById(id).style.display === "block" ){
     // hide it
@@ -226,6 +228,40 @@ trendy.App.toggleInfobox= function(id='instructionsPopout'){
   } else {
     document.getElementById(id).style.display = "block"
   }
+}
+
+trendy.App.addGeocoderControl = function(){
+  geocoderSearchbox = window.document.querySelector(".geocoderSearchbox");
+  // stylize our interface elements
+  var search_textinput = document.createElement('input');
+  search_textinput.type = "text";
+  search_textinput.style.width = "100%";
+  search_textinput.style.height = "100%";
+  search_textinput.style.padding = "5px";
+  search_textinput.style.padding = "0";
+  search_textinput.style.boxSizing = "border-box";
+  // append elements to div
+  geocoderSearchbox.appendChild(search_textinput);
+  geocoderSearchbox.style.display = "none";
+}
+
+trendy.App.toggleGeocoder = function(id='geocoderSearchbox', click_event='none'){
+  // is the geocoder search box currently displayed?
+  if( document.getElementById(id).style.display === "" | document.getElementById(id).style.display === "block" ){
+    // hide it
+    document.getElementById(id).style.display = "none"
+  // else: show it and initiate a query
+  } else {
+    geocoderSearchbox = window.document.querySelector(".geocoderSearchbox");
+    var left = click_event.clientX - 310;
+    var top = click_event.clientY;
+    // set the left / top of our searchbox using the mouse-click coords
+    geocoderSearchbox.style.left = left + "px";
+    geocoderSearchbox.style.top = top + "px";
+    // show it
+    geocoderSearchbox.style.display = "block";
+  }
+
 }
 /**
  * Create a marker from location services and pan the map to the user's current

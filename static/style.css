@@ -193,7 +193,7 @@ input:checked + .slider:before {
   transform: translateX(13px);
 }
 
-/* go to my location ui */
+/* go to my location control ui */
 .myLocationControl {
       position: absolute;
       border-radius: 2px;
@@ -213,13 +213,60 @@ input:checked + .slider:before {
       background-image: url('my_location_black_192x192.png');
       background-size: contain;
 }
-/* go to my location ui */
-.infoboxControl {
+/* geocoder control ui */
+.geocoderControl {
       position: absolute;
       border-radius: 2px;
       display: block;
       border: 0px none;
       bottom: 151px;
+      right: 0px;
+      padding: 0px;
+      margin: 10px;
+      background-color: white;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+      font-family: 'Roboto', Arial, sans-serif;
+      width: 28px;
+      height: 28px;
+      max-width: 28px;
+      max-height: 28px;
+      background-image: url('magnifying_glass_512x512.png');
+      background-size: contain;
+}
+.geocoderSearchbox {
+  position: fixed;
+  display: none;
+  right: 0px;
+  padding: 5px;
+  margin: 0;
+  vertical-align: middle;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+  font-family: 'Roboto', Arial, sans-serif;
+  width: 18%;
+  height: 2.5%;
+  min-width: 70px;
+  max-width: 350px;
+  min-height: 32px;
+  max-height: 48px;
+  background-color: #FFFFFF;
+  opacity: 0.98;
+  box-shadow: 3px 3px 5px #888888;
+  border-style: solid;
+  border-width: 1px;
+  border-color: grey;
+  border-radius: 2px;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+/* infobox button control ui */
+.infoboxControl {
+      position: absolute;
+      border-radius: 2px;
+      display: block;
+      border: 0px none;
+      bottom: 187px;
       right: 0px;
       padding: 0px;
       margin: 10px;
@@ -490,7 +537,7 @@ input:checked + .slider:before {
     font-size: 11px;
     width: 180px;
     background-color: #FFFFFF;
-    opacity: 0.8;
+    opacity: 0.98;
     box-shadow: 3px 3px 5px #888888;
     border-style: solid;
     border-width: 1px;

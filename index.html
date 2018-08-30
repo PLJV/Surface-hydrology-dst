@@ -16,6 +16,10 @@
     <!-- D3 Legend -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.12.2/d3.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.4/d3-legend.js"></script>
+    <!-- shpwrite interface -->
+    <script src="https://unpkg.com/shp-write@latest/shpwrite.js"></script>
+    <!-- our ee interface -->
+    <script src="/static/ee_api_js.js"></script>
     <!-- Our custom JavaScript for Trendy Lights. -->
     <script src="/static/script.js"></script>
   </head>
@@ -57,9 +61,37 @@
           <h3>Surface Hydrology Viewer <sup><font color="#d89f22">ALPHA</font></sup></h3>
         </div>
         <div class="scroll-box">
-        This map displays the current and historic distribution of surface water in the State of Kansas. Data from
-        the Landsat 8 satellite is used to map the current surface water extent in the state. Data from the Landsat
-        5 platform was used to map the frequency of historic wetness from 1985 to 2012.
+        Welcome to the Surface Hydrology Viewer!
+        <br><br>
+        This is a web application designed to help producers, private landowners, and biologists to identify and track
+        long-term patterns in surface water availability across Kansas. This website allows you to explore surface water
+        data in your browser or download and work with the data directly in a GIS.
+        <br><br>
+        Tips on usage :
+        <ul>
+          <li>You can <b>navigate the map</b> by left-clicking and holding with your mouse and then moving the
+            mouse. If you are using a mobile device, you can accomplish the same gesture by pressing and drag the
+            screen. You can also use the arrow keys on your keyboard.</li>
+          <li>You can <b>toggle the display layer(s)</b> for the “most recent wet scene” and the “long-term surface
+            hydrology” products by using the <img src="/static/toggle_icon.png" height="15px"></img> icons in the
+            legend on the lower-left hand side of the screen.</li>
+          <li>You can <b>zoom</b> in-and-out using the wheel on your mouse, or the <b>+</b> and <b>-</b> icons
+            located in the lower-right of the screen.</li>
+          <li>You can <b>zoom to the current geographic location</b> of your device by clicking the <img
+              src="/static/zoom_to_icon.png" height="15px"></img> control button in the lower-right hand side of the
+              screen.</li>
+          <li>You can <b>zoom to an area of interest</b> that is cached on Google Maps using the <img
+              src="/static/zoom_to_place.png" height="15px"></img> control button in the lower-right hand side of the
+            screen.</li>
+          <li>If you are using a desktop computer, you can use the drawing controls located at the top of the screen
+            to <b>add markers or shapes around an area of interest</b>. After you’ve delineated an area, you can export
+            map information by right-clicking on the viewer and using the context-menu to <b>export features</b>. By
+            default, this will generate a comma-separated file (CSV) with summary data that you can download and open
+            in spreadsheet software like LibreOffice, Excel, or ‘R’.</li>
+          <li>You can also use the <b>right-click</b> context menu to remove all features on the map, as well as hide
+          interface elements like the legend and this help window.</li>
+        </ul>
+        For a demonstration walk-through on using this app, we’ve made you a handy YouTube video (see: external link).
         </div>
         <div class="bottom-buttons">
           <button type="button" onclick="javascript:carta.hide();" >hide</button>

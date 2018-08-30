@@ -97,30 +97,36 @@ class MainHandler(webapp2.RequestHandler):
     template = JINJA2_ENVIRONMENT.get_template('index.html')
     self.response.out.write(template.render(template_values))
 
+class BackendFeatureCollectionHandler(webapp2.RequestHandler):
+    """Accepts geojson input for feature collection passed by the user from the GUI that is then used to
+     do things on the backend like extracting values and generating plots"""
 
-class DetailsHandler(webapp2.RequestHandler):
-  """A servlet to handle requests for details about a Polygon."""
-
-  def get(self):
-    """Returns details about a polygon."""
-    polygon_id = self.request.get('polygon_id')
-    if polygon_id in POLYGON_IDS:
-      content = GetPolygonTimeSeries(polygon_id)
-    else:
-      content = json.dumps({'error': 'Unrecognized polygon ID: ' + polygon_id})
-    self.response.headers['Content-Type'] = 'application/json'
-    self.response.out.write(content)
-
-class ExtractFeatureGeometries():
-    """Accepts geojson input for feature collection passed by the user from the GUI"""
     def __init__(self):
-        self._feature_geometries = None
+        self._ASSET = None
+        self._ASSET_ID = None
+        self._FEATURE_COLLECTION = None
+
+    @property
+    def asset(self):
+        return self._ASSET
+
+    @asset.setter
+    def asset(self, *args):
+        self._ASSET_ID = args[0] if args[0] else self._ASSET_ID
+        self._ASSET = ee.Image(self._ASSET_ID) if not self._ASSET else self._ASSET
+
+    def extract(self, *args, **kwargs):
+        # assign parameters for our extraction if provided
+        self._FEATURE_COLLECTION = kwargs.get('features', args[0] if args[0] else self._FEATURE_COLLECTION)
+        if type(self._FEATURE_COLLECTION) is not ee.FeatureCollection:
+            self._FEATURE_COLLECTION = ee.FeatureCollection(self._FEATURE_COLLECTION)
+
 
 # Define webapp2 routing from URL paths to web request handlers. See:
 # http://webapp-improved.appspot.com/tutorials/quickstart.html
 app = webapp2.WSGIApplication([
-    ('/details', DetailsHandler),
     ('/', MainHandler),
+    ('/extract', BackendFeatureCollectionHandler),
 ])
 
 
@@ -145,14 +151,7 @@ def GetTrendyMapId(image_collection_id, options=None):
   """Returns the MapID for the night-time lights trend map."""
   collection = ee.Image(image_collection_id)
   collection = collection.updateMask(collection.gte(0.1))
-  # Add a band containing image date as years since 1991.
-  # def CreateTimeBand(img):
-  #   year = ee.Date(img.get('system:time_start')).get('year').subtract(1991)
-  #   return ee.Image(year).byte().addBands(img)
-  # collection = collection.select('stable_lights').map(CreateTimeBand)
 
-  # Fit a linear trend to the nighttime lights collection.
-  # fit = collection.reduce(ee.Reducer.linearFit())
   return collection.getMapId(options)
 
 ###############################################################################
@@ -165,8 +164,6 @@ def GetTrendyMapId(image_collection_id, options=None):
 # https://cloud.google.com/appengine/docs/python/memcache/
 MEMCACHE_EXPIRATION = 60 * 60 * 24
 
-# The ImageCollection of the night-time lights dataset. See:
-# https://earthengine.google.org/#detail/NOAA%2FDMSP-OLS%2FNIGHTTIME_LIGHTS
 #IMAGE_COLLECTION_ID = 'NOAA/DMSP-OLS/NIGHTTIME_LIGHTS'
 #IMAGE_COLLECTION_ID = 'users/kyletaylor/published/ks_ls5_wetness_1985_2012'
 MOST_RECENT_IMAGE_COLLECTION_ID = 'users/kyletaylor/shared/LC8dynamicwater'

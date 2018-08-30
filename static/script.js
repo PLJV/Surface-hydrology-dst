@@ -263,16 +263,29 @@ trendy.App.toggleGeocoder = function(id='geocoderSearchbox', click_event='none')
   }
 }
 
-trendy.App.featuresToJson = function(shapes){
+trendy.App.featuresToJson = function(featureCollection){
   coords = [ ] 
-  for(i in length(shapes)){
-
+  for(i in length(featureCollection)){
     if (shapes[i] instanceof google.maps.Marker) {
-      coords[i] = [ { lat: shape.getPosition().lat()}, {lng:shape.getPosition().lon() } ]
-    } else if(shapes[i] instanceof google.maps.Polygon || shapes[i] instanceof google.maps.Rectangle) {
+      coords[i] = [
+        { lat: featureCollection[i].getPosition().lat() },
+        { lng:featureCollection[i].getPosition().lon() } ]
+    } else if(shapes[i] instanceof google.maps.Polygon || featureCollection[i] instanceof google.maps.Rectangle) {
 
     }
   }
+}
+trendy.App.extractFeatures = function(assetId, featureCollection){
+  assetId = 'users/adaniels/shared/LC5historicwetness_10m'
+  featureCollection = ee.FeatureCollection(featureCollection)
+  extractOperation = function(){
+    ee.initialize()
+    var asset  = ee.Image(assetId)
+    var extracted = asset.reduceRegions(featureCollection, ee.Reducer.mean());
+
+  }
+  // attempt to authenticate and run our function
+  ee.data.authenticate('104852534761357168165', extractOperation, null, null, null);
 }
 /**
  * Create a marker from location services and pan the map to the user's current
@@ -584,11 +597,39 @@ carta = { };
 carta.DEFAULT_ABOUT_HTML =
     "<div class=\"header-top\">" +
     "  <h3>Surface Hydrology Viewer <sup><font color=\"#d89f22\">ALPHA</font></sup></h3>" +
-    " </div>" +
+    "</div>" +
     "<div class=\"scroll-box\">" +
-    "This map displays the current and historic distribution of surface water in the State of Kansas. Data from" +
-    "the Landsat 8 satellite is used to map the current surface water extent in the state. Data from the Landsat" +
-    "5 platform was used to map the frequency of historic wetness from 1985 to 2012." +
+    "Welcome to the Surface Hydrology Viewer!" +
+    "<br><br>" +
+    "This is a web application designed to help producers, private landowners, and biologists to identify and track" +
+    "long-term patterns in surface water availability across Kansas. This website allows you to explore surface water" +
+    "data in your browser or download and work with the data directly in a GIS." +
+    "<br><br>" +
+    "Tips on usage :" +
+    "<ul>" +
+    "  <li>You can <b>navigate the map</b> by left-clicking and holding with your mouse and then moving the mouse. If"+
+    "  you are using a mobile device, you can accomplish the same gesture by pressing and drag the screen. You can"+
+    "  also use the arrow keys on your keyboard.</li>" +
+    "<li>You can <b>toggle the display layer(s)</b> for the “most recent wet scene” and the “long-term surface" +
+    "  hydrology” products by using the <img src=\"/static/toggle_icon.png\" height=\"15px\"></img> icons in the" +
+    "  legend on the lower-left hand side of the screen.</li>" +
+    "<li>You can <b>zoom</b> in-and-out using the wheel on your mouse, or the <b>+</b> and <b>-</b> icons" +
+    " located in the lower-right of the screen.</li>" +
+    "<li>You can <b>zoom to the current geographic location</b> of your device by clicking the <img " +
+    " src=\"/static/zoom_to_icon.png\" height=\"15px\"></img> control button in the lower-right hand side of the " +
+    " screen.</li> " +
+    " <li>You can <b>zoom to an area of interest</b> that is cached on Google Maps using the <img " +
+    "   src=\"/static/zoom_to_place.png\" height=\"15px\"></img> control button in the lower-right hand side of the" +
+    "   screen.</li>" +
+    " <li>If you are using a desktop computer, you can use the drawing controls located at the top of the screen " +
+    "   to <b>add markers or shapes around an area of interest</b>. After you’ve delineated an area, you can export " +
+    "   map information by right-clicking on the viewer and using the context-menu to <b>export features</b>. By " +
+    "   default, this will generate a comma-separated file (CSV) with summary data that you can download and open " +
+    "   in spreadsheet software like LibreOffice, Excel, or ‘R’.</li>" +
+    " <li>You can also use the <b>right-click</b> context menu to remove all features on the map, as well as hide" +
+    "   interface elements like the legend and this help window.</li>" +
+    "</ul>" +
+    "For a demonstration walk-through on using this app, we’ve made you a handy YouTube video (see: external link)." +
     "</div>" +
     "<div class=\"bottom-buttons\">"+
     "<button type=\"button\" onclick=\"javascript:carta.hide();\" >hide</button>" +
@@ -619,13 +660,19 @@ carta.ABOUT_CONTACT_INFORMATION_HTML =
     "<h3>About</h3>" +
     "</div>" +
     "<div class='scroll-box'>" +
-    "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+    "This map displays the current and historic distribution of surface water in the State of Kansas. Data from the " +
+    "Landsat 8 satellite is used to map the current surface water extent in the state. Data from the Landsat 5 " +
+    "platform was used to map the frequency of historic wetness from 1985 to 2012." +
+    "<br><br>"+
+    "The source code for this hydrology viewer is open source (GPLv3). If you are a developer and would like " +
+    "to contribute to the project, report a bug, or fork it and make your own, you can get in touch with the " +
+    "developers at PLJV using our GitHub project page.<br><br>" +
+    "  • GitHub Project Page (External Site) <br>"+
+    "  • About Playa Lakes Joint Venture (External Site) <br>"+
+    "  • About NRCS (External Site)<br>"+
+    "<br><br>" +
     "<img src=\"static/pljv_logo.jpg\" height=66></img>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
     "<img src=\"static/usda_logo.jpg\" height=58></img>" +
-    "<br><br>" +
-    "Fill this in with project contact information.<br>" +
-    "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;<a target='_blank' href='http://pljv.org/about'>About NRCS</a> (External Site)<br>" +
-    "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;<a target='_blank' href='http://pljv.org/about'>About Playa Lakes Joint Venture</a> (External Site)<br><br>" +
     "</div>" +
     "<div class=\"bottom-buttons\">"+
     "<button type='button' onclick='javascript:carta.hide(\"instructionsPopout\");'>hide</button>" +

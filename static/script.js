@@ -261,7 +261,18 @@ trendy.App.toggleGeocoder = function(id='geocoderSearchbox', click_event='none')
     // show it
     geocoderSearchbox.style.display = "block";
   }
+}
 
+trendy.App.featuresToJson = function(shapes){
+  coords = [ ] 
+  for(i in length(shapes)){
+
+    if (shapes[i] instanceof google.maps.Marker) {
+      coords[i] = [ { lat: shape.getPosition().lat()}, {lng:shape.getPosition().lon() } ]
+    } else if(shapes[i] instanceof google.maps.Polygon || shapes[i] instanceof google.maps.Rectangle) {
+
+    }
+  }
 }
 /**
  * Create a marker from location services and pan the map to the user's current

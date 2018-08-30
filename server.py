@@ -111,6 +111,10 @@ class DetailsHandler(webapp2.RequestHandler):
     self.response.headers['Content-Type'] = 'application/json'
     self.response.out.write(content)
 
+class ExtractFeatureGeometries():
+    """Accepts geojson input for feature collection passed by the user from the GUI"""
+    def __init__(self):
+        self._feature_geometries = None
 
 # Define webapp2 routing from URL paths to web request handlers. See:
 # http://webapp-improved.appspot.com/tutorials/quickstart.html

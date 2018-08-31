@@ -22,7 +22,10 @@ trendy.boot = function(historicalEeMapId, mostRecentEeMapId, historicalEeToken, 
   google.load('maps', '3', {'other_params': 'key=AIzaSyDraxoLomEu1kNGyDFpb6K-SU4FSmAFZWc&libraries=drawing'});
   // Create the Trendy Lights app.
   google.setOnLoadCallback(function() {
-    //var mapType = trendy.App.getEeMapType(historicalEeMapId, historicalEeToken);
+    /* note our image asset id's here -- we'll use them later */
+    trendy.App.historicalAssetId = 'users/adaniels/shared/LC5historicwetness_10m'
+    trendy.App.mostRecentAssetId = 'users/kyletaylor/shared/LC8dynamicwater'
+    /* create layers for each asset */
     trendy.App.historicalLayer = trendy.App.getEeMapType(historicalEeMapId, historicalEeToken);
     trendy.App.mostRecentLayer = trendy.App.getEeMapType(mostRecentEeMapId, mostRecentEeToken);
     // calls createMap() with our historical layer
@@ -280,7 +283,23 @@ trendy.App.featuresToJson = function(features){
     };
     _features_geojson.push(_feature_json);
   });
-  return(JSON.stringify(_features_geojson))
+  _features_geojson = {
+    type: "FeatureCollection",
+    features: _features_geojson
+  }
+  // pack with single quotes for URL handler
+  return(JSON.stringify(_features_geojson).replace(/"/g, "'"))
+}
+trendy.App.processFeatures = function(features){
+  // Asynchronously load and show details about the polygon.
+  $.get('/extract?features=' + features).done((function(data) {
+    if (data['error']) {
+      $('.panel .error').show().html(data['error']);
+    } else {
+      $('.panel .wiki-url').show().attr('href', data['wikiUrl']);
+      this.showChart(data['timeSeries']);
+    }
+  }).bind(this));
 }
 trendy.App.addLocationMarker = function(panTo=true){
   // Add a marker and pan for the default 'go to my location' action

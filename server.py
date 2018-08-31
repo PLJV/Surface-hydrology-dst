@@ -101,10 +101,39 @@ class BackendFeatureCollectionHandler(webapp2.RequestHandler):
     """Accepts geojson input for feature collection passed by the user from the GUI that is then used to
      do things on the backend like extracting values and generating plots"""
 
-    def __init__(self):
+    def __init__(self, request, response):
         self._ASSET = None
         self._ASSET_ID = None
         self._FEATURE_COLLECTION = None
+        self.initialize(request, response)
+
+    @property
+    def feature_collection(self):
+        return self._FEATURE_COLLECTION
+
+    @feature_collection.setter
+    def feature_collection(self, *args):
+        # assign parameters for our extraction if provided
+        self._FEATURE_COLLECTION = args[0] if args[0] else self._FEATURE_COLLECTION
+        # unpack from JS
+        self._FEATURE_COLLECTION = self._FEATURE_COLLECTION.encode("utf-8")
+        self._FEATURE_COLLECTION = self._FEATURE_COLLECTION.replace('\'', '"')
+        print(self._FEATURE_COLLECTION)
+        print(json.loads(self._FEATURE_COLLECTION))
+        if type(self._FEATURE_COLLECTION) is not ee.FeatureCollection:
+            # accept the json string passed by client using the asset_id=
+            # signifier
+            try:
+                json.loads(self._FEATURE_COLLECTION)
+            except TypeError as e:
+                self._FEATURE_COLLECTION = json.dumps(
+                  self._FEATURE_COLLECTION)
+            # iterate our features and assign as a single FeatureCollection
+            features = []
+            for feature in json.loads(self._FEATURE_COLLECTION)['features']:
+                features.append(ee.Feature(feature))
+            self._FEATURE_COLLECTION = ee.FeatureCollection(features)
+
 
     @property
     def asset(self):
@@ -115,19 +144,33 @@ class BackendFeatureCollectionHandler(webapp2.RequestHandler):
         self._ASSET_ID = args[0] if args[0] else self._ASSET_ID
         self._ASSET = ee.Image(self._ASSET_ID) if not self._ASSET else self._ASSET
 
-    def extract(self, *args, **kwargs):
+    def extract(self):
+        result = self._ASSET.reduceRegions(
+          self.feature_collection, ee.Reducer.mean()).getInfo()
+        extractions = [ ]
+        for ft in result['features'] :
+            extractions.append(ft['properties']['mean'])
+        return(extractions)
+
+    def get(self):
+        """default get handler for /extract?features=..."""
         # assign parameters for our extraction if provided
-        self._FEATURE_COLLECTION = kwargs.get('features', args[0] if args[0] else self._FEATURE_COLLECTION)
-        if type(self._FEATURE_COLLECTION) is not ee.FeatureCollection:
-            self._FEATURE_COLLECTION = ee.FeatureCollection(self._FEATURE_COLLECTION)
+        #self.asset = self.request.get('assetId')
+        self.feature_collection = self.request.get('features')
+        # process request
+        values = json.dumps(self.extract())
+        # standard handlers for response
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.out.write(values)
+
 
 
 # Define webapp2 routing from URL paths to web request handlers. See:
 # http://webapp-improved.appspot.com/tutorials/quickstart.html
-app = webapp2.WSGIApplication([
-    ('/', MainHandler),
-    ('/extract', BackendFeatureCollectionHandler),
-])
+app = webapp2.WSGIApplication(routes=[
+    (r'/', MainHandler),
+    (r'/extract', BackendFeatureCollectionHandler)
+], debug=False)
 
 
 ###############################################################################

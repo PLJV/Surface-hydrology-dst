@@ -18,8 +18,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.4/d3-legend.js"></script>
     <!-- shpwrite interface -->
     <script src="https://unpkg.com/shp-write@latest/shpwrite.js"></script>
-    <!-- our ee interface -->
-    <script src="/static/ee_api_js.js"></script>
     <!-- Our custom JavaScript for Trendy Lights. -->
     <script src="/static/script.js"></script>
   </head>
@@ -107,8 +105,6 @@
         </div>
         <div class="legend body" id="legendBody">
           <div class="legend body layerToggle">
-            <!-- <label for="last_valid_scene">Wetness Frequency of Last Scene</label> -->
-            <!-- <input name="last_valid_scene" id="most_recent_checkbox" type="checkbox" checked="checked"> -->
             <label class="switch">
               <input type="checkbox" checked="checked" id="most_recent_checkbox"
                      onchange="javascript:susie.toggleEeLayerById('most_recent_checkbox')">

@@ -264,7 +264,7 @@ trendy.App.toggleGeocoder = function(id='geocoderSearchbox', click_event='none')
 }
 
 trendy.App.featuresToJson = function(featureCollection){
-  coords = [ ] 
+  coords = [ ]
   for(i in length(featureCollection)){
     if (shapes[i] instanceof google.maps.Marker) {
       coords[i] = [
@@ -275,31 +275,6 @@ trendy.App.featuresToJson = function(featureCollection){
     }
   }
 }
-trendy.App.extractFeatures = function(assetId, featureCollection){
-  assetId = 'users/adaniels/shared/LC5historicwetness_10m'
-  featureCollection = ee.FeatureCollection(featureCollection)
-  extractOperation = function(){
-    ee.initialize()
-    var asset  = ee.Image(assetId)
-    var extracted = asset.reduceRegions(featureCollection, ee.Reducer.mean());
-
-  }
-  // attempt to authenticate and run our function
-  ee.data.authenticate('104852534761357168165', extractOperation, null, null, null);
-}
-/**
- * Create a marker from location services and pan the map to the user's current
- * location
- */
-trendy.App.addMyLocationControl = function(controlDiv){
-  var myLocationControl = document.createElement('div');
-  myLocationControl.title = 'Click to recenter the map';
-  controlDiv.appendChild(myLocationControl);
-  var controlText = document.createElement('div');
-  controlText.innerHTML = 'Center Map';
-  controlUI.appendChild(controlText);
-}
-
 trendy.App.addLocationMarker = function(panTo=true){
   // Add a marker and pan for the default 'go to my location' action
   var myLocationIcon = new google.maps.Marker({

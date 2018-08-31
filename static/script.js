@@ -262,18 +262,25 @@ trendy.App.toggleGeocoder = function(id='geocoderSearchbox', click_event='none')
     geocoderSearchbox.style.display = "block";
   }
 }
-
-trendy.App.featuresToJson = function(featureCollection){
-  coords = [ ]
-  for(i in length(featureCollection)){
-    if (shapes[i] instanceof google.maps.Marker) {
-      coords[i] = [
-        { lat: featureCollection[i].getPosition().lat() },
-        { lng:featureCollection[i].getPosition().lon() } ]
-    } else if(shapes[i] instanceof google.maps.Polygon || featureCollection[i] instanceof google.maps.Rectangle) {
-
-    }
-  }
+// quick and dirty Google Maps Data -> GeoJSON converter that will dump
+// a MultiPoint or MultiPolygon object as a json string.
+trendy.App.featuresToJson = function(features){
+  _features_geojson = [];
+  features.forEach(function(feature, i){
+    coords = [ feature.getPosition().lng(), feature.getPosition().lat() ];
+    var _feature_json = {
+      type:'Feature',
+      geometry: {
+        type: feature instanceof google.maps.Marker ? "Point" : 'Polygon',
+        coordinates: coords
+      },
+      properties: {
+        'fid': i
+      }
+    };
+    _features_geojson.push(_feature_json);
+  });
+  return(JSON.stringify(_features_geojson))
 }
 trendy.App.addLocationMarker = function(panTo=true){
   // Add a marker and pan for the default 'go to my location' action

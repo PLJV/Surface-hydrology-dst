@@ -287,8 +287,9 @@ trendy.App.featuresToJson = function(features){
     type: "FeatureCollection",
     features: _features_geojson
   }
-  // pack with single quotes for URL handler
-  return(JSON.stringify(_features_geojson).replace(/"/g, "'"))
+  // pack with lzstring for our URL handler
+  features = LZString.compressToEncodedURIComponent(JSON.stringify(_features_geojson))
+  return(features)
 }
 trendy.App.processFeatures = function(features){
   // Asynchronously load and show details about the polygon.

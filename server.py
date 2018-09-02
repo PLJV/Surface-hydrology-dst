@@ -66,6 +66,7 @@ import config
 import ee
 import jinja2
 import webapp2
+import lzstring
 
 from google.appengine.api import memcache
 
@@ -147,9 +148,7 @@ class BackendFeatureCollectionHandler(webapp2.RequestHandler):
     def extract(self):
         result = self._ASSET.reduceRegions(
           self.feature_collection, ee.Reducer.mean()).getInfo()
-        extractions = [ ]
-        for ft in result['features'] :
-            extractions.append(ft['properties']['mean'])
+        extractions = [ft for ft in result['features']]
         return(extractions)
 
     def get(self):
@@ -157,6 +156,8 @@ class BackendFeatureCollectionHandler(webapp2.RequestHandler):
         # assign parameters for our extraction if provided
         #self.asset = self.request.get('assetId')
         self.feature_collection = self.request.get('features')
+        self.feature_collection = lzstring.LZString().\
+            decompressFromEncodedURIComponent(self.feature_collection)
         # process request
         values = json.dumps(self.extract())
         # standard handlers for response

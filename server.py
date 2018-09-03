@@ -105,7 +105,7 @@ class BackendFeatureCollectionHandler(webapp2.RequestHandler):
         self._ASSET = None
         self._ASSET_ID = None
         self._FEATURE_COLLECTION = None
-
+        # initialize our super
         self.initialize(request, response)
 
     def unpack_zlib(self, *args):
@@ -196,19 +196,15 @@ app = webapp2.WSGIApplication(routes=[
 
 
 def GetTrendyMapId(image_collection_id, options=None):
+  """Returns the MapID for the night-time lights trend map."""
   # if no pallet options were specified, assume some sane defaults
   if (options == None):
       options = {
         'min': '0.1',
-        # 'max': '0.18,20,-0.18',
         'max' : '1',
-        # 'bands': 'scale,offset,scale',
-        # 'bands' : '0',
-        # 'palette' : 'rgba(255, 255, 255, 0.1), rgba(0,51,204,1)',
         'palette' : 'edf8b1, c7e9b4, 7fcdbb, 41b6c4, 1d91c0, 225ea8, 253494, 081d58',
         'opacity' : '0.95',
       }
-  """Returns the MapID for the night-time lights trend map."""
   collection = ee.Image(image_collection_id)
   collection = collection.updateMask(collection.gte(0.1))
 

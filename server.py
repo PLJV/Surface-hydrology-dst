@@ -58,15 +58,14 @@ which in turn helps us avoid exceeding our quota and respond to user
 requests more quickly.
 
 """
-
-import json
 import os
+import lzstring
+import json
 
 import config
 import ee
 import jinja2
 import webapp2
-import lzstring
 
 from google.appengine.api import memcache
 
@@ -106,7 +105,35 @@ class BackendFeatureCollectionHandler(webapp2.RequestHandler):
         self._ASSET = None
         self._ASSET_ID = None
         self._FEATURE_COLLECTION = None
+
         self.initialize(request, response)
+
+    def unpack_zlib(self, *args):
+        if args is None:
+            fc = self._FEATURE_COLLECTION
+        # decompress
+        fc = lzstring.LZString().\
+            decompressFromEncodedURIComponent(fc)
+        # unpack any lurking JS bug-a-boos
+        fc = fc.encode("utf-8")
+        fc = fc.replace('\'', '"')
+        return fc
+
+    def json_to_feature_collection(self, *args):
+        if args is None:
+            fc = self._FEATURE_COLLECTION
+        if type(fc) is not ee.FeatureCollection:
+            # accept the json string passed by client using the asset_id=
+            # signifier
+            try:
+                fc = json.loads(fc)
+            except TypeError as e:
+                fc = json.dumps(fc)
+                fc = json.loads(fc)
+            # listcomp as ee.Feature() and assign all features to a single FeatureCollection
+            features = [ee.Feature(ft) for ft in fc['features']]
+            fc = ee.FeatureCollection(features)
+        return fc
 
     @property
     def feature_collection(self):
@@ -115,26 +142,16 @@ class BackendFeatureCollectionHandler(webapp2.RequestHandler):
     @feature_collection.setter
     def feature_collection(self, *args):
         # assign parameters for our extraction if provided
-        self._FEATURE_COLLECTION = args[0] if args[0] else self._FEATURE_COLLECTION
-        # unpack from JS
-        self._FEATURE_COLLECTION = self._FEATURE_COLLECTION.encode("utf-8")
-        self._FEATURE_COLLECTION = self._FEATURE_COLLECTION.replace('\'', '"')
-        print(self._FEATURE_COLLECTION)
-        print(json.loads(self._FEATURE_COLLECTION))
-        if type(self._FEATURE_COLLECTION) is not ee.FeatureCollection:
-            # accept the json string passed by client using the asset_id=
-            # signifier
-            try:
-                json.loads(self._FEATURE_COLLECTION)
-            except TypeError as e:
-                self._FEATURE_COLLECTION = json.dumps(
-                  self._FEATURE_COLLECTION)
-            # iterate our features and assign as a single FeatureCollection
-            features = []
-            for feature in json.loads(self._FEATURE_COLLECTION)['features']:
-                features.append(ee.Feature(feature))
-            self._FEATURE_COLLECTION = ee.FeatureCollection(features)
-
+        fc = args[0] if args[0] else self._FEATURE_COLLECTION
+        try:
+            json.loads(fc)
+            fc = self.json_to_feature_collection(fc)
+        except TypeError as e:
+            # if we couldn't make a dict out of the string, assume it's
+            # it's a zlib-compressed string and unpack it
+            fc = self.unpack_zlib(fc)
+            fc = self.json_to_feature_collection(fc)
+        self._FEATURE_COLLECTION = fc
 
     @property
     def asset(self):
@@ -156,8 +173,7 @@ class BackendFeatureCollectionHandler(webapp2.RequestHandler):
         # assign parameters for our extraction if provided
         #self.asset = self.request.get('assetId')
         self.feature_collection = self.request.get('features')
-        self.feature_collection = lzstring.LZString().\
-            decompressFromEncodedURIComponent(self.feature_collection)
+
         # process request
         values = json.dumps(self.extract())
         # standard handlers for response

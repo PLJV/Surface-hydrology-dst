@@ -265,9 +265,21 @@ trendy.App.toggleGeocoder = function(id='geocoderSearchbox', click_event='none')
     geocoderSearchbox.style.display = "block";
   }
 }
+trendy.App.lzCompress = function(string){
+  // default : compressToEncodedURIComponent -- we lose a little bit of
+  // shrinkage here, but we end-up with strings that are compatible with
+  // our HTTP handlers
+  return(LZString.compressToEncodedURIComponent(string))
+}
+trendy.App.lzDecompress = function(string){
+  return(LZString.decompressFromEncodedURIComponent(string))
+}
 // quick and dirty Google Maps Data -> GeoJSON converter that will dump
 // a MultiPoint or MultiPolygon object as a json string.
-trendy.App.featuresToJson = function(features){
+trendy.App.featuresToJson = function(features, compress=false) {
+  if (typeof(features) == "string"){
+    return(JSON.parse(features))
+  }
   _features_geojson = [];
   features.forEach(function(feature, i){
     coords = [ feature.getPosition().lng(), feature.getPosition().lat() ];
@@ -287,20 +299,51 @@ trendy.App.featuresToJson = function(features){
     type: "FeatureCollection",
     features: _features_geojson
   }
-  // pack with lzstring for our URL handler
-  features = LZString.compressToEncodedURIComponent(JSON.stringify(_features_geojson))
+  // pack with lzstring for our URL handler if asked
+  if (compress) {
+    features = trendy.App.lzCompress(JSON.stringify(_features_geojson))
+  }
   return(features)
 }
-trendy.App.processFeatures = function(features){
+trendy.App.unpackFeatureExtractions = function(features){
+  _features = []
+  for(i=0; i < features.length; i++){
+    _features.push(features[i]['properties']['mean'])
+  }
+  return(_features)
+}
+trendy.App.processFeatures = function(features, assetId, callBack=null){
   // Asynchronously load and show details about the polygon.
-  $.get('/extract?features=' + features).done((function(data) {
+  $.get('/extract?features=' + features + '?assetId=' + assetId).done((function(data) {
     if (data['error']) {
-      $('.panel .error').show().html(data['error']);
+      //$('.panel .error').show().html(data['error']);
+      comp_str = data['error']
     } else {
-      $('.panel .wiki-url').show().attr('href', data['wikiUrl']);
-      this.showChart(data['timeSeries']);
+      //$('.panel .wiki-url').show().attr('href', data['wikiUrl']);
+      // this.showChart(data['mean']);
+      comp_str = data
+    }
+    if(assetId.includes('hist')){
+      trendy.App.historical_ext = trendy.App.featuresToJson(
+        trendy.App.lzDecompress(comp_str)
+      )
+      // use our user-specified callback
+      if (callBack != null){
+        callBack(trendy.App.historical_ext)
+      }
+    } else {
+      trendy.App.lastWetScene_ext = trendy.App.featuresToJson(
+        trendy.App.lzDecompress(comp_str)
+      )
+      // use our user-specified callback
+      if (callBack != null){
+        callBack(trendy.App.lastWetScene_ext)
+      }
     }
   }).bind(this));
+}
+trendy.App.featuresCallback = function(features){
+  alert("extracted values: " + trendy.App.unpackFeatureExtractions(features))
 }
 trendy.App.addLocationMarker = function(panTo=true){
   // Add a marker and pan for the default 'go to my location' action
@@ -861,7 +904,9 @@ menu.toggle_help = function(){
 }
 /* GEE processing methods */
 menu.export_features = function(){
-  alert("exporting")
+  ft = trendy.App.featuresToJson(trendy.App.markers, true)
+  trendy.App.processFeatures(ft, trendy.App.mostRecentAssetId, trendy.App.featuresCallback)
+  trendy.App.processFeatures(ft, trendy.App.historicalAssetId, trendy.App.featuresCallback)
   // hide the menu
   if(menu.menuDisplayed == true){
       menu.menuBox.style.display = "none";

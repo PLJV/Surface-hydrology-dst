@@ -111,20 +111,38 @@ class BackendFeatureCollectionHandler(webapp2.RequestHandler):
     def unpack_zlib(self, *args):
         if args is None:
             fc = self._FEATURE_COLLECTION
+        else:
+            fc = args[0]
+        # force json string formatting
+        fc = json.dumps(fc)
         # decompress
         fc = lzstring.LZString().\
-            decompressFromEncodedURIComponent(fc)
+            decompressFromEncodedURIComponent(args[0])
         # unpack any lurking JS bug-a-boos
         fc = fc.encode("utf-8")
         fc = fc.replace('\'', '"')
         return fc
 
+    def pack_zlib(self, *args):
+        # force json string formatting
+        json_str = json.dumps(args[0])
+        # decompress
+        json_str = lzstring.LZString().\
+            compressToEncodedURIComponent(json_str)
+        # unpack any lurking JS bug-a-boos
+        json_str = json_str.encode("utf-8")
+        json_str = json_str.replace('\'', '"')
+        return json_str
+
     def json_to_feature_collection(self, *args):
         if args is None:
             fc = self._FEATURE_COLLECTION
+        else:
+            fc = args[0]
         if type(fc) is not ee.FeatureCollection:
-            # accept the json string passed by client using the asset_id=
-            # signifier
+            # accept a string passed by client using the asset_id=
+            # signifier -- throw it at json.loads and see if it raises
+            # any strange errors
             try:
                 fc = json.loads(fc)
             except TypeError as e:
@@ -146,7 +164,7 @@ class BackendFeatureCollectionHandler(webapp2.RequestHandler):
         try:
             json.loads(fc)
             fc = self.json_to_feature_collection(fc)
-        except TypeError as e:
+        except ValueError as e:
             # if we couldn't make a dict out of the string, assume it's
             # it's a zlib-compressed string and unpack it
             fc = self.unpack_zlib(fc)
@@ -160,7 +178,9 @@ class BackendFeatureCollectionHandler(webapp2.RequestHandler):
     @asset.setter
     def asset(self, *args):
         self._ASSET_ID = args[0] if args[0] else self._ASSET_ID
-        self._ASSET = ee.Image(self._ASSET_ID) if not self._ASSET else self._ASSET
+        # for debugging
+        self._ASSET_ID = MOST_RECENT_IMAGE_COLLECTION_ID
+        self._ASSET = ee.Image(self._ASSET_ID)
 
     def extract(self):
         result = self._ASSET.reduceRegions(
@@ -171,13 +191,14 @@ class BackendFeatureCollectionHandler(webapp2.RequestHandler):
     def get(self):
         """default get handler for /extract?features=..."""
         # assign parameters for our extraction if provided
-        #self.asset = self.request.get('assetId')
+        self.asset = self.request.get('assetId')
         self.feature_collection = self.request.get('features')
 
         # process request
-        values = json.dumps(self.extract())
+        values = self.extract()
+        values = self.pack_zlib(values)
         # standard handlers for response
-        self.response.headers['Content-Type'] = 'application/json'
+        self.response.headers['Content-Type'] = 'text'
         self.response.out.write(values)
 
 

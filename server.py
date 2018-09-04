@@ -177,14 +177,14 @@ class BackendFeatureCollectionHandler(webapp2.RequestHandler):
 
     @asset.setter
     def asset(self, *args):
-        self._ASSET_ID = args[0] if args[0] else self._ASSET_ID
+        self._ASSET_ID = self.unpack_zlib(args[0]) if args[0] else self._ASSET_ID
         # for debugging
-        self._ASSET_ID = MOST_RECENT_IMAGE_COLLECTION_ID
         self._ASSET = ee.Image(self._ASSET_ID)
 
     def extract(self):
         result = self._ASSET.reduceRegions(
           self.feature_collection, ee.Reducer.mean()).getInfo()
+        print(result)
         extractions = [ft for ft in result['features']]
         return(extractions)
 
@@ -193,8 +193,8 @@ class BackendFeatureCollectionHandler(webapp2.RequestHandler):
         # assign parameters for our extraction if provided
         self.asset = self.request.get('assetId')
         self.feature_collection = self.request.get('features')
-
         # process request
+        print(self.asset)
         values = self.extract()
         values = self.pack_zlib(values)
         # standard handlers for response

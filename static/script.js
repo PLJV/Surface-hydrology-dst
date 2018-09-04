@@ -191,7 +191,12 @@ trendy.App.addDrawingManagerControl = function(show=false){
     if(event.type == google.maps.drawing.OverlayType.POLYGON | event.type == google.maps.drawing.OverlayType.RECTANGLE) {
       trendy.App.polygons.push(event.overlay);
     } else if(event.type == google.maps.drawing.OverlayType.MARKER) {
+      if (trendy.App.markers.length > 0) {
+        trendy.App.markers[trendy.App.markers.length - 1].setMap(null);
+        trendy.App.markers.pop();
+      }
       trendy.App.markers.push(event.overlay);
+      trendy.App.markers[0].setMap(trendy.App.map);
     }
   });
   // by default, the drawing manager is hidden -- let's show it
@@ -204,9 +209,11 @@ trendy.App.addDrawingManagerControl = function(show=false){
 trendy.App.removeAllFeatures = function(){
   for (var i = 0; i < trendy.App.markers.length; i++) {
      trendy.App.markers[i].setMap(null);
+     trendy.App.markers = []
   }
   for (var i = 0; i < trendy.App.polygons.length; i++) {
      trendy.App.polygons[i].setMap(null);
+     trendy.App.polygons = []
   }
 }
 /**
@@ -308,13 +315,19 @@ trendy.App.featuresToJson = function(features, compress=false) {
 trendy.App.unpackFeatureExtractions = function(features){
   _features = []
   for(i=0; i < features.length; i++){
-    _features.push(features[i]['properties']['mean'])
+    if(features[i]['properties'].length<2){
+      console.log(features[i]['properties'])
+    }
+    result = Math.round(features[i]['properties']['mean']*100)/100
+    result = result || 0
+    _features.push(result)
   }
   return(_features)
 }
 trendy.App.processFeatures = function(features, assetId, callBack=null){
-  // Asynchronously load and show details about the polygon.
-  $.get('/extract?features=' + features + '?assetId=' + assetId).done((function(data) {
+  // Asynchronously load and show details about the point feature
+  uuAssetId = trendy.App.lzCompress(assetId)
+  $.get('/extract?features=' + features + '&assetId=' + uuAssetId).done((function(data) {
     if (data['error']) {
       //$('.panel .error').show().html(data['error']);
       comp_str = data['error']
@@ -905,7 +918,6 @@ menu.toggle_help = function(){
 /* GEE processing methods */
 menu.export_features = function(){
   ft = trendy.App.featuresToJson(trendy.App.markers, true)
-  trendy.App.processFeatures(ft, trendy.App.mostRecentAssetId, trendy.App.featuresCallback)
   trendy.App.processFeatures(ft, trendy.App.historicalAssetId, trendy.App.featuresCallback)
   // hide the menu
   if(menu.menuDisplayed == true){

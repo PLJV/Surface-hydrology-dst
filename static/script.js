@@ -175,8 +175,8 @@ trendy.App.addDrawingManagerControl = function(show=false){
       drawingModes: ['marker','polygon','rectangle'],
       position: google.maps.ControlPosition.TOP_CENTER,
     },
-    markerOptions: { editable: true, draggable: true },
-    polygonOptions: { editable: true},
+    markerOptions: { editable: true, draggable: true, alpha: '0.95' },
+    polygonOptions: { editable: true },
     rectangleOptions: { editable: true}
   });
   // show method
@@ -188,15 +188,33 @@ trendy.App.addDrawingManagerControl = function(show=false){
     trendy.App.map.setOptions({ drawingControl: false });
   }
   google.maps.event.addListener(trendy.App.drawingManager, 'overlaycomplete', function(event) {
+    rectangleToPolygon = function(x){
+      bounds = x.getBounds()
+      bounds = [
+        { lat: bounds.getSouthWest().lat(), lng: bounds.getSouthWest().lng() }, // south_west
+        { lat: bounds.getNorthEast().lat(), lng: bounds.getSouthWest().lng() }, // north_west
+        { lat: bounds.getNorthEast().lat(), lng: bounds.getNorthEast().lng() }, // north_east
+        { lat: bounds.getSouthWest().lat(), lng: bounds.getNorthEast().lng() }  // south_east
+      ]
+      return(new google.maps.Polygon({paths:bounds, editable: true}))
+    }
     /* event handler for POLYGON geometries */
-    if(event.type == google.maps.drawing.OverlayType.POLYGON || event.type == google.maps.drawing.OverlayType.RECTANGLE)
+    if( (event.type == google.maps.drawing.OverlayType.POLYGON) || (event.type == google.maps.drawing.OverlayType
+    .RECTANGLE) )
      {
+      // clear the existing stack
       if (trendy.App.polygons.length > 0) {
         trendy.App.polygons[trendy.App.polygons.length - 1].setMap(null);
         trendy.App.polygons.pop();
       }
-      // push the polygon onto our stack
-      trendy.App.polygons.push(event.overlay);
+      // convert RECTANGLE -> POLYGON (if needed) and push onto our stack
+      if (event.type == google.maps.drawing.OverlayType.RECTANGLE) {
+        trendy.App.polygons.push(rectangleToPolygon(event.overlay));
+        event.overlay.setMap(null);
+        trendy.App.polygons[0].setMap(trendy.App.map);
+      } else {
+        trendy.App.polygons.push(event.overlay);
+      }
       // add an area label as an info window with common event triggers
       mean = function(x){
         var s = 0;
@@ -205,30 +223,37 @@ trendy.App.addDrawingManagerControl = function(show=false){
         }
         return(Math.round((s/x.length)*10000)/10000)
       };
-      // calculate a centroid from our polygon feature vertices
-      // and use it to populate a pop-out label
-      var vertices =
-        trendy.App.
-          polygons[0].
-          getPath().
-          getArray().
-          map(function(x){ return([ x.lat(), x.lng()]) });
-      centroid = new google.maps.LatLng(
-        mean(vertices.map(function(x){return(x[0])})),
-        mean(vertices.map(function(x){return(x[1])}))
-      );
-      label = "Area (Acres) : " + String(Math.round(
-        0.000247105 * google.maps.geometry.spherical.computeArea(trendy.App.polygons[0].getPath())
-      ))
-      // add a simple info window pop-out to the canvas
-      var infoWindow = new google.maps.InfoWindow();
-      infoWindow.setContent(label);
-      infoWindow.setPosition(centroid);
-      infoWindow.open(trendy.App.map);
-      // add a single click-event handler
+      generateInfoWindow = function(polygon){
+        // calculate a centroid from our polygon feature vertices
+        // and use it to populate a pop-out label
+        var vertices =
+          polygon.
+            getPath().
+            getArray().
+            map(function(x){ return([ x.lat(), x.lng()]) });
+        centroid = new google.maps.LatLng(
+          mean(vertices.map(function(x){return(x[0])})),
+          mean(vertices.map(function(x){return(x[1])}))
+        );
+        // build a label from the current geometry on the canvas
+        label = "Area (Acres) : " + String(Math.round(
+          0.000247105 * google.maps.geometry.spherical.computeArea(polygon.getPath())
+        ))
+        // add a simple info window pop-out to the canvas
+        var infoWindow = new google.maps.InfoWindow();
+        infoWindow.setContent(label);
+        infoWindow.setPosition(centroid);
+        infoWindow.open(trendy.App.map);
+      };
+      // load the pop-out after initial draw
+      generateInfoWindow(trendy.App.polygons[0]);
+      // add a single click and resize event handler(s) to do the same
       google.maps.event.addListener(trendy.App.polygons[0], 'click', function (e) {
-          infoWindow.open(trendy.App.map);
-        });
+        generateInfoWindow(trendy.App.polygons[0]);
+      });
+      google.maps.event.addListener(trendy.App.polygons[0], 'resize', function (e){
+        generateInfoWindow(trendy.App.polygons[0]);
+      });
       // set visible on canvas
       trendy.App.polygons[0].setMap(trendy.App.map);
     /* event handlers for MARKER geometries */
@@ -406,7 +431,7 @@ trendy.App.featuresCallback = function(features){
   label = {
     text: String(trendy.App.unpackFeatureExtractions(features)),
     fontWeight: 'bold',
-    fontSize: '18px'
+    fontSize: '10px'
   }
   trendy.App.markers[0].setLabel(label)
 }

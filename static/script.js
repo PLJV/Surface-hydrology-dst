@@ -198,29 +198,33 @@ trendy.App.addDrawingManagerControl = function(show=false){
       // push the polygon onto our stack
       trendy.App.polygons.push(event.overlay);
       // add an area label as an info window with common event triggers
-      var infoWindow = new google.maps.InfoWindow();
-      label = "Area (Acres) : " + String(Math.round(
-        0.000247105 * google.maps.geometry.spherical.computeArea(trendy.App.polygons[0].getPath())
-      ))
-      google.maps.event.addListener(trendy.App.polygons[0], 'click', function (e) {
+      mean = function(x){
+        var s = 0;
+        for(var i=0; i<x.length; i++){
+          s += x[i];
+        }
+        return(Math.round((s/x.length)*10000)/10000)
+      };
+
+        var vertices =
+        trendy.App.
+          polygons[0].
+          getPath().
+          getArray().
+          map(function(x){ return([ x.lat(), x.lng()]) });
+        centroid = new google.maps.LatLng(
+          mean(vertices.map(function(x){return(x[0])})),
+          mean(vertices.map(function(x){return(x[1])}))
+        );
+        label = "Area (Acres) : " + String(Math.round(
+          0.000247105 * google.maps.geometry.spherical.computeArea(trendy.App.polygons[0].getPath())
+        ))
+        var infoWindow = new google.maps.InfoWindow();
+        // add our info window pop-out
         infoWindow.setContent(label);
-        var latLng = e.latLng;
-        infoWindow.setPosition(latLng);
+        infoWindow.setPosition(centroid);
         infoWindow.open(trendy.App.map);
 
-      });
-      google.maps.event.addListener(trendy.App.polygons[0], 'mouseover', function (e) {
-        infoWindow.setContent(label);
-        var latLng = e.latLng;
-        infoWindow.setPosition(latLng);
-        infoWindow.open(trendy.App.map);
-        window.setTimeout(function() {
-          infoWindow.close(trendy.App.map);
-        }, 8000);
-      });
-      google.maps.event.addListener(trendy.App.polygons[0], 'mouseout', function (e) {
-        infoWindow.close(trendy.App.map);
-      });
       // set visible on canvas
       trendy.App.polygons[0].setMap(trendy.App.map);
     /* event handlers for MARKER geometries */

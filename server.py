@@ -140,7 +140,7 @@ class BackendFeatureCollectionHandler(webapp2.RequestHandler):
         else:
             fc = args[0]
         if type(fc) is not ee.FeatureCollection:
-            # accept a string passed by client using the asset_id=
+            # accept a string passed by client using the assetId=
             # signifier -- throw it at json.loads and see if it raises
             # any strange errors
             try:

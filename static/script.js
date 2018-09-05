@@ -175,7 +175,7 @@ trendy.App.addDrawingManagerControl = function(show=false){
       drawingModes: ['marker','polygon','rectangle'],
       position: google.maps.ControlPosition.TOP_CENTER,
     },
-    markerOptions: { editable: true},
+    markerOptions: { editable: true, draggable: true },
     polygonOptions: { editable: true},
     rectangleOptions: { editable: true}
   });
@@ -189,7 +189,39 @@ trendy.App.addDrawingManagerControl = function(show=false){
   }
   google.maps.event.addListener(trendy.App.drawingManager, 'overlaycomplete', function(event) {
     if(event.type == google.maps.drawing.OverlayType.POLYGON | event.type == google.maps.drawing.OverlayType.RECTANGLE) {
+      if (trendy.App.polygons.length > 0) {
+        trendy.App.polygons[trendy.App.polygons.length - 1].setMap(null);
+        trendy.App.polygons.pop();
+      }
+      // push the polygon onto our stack
       trendy.App.polygons.push(event.overlay);
+      // add an area label as an info window with common event triggers
+      var infoWindow = new google.maps.InfoWindow();
+      label = "Area (Acres) : " + String(Math.round(
+        0.000247105 * google.maps.geometry.spherical.computeArea(trendy.App.polygons[0].getPath())
+      ))
+      google.maps.event.addListener(trendy.App.polygons[0], 'click', function (e) {
+        infoWindow.setContent(label);
+        var latLng = e.latLng;
+        infoWindow.setPosition(latLng);
+        infoWindow.open(trendy.App.map);
+        window.setTimeout(function() {
+           infoWindow.close(trendy.App.map);
+         }, 8000);
+      });
+      google.maps.event.addListener(trendy.App.polygons[0], 'mouseover', function (e) {
+        infoWindow.setContent(label);
+        var latLng = e.latLng;
+        infoWindow.setPosition(latLng);
+        infoWindow.open(trendy.App.map);
+        window.setTimeout(function() {
+          infoWindow.close(trendy.App.map);
+        }, 8000);
+      });
+      google.maps.event.addListener(trendy.App.polygons[0], 'mouseout', function (e) {
+        infoWindow.close(trendy.App.map);
+      });
+      trendy.App.polygons[0].setMap(trendy.App.map);
     } else if(event.type == google.maps.drawing.OverlayType.MARKER) {
       if (trendy.App.markers.length > 0) {
         trendy.App.markers[trendy.App.markers.length - 1].setMap(null);
@@ -356,7 +388,12 @@ trendy.App.processFeatures = function(features, assetId, callBack=null){
   }).bind(this));
 }
 trendy.App.featuresCallback = function(features){
-  alert("extracted values: " + trendy.App.unpackFeatureExtractions(features))
+  label = {
+    text: String(trendy.App.unpackFeatureExtractions(features)),
+    fontWeight: 'bold',
+    fontSize: '18px'
+  }
+  trendy.App.markers[0].setLabel(label)
 }
 trendy.App.addLocationMarker = function(panTo=true){
   // Add a marker and pan for the default 'go to my location' action

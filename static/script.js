@@ -205,26 +205,30 @@ trendy.App.addDrawingManagerControl = function(show=false){
         }
         return(Math.round((s/x.length)*10000)/10000)
       };
-
-        var vertices =
+      // calculate a centroid from our polygon feature vertices
+      // and use it to populate a pop-out label
+      var vertices =
         trendy.App.
           polygons[0].
           getPath().
           getArray().
           map(function(x){ return([ x.lat(), x.lng()]) });
-        centroid = new google.maps.LatLng(
-          mean(vertices.map(function(x){return(x[0])})),
-          mean(vertices.map(function(x){return(x[1])}))
-        );
-        label = "Area (Acres) : " + String(Math.round(
-          0.000247105 * google.maps.geometry.spherical.computeArea(trendy.App.polygons[0].getPath())
-        ))
-        var infoWindow = new google.maps.InfoWindow();
-        // add our info window pop-out
-        infoWindow.setContent(label);
-        infoWindow.setPosition(centroid);
-        infoWindow.open(trendy.App.map);
-
+      centroid = new google.maps.LatLng(
+        mean(vertices.map(function(x){return(x[0])})),
+        mean(vertices.map(function(x){return(x[1])}))
+      );
+      label = "Area (Acres) : " + String(Math.round(
+        0.000247105 * google.maps.geometry.spherical.computeArea(trendy.App.polygons[0].getPath())
+      ))
+      // add a simple info window pop-out to the canvas
+      var infoWindow = new google.maps.InfoWindow();
+      infoWindow.setContent(label);
+      infoWindow.setPosition(centroid);
+      infoWindow.open(trendy.App.map);
+      // add a single click-event handler
+      google.maps.event.addListener(trendy.App.polygons[0], 'click', function (e) {
+          infoWindow.open(trendy.App.map);
+        });
       // set visible on canvas
       trendy.App.polygons[0].setMap(trendy.App.map);
     /* event handlers for MARKER geometries */

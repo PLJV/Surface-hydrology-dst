@@ -184,7 +184,6 @@ class BackendFeatureCollectionHandler(webapp2.RequestHandler):
     def extract(self):
         result = self._ASSET.reduceRegions(
           self.feature_collection, ee.Reducer.mean()).getInfo()
-        print(result)
         extractions = [ft for ft in result['features']]
         return(extractions)
 
@@ -194,7 +193,6 @@ class BackendFeatureCollectionHandler(webapp2.RequestHandler):
         self.asset = self.request.get('assetId')
         self.feature_collection = self.request.get('features')
         # process request
-        print(self.asset)
         values = self.extract()
         values = self.pack_zlib(values)
         # standard handlers for response

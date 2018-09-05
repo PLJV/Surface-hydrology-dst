@@ -232,6 +232,9 @@ trendy.App.addDrawingManagerControl = function(show=false){
         trendy.App.markers.pop();
       }
       trendy.App.markers.push(event.overlay);
+      google.maps.event.addListener(trendy.App.markers[0], 'dragend', function (e) {
+        menu.export_features();
+      });
       trendy.App.markers[0].setMap(trendy.App.map);
       // fire our earth engine reduction automatically
       menu.export_features();
@@ -395,7 +398,7 @@ trendy.App.processFeatures = function(features, assetId, callBack=null){
 }
 trendy.App.featuresCallback = function(features){
   label = {
-    text: String(trendy.App.unpackFeatureExtractions(features)),
+    text: String(Math.round(trendy.App.unpackFeatureExtractions(features)*10)),
     fontWeight: 'bold',
     fontSize: '18px'
   }

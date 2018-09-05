@@ -188,7 +188,9 @@ trendy.App.addDrawingManagerControl = function(show=false){
     trendy.App.map.setOptions({ drawingControl: false });
   }
   google.maps.event.addListener(trendy.App.drawingManager, 'overlaycomplete', function(event) {
-    if(event.type == google.maps.drawing.OverlayType.POLYGON | event.type == google.maps.drawing.OverlayType.RECTANGLE) {
+    /* event handler for POLYGON geometries */
+    if(event.type == google.maps.drawing.OverlayType.POLYGON || event.type == google.maps.drawing.OverlayType.RECTANGLE)
+     {
       if (trendy.App.polygons.length > 0) {
         trendy.App.polygons[trendy.App.polygons.length - 1].setMap(null);
         trendy.App.polygons.pop();
@@ -221,7 +223,9 @@ trendy.App.addDrawingManagerControl = function(show=false){
       google.maps.event.addListener(trendy.App.polygons[0], 'mouseout', function (e) {
         infoWindow.close(trendy.App.map);
       });
+      // set visible on canvas
       trendy.App.polygons[0].setMap(trendy.App.map);
+    /* event handlers for MARKER geometries */
     } else if(event.type == google.maps.drawing.OverlayType.MARKER) {
       if (trendy.App.markers.length > 0) {
         trendy.App.markers[trendy.App.markers.length - 1].setMap(null);
@@ -229,6 +233,8 @@ trendy.App.addDrawingManagerControl = function(show=false){
       }
       trendy.App.markers.push(event.overlay);
       trendy.App.markers[0].setMap(trendy.App.map);
+      // fire our earth engine reduction automatically
+      menu.export_features();
     }
   });
   // by default, the drawing manager is hidden -- let's show it

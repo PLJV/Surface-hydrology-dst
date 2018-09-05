@@ -207,9 +207,7 @@ trendy.App.addDrawingManagerControl = function(show=false){
         var latLng = e.latLng;
         infoWindow.setPosition(latLng);
         infoWindow.open(trendy.App.map);
-        window.setTimeout(function() {
-           infoWindow.close(trendy.App.map);
-         }, 8000);
+
       });
       google.maps.event.addListener(trendy.App.polygons[0], 'mouseover', function (e) {
         infoWindow.setContent(label);
@@ -236,7 +234,7 @@ trendy.App.addDrawingManagerControl = function(show=false){
         menu.export_features();
       });
       trendy.App.markers[0].setMap(trendy.App.map);
-      // fire our earth engine reduction automatically
+      // fire our earth engine reduce operation automatically on 'done'
       menu.export_features();
     }
   });
@@ -398,7 +396,7 @@ trendy.App.processFeatures = function(features, assetId, callBack=null){
 }
 trendy.App.featuresCallback = function(features){
   label = {
-    text: String(Math.round(trendy.App.unpackFeatureExtractions(features)*10)),
+    text: String(trendy.App.unpackFeatureExtractions(features)),
     fontWeight: 'bold',
     fontSize: '18px'
   }

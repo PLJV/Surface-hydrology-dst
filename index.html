@@ -26,7 +26,7 @@
     susie.setLegendLinear(
         title='Surface Wetness of Most Recent Scene',
         svgId='#legendSvgLastScene',domain=[0,1],
-        labels=[0,1],
+        labels=['','wet'],
         cells=2,
         startColor='rgba(8, 29, 88, 0.01)',
         endColor='rgba(8, 29, 88, 0.98)'
@@ -34,9 +34,9 @@
     susie.setLegendLinear(
         title='Surface Wetness Over Previous Ten Years',
         svgId='#legendSvgHistorical',
-        domain=[1,10],
-        labels=[1,2,3,4,5,6,7,8,9,10],
-        cells=10
+        domain=[0,10],
+        labels=['0.0','0.1','0.2','0.3','0.4','0.5','0.6','0.7','0.8','0.9','1.0'],
+        cells=11
     );">
     <!-- The DOM of our application. -->
     <div class="trendy">

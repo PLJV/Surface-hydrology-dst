@@ -219,13 +219,13 @@ def GetTrendyMapId(image_collection_id, options=None):
   # if no pallet options were specified, assume some sane defaults
   if (options == None):
       options = {
-        'min': '0.1',
+        'min': '0',
         'max' : '1',
         'palette' : 'edf8b1, c7e9b4, 7fcdbb, 41b6c4, 1d91c0, 225ea8, 253494, 081d58',
         'opacity' : '0.95',
       }
   collection = ee.Image(image_collection_id)
-  collection = collection.updateMask(collection.gte(0.1))
+  collection = collection.updateMask(collection.gte(0.001))
 
   return collection.getMapId(options)
 

@@ -76,8 +76,8 @@ body,
       min-width: 340px;
       max-width: 440px;
       height: 72%;
-      min-height: 30px;
-      max-height: 450px;
+      min-height: 500px;
+      max-height: 83%;
       z-index: 999;
     }
 }
@@ -98,7 +98,7 @@ body,
       max-width: 440px;
       height: 60%;
       min-height: 30px;
-      max-height: 400px;
+      max-height: 90%;
       z-index: 999;
     }
 
@@ -125,15 +125,29 @@ body,
   line-height: 1.4rem;
   padding-bottom: 0.4rem;
 }
-
-.instructions .scroll-box {
-    height: 88%;
-    min-height: 20px;
-    max-height: 390px;
-    overflow-y: auto;
-    margin-left: 0px;
-    margin-right: 4px;
-    margin-bottom: -3%;
+@media screen and (orientation:portrait) {
+  .instructions .scroll-box {
+      height: 82%;
+      min-height: 20px;
+      max-height: 90%;
+      overflow-y: auto;
+      margin-left: 0px;
+      margin-right: 4px;
+      margin-top: 10px;
+      margin-bottom: 0px;
+  }
+}
+@media screen and (orientation:landscape) {
+  .instructions .scroll-box {
+      height: 85%;
+      min-height: 20px;
+      max-height: 90%;
+      overflow-y: auto;
+      margin-top: 10px;
+      margin-left: 0px;
+      margin-right: 4px;
+      margin-bottom: 0px;
+  }
 }
 .instructions .header-top {
     height: 5.5%;
@@ -142,13 +156,25 @@ body,
     min-width: 200px;
     vertical-align: top;
 }
-.instructions .bottom-buttons {
-    height: 6%;
-    min-height: 20px;
-    max-height: 30px;
-    min-width: 185px;
-    vertical-align: bottom;
-    margin-top: 5%;
+@media screen and (orientation:portrait) {
+  .instructions .bottom-buttons {
+      height: 20px;
+      min-height: 10px;
+      max-height: 35px;
+      min-width: 185px;
+      vertical-align: bottom;
+      margin-top: 10px;
+  }
+}
+@media screen and (orientation:landscape) {
+  .instructions .bottom-buttons {
+      height: 20px;
+      min-height: 10px;
+      max-height: 35px;
+      min-width: 185px;
+      vertical-align: bottom;
+      margin-top: 10px;
+  }
 }
 .switch {
   position: relative;
@@ -306,9 +332,9 @@ input:checked + .slider:before {
     box-shadow: 2px 2px 5px rgba(0,0,0,0.6);
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
-    font-size: 13px;
-    height: 30%;
-    min-height: 165px;
+    font-size: 16px;
+    height: 24%;
+    min-height: 190px;
     max-height: 300px;
     width: 75%;
     min-width: 290px;
@@ -319,7 +345,7 @@ input:checked + .slider:before {
 @media screen and (orientation:landscape) {
   .legend {
     position: absolute;
-    bottom:0px;
+    bottom:0;
     left: 0;
     padding: 10px;
     margin: 10px;
@@ -327,13 +353,13 @@ input:checked + .slider:before {
     box-shadow: 2px 2px 5px rgba(0,0,0,0.6);
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
-    font-size: 13px;
-    height: 20%;
-    min-height: 180px;
-    max-height: 250px;
-    width: 20%;
-    min-width: 365px;
-    max-width: 26%;
+    font-size: 16px;
+    height: 30%;
+    min-height: 190px;
+    max-height: 200px;
+    width: 75%;
+    min-width: 300px;
+    max-width: 400px;
   }
 }
 
@@ -368,7 +394,7 @@ input:checked + .slider:before {
     position: relative;
     float: right;
     top: 0px;
-    left: -15px;
+    left: -55px;
     max-height: 100%;
     max-width: 95%;
   }
@@ -422,12 +448,14 @@ input:checked + .slider:before {
     min-width: 1%;
     width: 11%;
     max-width: 12%;
-    height: 20%;
+    height: 45%;
+    min-height: 65px;
   }
   .legend .body .layerEntry {
     position: relative;
     float: right;
-    height: 49%;
+    height: 45%;
+    min-height: 65px;
     width: 89%;
     min-width: 89%;
   }
@@ -439,15 +467,16 @@ input:checked + .slider:before {
     float: left;
     top: 10px;
     display: inline-block;
-    min-width: 1%;
-    width: 11%;
+    min-width: 15%;
+    width: 15%;
     height: 40%;
   }
   .legend .body .layerEntry {
     position: relative;
     float: right;
     height: 49%;
-    min-width: 89%;
+    width: 85%;
+    min-width: 85%;
   }
 }
 

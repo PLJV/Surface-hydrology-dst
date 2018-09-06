@@ -820,12 +820,12 @@ carta.ABOUT_CONTACT_INFORMATION_HTML =
     "Landsat 8 satellite is used to map the current surface water extent in the state. Data from the Landsat 5 " +
     "platform was used to map the frequency of historic wetness from 1985 to 2012." +
     "<br><br>"+
-    "The source code for this hydrology viewer is open source (GPLv3). If you are a developer and would like " +
+    "All original source code contributions for this viewer are copyrighted by their respective authors. The viewer itself is released under an open source (<a href=\"https://github.com/PLJV/SurfaceHydrologyDST/blob/master/LICENSE\" target=\"_blank\" rel=\"noopener\">GPLv3</a>). If you are a developer and would like " +
     "to contribute to the project, report a bug, or fork it and make your own, you can get in touch with the " +
     "developers at PLJV using our GitHub project page.<br><br>" +
-    "  • GitHub Project Page (External Site) <br>"+
-    "  • About Playa Lakes Joint Venture (External Site) <br>"+
-    "  • About NRCS (External Site)<br>"+
+    "  • <a href=\"https://github.com/PLJV/SurfaceHydrologyDST/\" target=\"_blank\" rel=\"noopener\">GitHub Project Page</a> (External Site) <br>"+
+    "  • <a href=\"http://pljv.org/about-us/\" target=\"_blank\" rel=\"noopener\">About Playa Lakes Joint Venture</a> (External Site) <br>"+
+    "  • <a href=\"https://www.nrcs.usda.gov/wps/portal/nrcs/main/national/about/\" target=\"_blank\" rel=\"noopener\">About NRCS</a> (External Site)<br>"+
     "<br><br>" +
     "<img src=\"static/pljv_logo.jpg\" height=66></img>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
     "<img src=\"static/usda_logo.jpg\" height=58></img>" +
@@ -896,11 +896,11 @@ susie.setLegendLinear = function(title=undefined, svgId='svg', domain=[0,1], lab
 
   var svg = d3.select(svgId);
 
-
   svg.append("g")
     .attr("class", "legendLinear")
     .attr("transform", "translate(20,20)")
-    .style("font-size","11px")
+    .style("font-size","13px")
+    .style("font-weight", "300")
     .style("font-family","Roboto");
 
   // determine a sane number of pixels for our legend SVG

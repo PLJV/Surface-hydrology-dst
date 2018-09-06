@@ -246,23 +246,23 @@ input:checked + .slider:before {
 }
 /* geocoder control ui */
 .geocoderControl {
-      position: absolute;
-      border-radius: 2px;
-      display: block;
-      border: 0px none;
-      bottom: 151px;
-      right: 0px;
-      padding: 0px;
-      margin: 10px;
-      background-color: white;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-      font-family: 'Roboto', Arial, sans-serif;
-      width: 28px;
-      height: 28px;
-      max-width: 28px;
-      max-height: 28px;
-      background-image: url('magnifying_glass_512x512.png');
-      background-size: contain;
+  position: absolute;
+  border-radius: 2px;
+  display: block;
+  border: 0px none;
+  bottom: 151px;
+  right: 0px;
+  padding: 0px;
+  margin: 10px;
+  background-color: white;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+  font-family: 'Roboto', Arial, sans-serif;
+  width: 28px;
+  height: 28px;
+  max-width: 28px;
+  max-height: 28px;
+  background-image: url('magnifying_glass_512x512.png');
+  background-size: contain;
 }
 .geocoderSearchbox {
   position: fixed;
@@ -273,12 +273,14 @@ input:checked + .slider:before {
   vertical-align: middle;
   box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
   font-family: 'Roboto', Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 300;
   width: 18%;
   height: 2.5%;
   min-width: 70px;
-  max-width: 350px;
-  min-height: 32px;
-  max-height: 48px;
+  max-width: 300px;
+  min-height: 30px;
+  max-height: 40px;
   background-color: #FFFFFF;
   opacity: 0.98;
   box-shadow: 3px 3px 5px #888888;
@@ -290,7 +292,9 @@ input:checked + .slider:before {
   padding-right: 5px;
   padding-top: 3px;
   padding-bottom: 3px;
+  z-index: 999;
 }
+
 /* infobox button control ui */
 .infoboxControl {
       position: absolute;

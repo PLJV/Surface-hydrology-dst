@@ -19,7 +19,7 @@ trendy.boot = function(historicalEeMapId, mostRecentEeMapId, historicalEeToken, 
   google.load('visualization', '1.0');
   google.load('jquery', '1');
   //  this key has domain restrictions associated with it
-  google.load('maps', '3', {'other_params': 'key=AIzaSyDraxoLomEu1kNGyDFpb6K-SU4FSmAFZWc&libraries=drawing'});
+  google.load('maps', '3', {'other_params': 'key=AIzaSyDraxoLomEu1kNGyDFpb6K-SU4FSmAFZWc&libraries=drawing,places'});
   // Create the Trendy Lights app.
   google.setOnLoadCallback(function() {
     /* note our image asset id's here -- we'll use them later */
@@ -91,7 +91,7 @@ trendy.App.createMap = function(mapType) {
 
   var mapEl = $('.map').get(0);
   trendy.App.map = new google.maps.Map(mapEl, trendy.App.defaultMapOptions);
-
+  // set our style options
   trendy.App.map.setOptions({styles: trendy.App.BASE_MAP_STYLE});
   // add our 30 year historical imagery by default
   trendy.App.addLayer(mapType, is='historical');
@@ -106,6 +106,8 @@ trendy.App.createMap = function(mapType) {
   })
   // add the drawing manager control
   trendy.App.addDrawingManagerControl();
+  // initialize our places api service
+  trendy.App.placesService = new google.maps.places.PlacesService(trendy.App.map);
 };
 /**
  * Add an additional layer to an existing map object
@@ -294,6 +296,33 @@ trendy.App.removeAllFeatures = function(){
      trendy.App.polygons = []
   }
 }
+trendy.App.searchByPlace = function(search_string, callback){
+  var request = {
+    query: search_string.toLowerCase(),
+    fields: ['geometry']
+  };
+  if(!callback){
+  trendy.App.placesService.findPlaceFromQuery(
+    request,
+    function(pos){
+      var me = new google.maps.LatLng(
+        pos[0].geometry.location.lat(),
+        pos[0].geometry.location.lng()
+      );
+      trendy.App.map.panTo(me);
+      trendy.App.map.setZoom(14);
+    });
+  } else {
+    trendy.App.placesService.findPlaceFromQuery(
+      request,
+      callback
+    );
+  }
+  // drop the search value and hide the search box
+  trendy.App.search_textinput.value="";
+  document.getElementById('geocoderSearchbox').style.display = "none";
+  window.location.hash = '#map';
+}
 /**
  * Create a marker from location services and pan the map to the user's current
  * location
@@ -321,15 +350,35 @@ trendy.App.toggleInfobox = function(id='instructionsPopout'){
 trendy.App.addGeocoderControl = function(){
   geocoderSearchbox = window.document.querySelector(".geocoderSearchbox");
   // stylize our interface elements
-  var search_textinput = document.createElement('input');
-  search_textinput.type = "text";
-  search_textinput.style.width = "100%";
-  search_textinput.style.height = "100%";
-  search_textinput.style.padding = "5px";
-  search_textinput.style.padding = "0";
-  search_textinput.style.boxSizing = "border-box";
+  trendy.App.search_textinput = document.createElement('input');
+    trendy.App.search_textinput.type = "text";
+    trendy.App.search_textinput.id = "search_textinput";
+    trendy.App.search_textinput.style.width = "74%";
+    trendy.App.search_textinput.style.float = "left";
+    trendy.App.search_textinput.style.height = "98%";
+    trendy.App.search_textinput.style.padding = "5px";
+    trendy.App.search_textinput.style.marginTop = "0.5px";
+    trendy.App.search_textinput.style.boxSizing = "border-box";
+  trendy.App.search_textinput.onkeydown = function(event) {
+    if (event.key == "Enter") {
+      trendy.App.searchByPlace(trendy.App.search_textinput.value)
+    }
+  };
+  trendy.App.search_button = document.createElement('input');
+    trendy.App.search_button.type = "button";
+    trendy.App.search_button.value = "search"
+    trendy.App.search_button.style.width = "24%";
+    trendy.App.search_button.style.float = "right";
+    trendy.App.search_button.style.height = "98%";
+    trendy.App.search_button.style.padding = "5px";
+    trendy.App.search_button.style.marginTop = "0.5px";
+    trendy.App.search_button.style.boxSizing = "border-box";
+  trendy.App.search_button.onclick = function() {
+    trendy.App.searchByPlace(trendy.App.search_textinput.value)
+  };
   // append elements to div
-  geocoderSearchbox.appendChild(search_textinput);
+  geocoderSearchbox.appendChild(trendy.App.search_textinput);
+  geocoderSearchbox.appendChild(trendy.App.search_button);
   geocoderSearchbox.style.display = "none";
 }
 
@@ -338,6 +387,7 @@ trendy.App.toggleGeocoder = function(id='geocoderSearchbox', click_event='none')
   if( document.getElementById(id).style.display === "" | document.getElementById(id).style.display === "block" ){
     // hide it
     document.getElementById(id).style.display = "none"
+    window.location.hash = '#map';
   // else: show it and initiate a query
   } else {
     geocoderSearchbox = window.document.querySelector(".geocoderSearchbox");
@@ -348,6 +398,8 @@ trendy.App.toggleGeocoder = function(id='geocoderSearchbox', click_event='none')
     geocoderSearchbox.style.top = top + "px";
     // show it
     geocoderSearchbox.style.display = "block";
+    // give it focus
+    window.location.hash = '#search_textinput';
   }
 }
 trendy.App.lzCompress = function(string){
@@ -1024,5 +1076,9 @@ menu.export_features = function(){
 }
 menu.remove_all_features = function(){
   trendy.App.removeAllFeatures();
+  menu.hide();
+}
+menu.toggle_search = function(event){
+  trendy.App.toggleGeocoder(id='geocoderSearchbox', click_event=event)
   menu.hide();
 }

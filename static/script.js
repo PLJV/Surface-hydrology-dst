@@ -224,6 +224,12 @@ trendy.App.addDrawingManagerControl = function(show=false){
         return(Math.round((s/x.length)*10000)/10000)
       };
       generateInfoWindow = function(polygon){
+        // async call will store result in trendy.App.polygonFeatureExtraction
+        trendy.App.processFeatures(
+          trendy.App.featuresToJson(trendy.App.polygons, compress=true),
+          trendy.App.historicalAssetId,
+          trendy.App.polygonFeaturesCallback
+        )
         // calculate a centroid from our polygon feature vertices
         // and use it to populate a pop-out label
         var vertices =
@@ -240,10 +246,10 @@ trendy.App.addDrawingManagerControl = function(show=false){
           0.000247105 * google.maps.geometry.spherical.computeArea(polygon.getPath())
         ))
         // add a simple info window pop-out to the canvas
-        var infoWindow = new google.maps.InfoWindow();
-        infoWindow.setContent(label);
-        infoWindow.setPosition(centroid);
-        infoWindow.open(trendy.App.map);
+        trendy.App.infoWindow = new google.maps.InfoWindow();
+        trendy.App.infoWindow.setContent(label);
+        trendy.App.infoWindow.setPosition(centroid);
+        trendy.App.infoWindow.open(trendy.App.map);
       };
       // load the pop-out after initial draw
       generateInfoWindow(trendy.App.polygons[0]);
@@ -361,12 +367,20 @@ trendy.App.featuresToJson = function(features, compress=false) {
   }
   _features_geojson = [];
   features.forEach(function(feature, i){
-    coords = [ feature.getPosition().lng(), feature.getPosition().lat() ];
+    if(feature instanceof google.maps.Polygon) {
+      coords = feature.getPath().getArray().map(function(x){
+        return([ x.lng(), x.lat()])
+      })
+    } else if(feature instanceof google.maps.Marker){
+      coords = [ feature.getPosition().lng(), feature.getPosition().lat() ];
+    } else {
+      coords = [ ]
+    }
     var _feature_json = {
       type:'Feature',
       geometry: {
         type: feature instanceof google.maps.Marker ? "Point" : 'Polygon',
-        coordinates: coords
+        coordinates: feature instanceof google.maps.Marker ? coords : [ coords ]
       },
       properties: {
         'fid': i
@@ -380,9 +394,9 @@ trendy.App.featuresToJson = function(features, compress=false) {
   }
   // pack with lzstring for our URL handler if asked
   if (compress) {
-    features = trendy.App.lzCompress(JSON.stringify(_features_geojson))
+    _features_geojson = trendy.App.lzCompress(JSON.stringify(_features_geojson))
   }
-  return(features)
+  return(_features_geojson)
 }
 trendy.App.unpackFeatureExtractions = function(features){
   _features = []
@@ -427,13 +441,20 @@ trendy.App.processFeatures = function(features, assetId, callBack=null){
     }
   }).bind(this));
 }
-trendy.App.featuresCallback = function(features){
+trendy.App.pointFeaturesCallback = function(features){
   label = {
     text: String(trendy.App.unpackFeatureExtractions(features)),
     fontWeight: 'bold',
     fontSize: '10px'
   }
   trendy.App.markers[0].setLabel(label)
+}
+trendy.App.polygonFeaturesCallback = function(features){
+  extraction = trendy.App.unpackFeatureExtractions(features)
+  label = trendy.App.infoWindow.getContent();
+  label = label + "<br>Area Wet Frequency (Mean) : " + String(
+          Math.round(extraction*100)/100)
+  trendy.App.infoWindow.setContent(label);
 }
 trendy.App.addLocationMarker = function(panTo=true){
   // Add a marker and pan for the default 'go to my location' action
@@ -995,7 +1016,7 @@ menu.toggle_help = function(){
 /* GEE processing methods */
 menu.export_features = function(){
   ft = trendy.App.featuresToJson(trendy.App.markers, true)
-  trendy.App.processFeatures(ft, trendy.App.historicalAssetId, trendy.App.featuresCallback)
+  trendy.App.processFeatures(ft, trendy.App.historicalAssetId, trendy.App.pointFeaturesCallback)
   // hide the menu
   if(menu.menuDisplayed == true){
       menu.menuBox.style.display = "none";

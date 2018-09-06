@@ -131,7 +131,6 @@ class BackendFeatureCollectionHandler(webapp2.RequestHandler):
             compressToEncodedURIComponent(json_str)
         # unpack any lurking JS bug-a-boos
         json_str = json_str.encode("utf-8")
-        json_str = json_str.replace('\'', '"')
         return json_str
 
     def json_to_feature_collection(self, *args):

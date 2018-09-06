@@ -70,7 +70,8 @@ body,
       background-color: white;
       box-shadow: 2px 2px 5px rgba(0,0,0,0.6);
       font-family: 'Roboto', sans-serif;
-      font-size: 11px;
+      font-weight: 300;
+      font-size: 13px;
       width: 25%;
       min-width: 340px;
       max-width: 440px;
@@ -90,7 +91,8 @@ body,
       background-color: white;
       box-shadow: 2px 2px 5px rgba(0,0,0,0.6);
       font-family: 'Roboto', sans-serif;
-      font-size: 11px;
+      font-weight: 300;
+      font-size: 13px;
       width: 90%;
       min-width: 340px;
       max-width: 440px;
@@ -114,7 +116,8 @@ body,
 
 .instructions button{
     margin: 1px;
-    font-size: 11px;
+    font-weight: 300;
+    font-size: 13px;
     font-family: 'Roboto', sans-serif;
 }
 
@@ -302,7 +305,8 @@ input:checked + .slider:before {
     background-color: white;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.6);
     font-family: 'Roboto', sans-serif;
-    font-size: 11px;
+    font-weight: 300;
+    font-size: 13px;
     height: 30%;
     min-height: 165px;
     max-height: 300px;
@@ -322,7 +326,8 @@ input:checked + .slider:before {
     background-color: white;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.6);
     font-family: 'Roboto', sans-serif;
-    font-size: 11px;
+    font-weight: 300;
+    font-size: 13px;
     height: 20%;
     min-height: 180px;
     max-height: 250px;
@@ -494,7 +499,8 @@ input:checked + .slider:before {
   }
 
   .instructions {
-    font-size: 11px;
+    font-weight: 300;
+    font-size: 13px;
   }
 }
 
@@ -529,14 +535,16 @@ input:checked + .slider:before {
   }
 
   .instructions {
-    font-size: 9px;
+    font-weight: 300;
+    font-size: 13px;
   }
 }
 
 .menu
 {
     font-family: 'Roboto', sans-serif;
-    font-size: 11px;
+    font-weight: 300;
+    font-size: 13px;
     width: 180px;
     background-color: #FFFFFF;
     opacity: 0.98;

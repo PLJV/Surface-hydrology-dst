@@ -177,7 +177,7 @@ class BackendFeatureCollectionHandler(webapp2.RequestHandler):
     @asset.setter
     def asset(self, *args):
         self._ASSET_ID = self.unpack_zlib(args[0]) if args[0] else self._ASSET_ID
-        # for debugging
+        # load our asset by id
         self._ASSET = ee.Image(self._ASSET_ID)
 
     def extract(self):
@@ -224,7 +224,7 @@ def GetTrendyMapId(image_collection_id, options=None):
         'opacity' : '0.95',
       }
   collection = ee.Image(image_collection_id)
-  collection = collection.updateMask(collection.gte(0.001))
+  collection = collection.updateMask(collection.gte(0.011))
 
   return collection.getMapId(options)
 

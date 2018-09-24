@@ -356,10 +356,12 @@ kwap.App.addGeocoderControl = function(){
     kwap.App.search_textinput.type = "text";
     kwap.App.search_textinput.id = "search_textinput";
     kwap.App.search_textinput.style.width = "74%";
+    kwap.App.search_textinput.style.fontSize = "13px";
     kwap.App.search_textinput.style.float = "left";
-    kwap.App.search_textinput.style.height = "98%";
-    kwap.App.search_textinput.style.padding = "5px";
-    kwap.App.search_textinput.style.marginTop = "0.5px";
+    kwap.App.search_textinput.style.height = "32px";
+    kwap.App.search_textinput.style.maxHeight = "32px";
+    kwap.App.search_textinput.style.lineHeight = "32px";
+    kwap.App.search_textinput.style.padding = "0";
     kwap.App.search_textinput.style.boxSizing = "border-box";
   kwap.App.search_textinput.onkeydown = function(event) {
     if (event.key == "Enter") {
@@ -371,9 +373,10 @@ kwap.App.addGeocoderControl = function(){
     kwap.App.search_button.value = "search"
     kwap.App.search_button.style.width = "24%";
     kwap.App.search_button.style.float = "right";
-    kwap.App.search_button.style.height = "98%";
-    kwap.App.search_button.style.padding = "5px";
-    kwap.App.search_button.style.marginTop = "0.5px";
+    kwap.App.search_button.style.height = "32px";
+    kwap.App.search_button.style.maxHeight = "32px";
+    kwap.App.search_button.style.padding = "0";
+
     kwap.App.search_button.style.boxSizing = "border-box";
   kwap.App.search_button.onclick = function() {
     kwap.App.searchByPlace(kwap.App.search_textinput.value)

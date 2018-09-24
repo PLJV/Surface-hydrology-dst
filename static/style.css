@@ -75,9 +75,9 @@ body,
       width: 25%;
       min-width: 340px;
       max-width: 440px;
-      height: 72%;
+      height: 560px;
       min-height: 500px;
-      max-height: 83%;
+      max-height: 580px;
       z-index: 999;
     }
 }
@@ -96,9 +96,9 @@ body,
       width: 90%;
       min-width: 340px;
       max-width: 440px;
-      height: 60%;
+      height: 350px;
       min-height: 30px;
-      max-height: 90%;
+      max-height: 450px;
       z-index: 999;
     }
 
@@ -127,9 +127,9 @@ body,
 }
 @media screen and (orientation:portrait) {
   .instructions .scroll-box {
-      height: 82%;
+      height: 250px;
       min-height: 20px;
-      max-height: 90%;
+      max-height: 260px;
       overflow-y: auto;
       margin-left: 0px;
       margin-right: 4px;
@@ -139,9 +139,9 @@ body,
 }
 @media screen and (orientation:landscape) {
   .instructions .scroll-box {
-      height: 85%;
+      height: 480px;
       min-height: 20px;
-      max-height: 90%;
+      max-height: 490px;
       overflow-y: auto;
       margin-top: 10px;
       margin-left: 0px;
@@ -173,7 +173,7 @@ body,
       max-height: 35px;
       min-width: 185px;
       vertical-align: bottom;
-      margin-top: 25px;
+      margin-top: 11px;
   }
 }
 .switch {
@@ -275,10 +275,10 @@ input:checked + .slider:before {
   font-family: 'Roboto', Arial, sans-serif;
   font-size: 13px;
   font-weight: 300;
-  width: 18%;
-  height: 2.5%;
-  min-width: 70px;
-  max-width: 300px;
+  width: 350px;
+  height: 32px;
+  min-width: 200px;
+  max-width: 350px;
   min-height: 30px;
   max-height: 40px;
   background-color: #FFFFFF;

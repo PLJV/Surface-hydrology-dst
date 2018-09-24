@@ -87,8 +87,8 @@ def exportImageToAsset(image=None, assetId=None, region=None, timeout_minutes=30
     task = ee.batch.Export.image.toAsset(
         image=image,
         assetId=assetId,
-        scale=30,
-        maxPixels=400000000,
+        scale=10,
+        maxPixels=40000000000,
         region=region,
         description='Generating LS8 last wet scene product'
     )

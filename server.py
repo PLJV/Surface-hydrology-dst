@@ -224,7 +224,7 @@ def GetTrendyMapId(image_collection_id, options=None):
         'opacity' : '0.95',
       }
   collection = ee.Image(image_collection_id)
-  collection = collection.updateMask(collection.gte(0.015))
+  collection = collection.updateMask(collection.gte(0.03))
 
   return collection.getMapId(options)
 

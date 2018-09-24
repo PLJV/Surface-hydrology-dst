@@ -39,13 +39,13 @@
         cells=11
     );">
     <!-- The DOM of our application. -->
-    <div class="trendy">
+    <div class="kwap">
       <!-- A container which the Maps API will populate with a map. -->
       <div class="map"></div>
-      <div class="myLocationControl" id="myLocationControl" onclick="javascript:trendy.App.addLocationMarker()"></div>
+      <div class="myLocationControl" id="myLocationControl" onclick="javascript:kwap.App.addLocationMarker()"></div>
       <div class="geocoderSearchbox" id="geocoderSearchbox"></div>
-      <div class="geocoderControl" id="geocoderControl" onclick="javascript:trendy.App.toggleGeocoder(id='geocoderSearchbox', click_event=event)"></div>
-      <div class="infoboxControl" id="infoboxControl" onclick="javascript:trendy.App.toggleInfobox()"></div>
+      <div class="geocoderControl" id="geocoderControl" onclick="javascript:kwap.App.toggleGeocoder(id='geocoderSearchbox', click_event=event)"></div>
+      <div class="infoboxControl" id="infoboxControl" onclick="javascript:kwap.App.toggleInfobox()"></div>
       <!-- contextmenu contents -->
       <div class="menu">
         <div class="menu-item" onclick="javascript:menu.export_features();">Export Features (Spreadsheet)</div>
@@ -135,8 +135,8 @@
     </div>
     <!-- Boot our JavaScript once the body has loaded. -->
     <script>
-    // boot our map interface through trendy
-      trendy.boot(
+    // boot our map interface through kwap
+      kwap.boot(
           '{{ historicalEeMapId | safe }}',
           '{{ mostRecentEeMapId | safe }}',
           '{{ historicalEeToken | safe }}',

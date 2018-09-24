@@ -5,35 +5,40 @@
  * Copyright: Playa Lakes Joint Venture (2017)
  */
 
-trendy = {};  // Our namespace.
+kwap = {};  // Our namespace.
 
 /**
- * Starts the Trendy Lights application. The main entry point for the app.
+ * Starts the web application. The main entry point for the app.
  * @param {string} eeMapId The Earth Engine map ID.
  * @param {string} eeToken The Earth Engine map token.
  * @param {string} serializedPolygonIds A serialized array of the IDs of the
  *     polygons to show on the map. For example: "['poland', 'moldova']".
  */
-trendy.boot = function(historicalEeMapId, mostRecentEeMapId, historicalEeToken, mostRecentEeToken) {
+kwap.boot = function(historicalEeMapId, mostRecentEeMapId, historicalEeToken, mostRecentEeToken) {
   // Load external libraries.
   google.load('visualization', '1.0');
   google.load('jquery', '1');
   //  this key has domain restrictions associated with it
   google.load('maps', '3', {'other_params': 'key=AIzaSyDraxoLomEu1kNGyDFpb6K-SU4FSmAFZWc&libraries=drawing,places'});
-  // Create the Trendy Lights app.
+  // Create the web app.
   google.setOnLoadCallback(function() {
     /* note our image asset id's here -- we'll use them later */
-    trendy.App.historicalAssetId = 'users/adaniels/shared/LC5historicwetness_10m'
-    trendy.App.mostRecentAssetId = 'users/kyletaylor/shared/LC8dynamicwater'
+    kwap.App.historicalAssetId = 'users/adaniels/shared/LC5historicwetness_10m'
+    kwap.App.mostRecentAssetId = 'users/kyletaylor/shared/LC8dynamicwater'
     /* create layers for each asset */
-    trendy.App.historicalLayer = trendy.App.getEeMapType(historicalEeMapId, historicalEeToken);
-    trendy.App.mostRecentLayer = trendy.App.getEeMapType(mostRecentEeMapId, mostRecentEeToken);
+    kwap.App.historicalLayer = kwap.App.getEeMapType(historicalEeMapId, historicalEeToken);
+    kwap.App.mostRecentLayer = kwap.App.getEeMapType(mostRecentEeMapId, mostRecentEeToken);
     // calls createMap() with our historical layer
-    trendy.App(trendy.App.historicalLayer);
-    trendy.App.addLayer(trendy.App.mostRecentLayer, id='mostRecent');
+    kwap.App(kwap.App.historicalLayer);
+    kwap.App.addLayer(kwap.App.mostRecentLayer, id='mostRecent');
   });
   // initialize any lurking div elements for controls
-  trendy.App.addGeocoderControl();
+  kwap.App.addGeocoderControl();
+  // empty initialization for our polygons, points, and
+  // drawing manager shape cache
+  kwap.App.polygons = [];
+  kwap.App.points = [];
+  kwap.App.shape_extractions = []
 };
 
 
@@ -44,20 +49,20 @@ trendy.boot = function(historicalEeMapId, mostRecentEeMapId, historicalEeToken, 
 
 
 /**
- * The main Trendy Lights application.
+ * The main web application.
  * This constructor renders the UI and sets up event handling.
  * @param {google.maps.ImageMapType} mapType The map type to render on the map.
  * @param {Array<string>} polygonIds The IDs of the polygons to show on the map.
  *     For example ['poland', 'moldova'].
  * @constructor
  */
-trendy.App = function(mapType, polygonIds) {
+kwap.App = function(mapType, polygonIds) {
   // Create and display the map.
-  trendy.App.createMap(mapType);
+  kwap.App.createMap(mapType);
   // Fix our default zoom levels
   // Add a move listener to restrict the bounds range
-  trendy.App.map.addListener('center_changed', function() {
-    trendy.App.checkBounds();
+  kwap.App.map.addListener('center_changed', function() {
+    kwap.App.checkBounds();
   });
 };
 
@@ -68,13 +73,13 @@ trendy.App = function(mapType, polygonIds) {
  * @param {google.maps.ImageMapType} mapType The map type to include on the map.
  * @return {google.maps.Map} A map instance with the map type rendered.
  */
-trendy.App.createMap = function(mapType) {
+kwap.App.createMap = function(mapType) {
   // initialize our layers stack
-  trendy.App.numLayers = 0;
-  trendy.App.defaultMapOptions = {
+  kwap.App.numLayers = 0;
+  kwap.App.defaultMapOptions = {
     backgroundColor: '#00000',
-    center: trendy.App.DEFAULT_CENTER,
-    zoom: trendy.App.DEFAULT_ZOOM,
+    center: kwap.App.DEFAULT_CENTER,
+    zoom: kwap.App.DEFAULT_ZOOM,
     mapTypeId: google.maps.MapTypeId.TERRAIN,
     minZoom: 4,
     maxZoom: 17,
@@ -86,92 +91,89 @@ trendy.App.createMap = function(mapType) {
     }
   };
                                  //Lower, Left                    //Upper, Right
-  trendy.App.allowedBounds = new google.maps.
+  kwap.App.allowedBounds = new google.maps.
     LatLngBounds(new google.maps.LatLng(37,-102), new google.maps.LatLng(40.1,-94.58));
 
   var mapEl = $('.map').get(0);
-  trendy.App.map = new google.maps.Map(mapEl, trendy.App.defaultMapOptions);
+  kwap.App.map = new google.maps.Map(mapEl, kwap.App.defaultMapOptions);
   // set our style options
-  trendy.App.map.setOptions({styles: trendy.App.BASE_MAP_STYLE});
+  kwap.App.map.setOptions({styles: kwap.App.BASE_MAP_STYLE});
   // add our 30 year historical imagery by default
-  trendy.App.addLayer(mapType, is='historical');
+  kwap.App.addLayer(mapType, is='historical');
   // now add the boundary for the state of Kansas
-  trendy.App.map.data.loadGeoJson('static/kansas.json');
-  trendy.App.map.data.setStyle({
+  kwap.App.map.data.loadGeoJson('static/kansas.json');
+  kwap.App.map.data.setStyle({
     fillColor: 'white',
     fillOpacity:0,
     strokeColor: "#f7f7f7",
     strokeOpacity: 0.9,
-    strokeWeight: 1
+    strokeWeight: 1.5
   })
   // add the drawing manager control
-  trendy.App.addDrawingManagerControl();
+  kwap.App.addDrawingManagerControl();
   // initialize our places api service
-  trendy.App.placesService = new google.maps.places.PlacesService(trendy.App.map);
+  kwap.App.placesService = new google.maps.places.PlacesService(kwap.App.map);
 };
 /**
  * Add an additional layer to an existing map object
  */
- trendy.App.addLayer = function(mapType, id){
-    trendy.App.map.overlayMapTypes.push(mapType);
-    trendy.App.numLayers += 1
+ kwap.App.addLayer = function(mapType, id){
+    kwap.App.map.overlayMapTypes.push(mapType);
+    kwap.App.numLayers += 1
     if(id.includes("istor")){
-      trendy.App.historicalLayer.at = (trendy.App.numLayers-1)
+      kwap.App.historicalLayer.at = (kwap.App.numLayers-1)
     } else if(id.includes("ost")) {
-      trendy.App.mostRecentLayer.at = (trendy.App.numLayers-1)
+      kwap.App.mostRecentLayer.at = (kwap.App.numLayers-1)
     }
  }
- trendy.App.removeLayer = function(id){
+ kwap.App.removeLayer = function(id){
    if(id.includes("istor")){
-     trendy.App.map.overlayMapTypes.removeAt(trendy.App.historicalLayer.at);
-     trendy.App.historicalLayer.at = null
-     trendy.App.numLayers -= 1
+     kwap.App.map.overlayMapTypes.removeAt(kwap.App.historicalLayer.at);
+     kwap.App.historicalLayer.at = null
+     kwap.App.numLayers -= 1
      // if we still have the other layer on the map, adjust it's array pos
-     if(trendy.App.mostRecentLayer.at){
-       trendy.App.mostRecentLayer.at -= 1
+     if(kwap.App.mostRecentLayer.at){
+       kwap.App.mostRecentLayer.at -= 1
      }
    } else if(id.includes("ost")){
-     trendy.App.map.overlayMapTypes.removeAt(trendy.App.mostRecentLayer.at);
-     trendy.App.mostRecentLayer.at = null
-     trendy.App.numLayers -= 1
+     kwap.App.map.overlayMapTypes.removeAt(kwap.App.mostRecentLayer.at);
+     kwap.App.mostRecentLayer.at = null
+     kwap.App.numLayers -= 1
      // if we still have the other layer on the map, adjust it's array pos
-     if(trendy.App.historicalLayer.at){
-       trendy.App.historicalLayer.at -= 1
+     if(kwap.App.historicalLayer.at){
+       kwap.App.historicalLayer.at -= 1
      }
    }
  }
 /**
  * If the map position is out of range, move it back
  */
-trendy.App.checkBounds = function() {
+kwap.App.checkBounds = function() {
       // Perform the check and return if OK
-      if (trendy.App.allowedBounds.contains(trendy.App.map.getCenter())) {
+      if (kwap.App.allowedBounds.contains(kwap.App.map.getCenter())) {
         return;
       }
       // If it`s not OK, find the nearest allowed point and move there
-      var C = trendy.App.map.getCenter();
+      var C = kwap.App.map.getCenter();
       var X = C.lng();
       var Y = C.lat();
 
-      var AmaxX = trendy.App.allowedBounds.getNorthEast().lng();
-      var AmaxY = trendy.App.allowedBounds.getNorthEast().lat();
-      var AminX = trendy.App.allowedBounds.getSouthWest().lng();
-      var AminY = trendy.App.allowedBounds.getSouthWest().lat();
+      var AmaxX = kwap.App.allowedBounds.getNorthEast().lng();
+      var AmaxY = kwap.App.allowedBounds.getNorthEast().lat();
+      var AminX = kwap.App.allowedBounds.getSouthWest().lng();
+      var AminY = kwap.App.allowedBounds.getSouthWest().lat();
 
       if (X < AminX) {X = AminX;}
       if (X > AmaxX) {X = AmaxX;}
       if (Y < AminY) {Y = AminY;}
       if (Y > AmaxY) {Y = AmaxY;}
       //alert ("Restricting "+Y+" "+X);
-      trendy.App.map.panTo(new google.maps.LatLng(Y,X));
+      kwap.App.map.panTo(new google.maps.LatLng(Y,X));
 }
 
-trendy.App.addDrawingManagerControl = function(show=false){
-  // create some array space for any markers or polygons
-  trendy.App.markers = [];
-  trendy.App.polygons = [];
+kwap.App.addDrawingManagerControl = function(show=false){
   // load our drawing manager interface
-  trendy.App.drawingManager = new google.maps.drawing.DrawingManager({
+  kwap.App.drawingManager = new google.maps.drawing.DrawingManager({
     drawingMode: google.maps.drawing.OverlayType.MARKER,
     drawingControlOptions: {
       drawingModes: ['marker','polygon','rectangle'],
@@ -182,14 +184,14 @@ trendy.App.addDrawingManagerControl = function(show=false){
     rectangleOptions: { editable: true}
   });
   // show method
-  trendy.App.drawingManager.show = function(){
-    trendy.App.map.setOptions({ drawingControl: true });
+  kwap.App.drawingManager.show = function(){
+    kwap.App.map.setOptions({ drawingControl: true });
   }
   // hide method
-  trendy.App.drawingManager.hide = function(){
-    trendy.App.map.setOptions({ drawingControl: false });
+  kwap.App.drawingManager.hide = function(){
+    kwap.App.map.setOptions({ drawingControl: false });
   }
-  google.maps.event.addListener(trendy.App.drawingManager, 'overlaycomplete', function(event) {
+  google.maps.event.addListener(kwap.App.drawingManager, 'overlaycomplete', function(event) {
     rectangleToPolygon = function(x){
       bounds = x.getBounds()
       bounds = [
@@ -205,17 +207,17 @@ trendy.App.addDrawingManagerControl = function(show=false){
     .RECTANGLE) )
      {
       // clear the existing stack
-      if (trendy.App.polygons.length > 0) {
-        trendy.App.polygons[trendy.App.polygons.length - 1].setMap(null);
-        trendy.App.polygons.pop();
+      if (kwap.App.polygons.length > 0) {
+        kwap.App.polygons[kwap.App.polygons.length - 1].setMap(null);
+        kwap.App.polygons.pop();
       }
       // convert RECTANGLE -> POLYGON (if needed) and push onto our stack
       if (event.type == google.maps.drawing.OverlayType.RECTANGLE) {
-        trendy.App.polygons.push(rectangleToPolygon(event.overlay));
+        kwap.App.polygons.push(rectangleToPolygon(event.overlay));
         event.overlay.setMap(null);
-        trendy.App.polygons[0].setMap(trendy.App.map);
+        kwap.App.polygons[0].setMap(kwap.App.map);
       } else {
-        trendy.App.polygons.push(event.overlay);
+        kwap.App.polygons.push(event.overlay);
       }
       // add an area label as an info window with common event triggers
       mean = function(x){
@@ -226,11 +228,11 @@ trendy.App.addDrawingManagerControl = function(show=false){
         return(Math.round((s/x.length)*10000)/10000)
       };
       generateInfoWindow = function(polygon){
-        // async call will store result in trendy.App.polygonFeatureExtraction
-        trendy.App.processFeatures(
-          trendy.App.featuresToJson(trendy.App.polygons, compress=true),
-          trendy.App.historicalAssetId,
-          trendy.App.polygonFeaturesCallback
+        // async call will store result in kwap.App.polygonFeatureExtraction
+        kwap.App.processFeatures(
+          kwap.App.featuresToJson(kwap.App.polygons, compress=true),
+          kwap.App.historicalAssetId,
+          kwap.App.polygonFeaturesCallback
         )
         // calculate a centroid from our polygon feature vertices
         // and use it to populate a pop-out label
@@ -248,78 +250,78 @@ trendy.App.addDrawingManagerControl = function(show=false){
           0.000247105 * google.maps.geometry.spherical.computeArea(polygon.getPath())
         ))
         // add a simple info window pop-out to the canvas
-        trendy.App.infoWindow = new google.maps.InfoWindow();
-        trendy.App.infoWindow.setContent(label);
-        trendy.App.infoWindow.setPosition(centroid);
-        trendy.App.infoWindow.open(trendy.App.map);
+        kwap.App.infoWindow = new google.maps.InfoWindow();
+        kwap.App.infoWindow.setContent(label);
+        kwap.App.infoWindow.setPosition(centroid);
+        kwap.App.infoWindow.open(kwap.App.map);
       };
       // load the pop-out after initial draw
-      generateInfoWindow(trendy.App.polygons[0]);
+      generateInfoWindow(kwap.App.polygons[0]);
       // add a single click and resize event handler(s) to do the same
-      google.maps.event.addListener(trendy.App.polygons[0], 'click', function (e) {
-        generateInfoWindow(trendy.App.polygons[0]);
+      google.maps.event.addListener(kwap.App.polygons[0], 'click', function (e) {
+        generateInfoWindow(kwap.App.polygons[0]);
       });
-      google.maps.event.addListener(trendy.App.polygons[0], 'resize', function (e){
-        generateInfoWindow(trendy.App.polygons[0]);
+      google.maps.event.addListener(kwap.App.polygons[0], 'resize', function (e){
+        generateInfoWindow(kwap.App.polygons[0]);
       });
       // set visible on canvas
-      trendy.App.polygons[0].setMap(trendy.App.map);
+      kwap.App.polygons[0].setMap(kwap.App.map);
     /* event handlers for MARKER geometries */
     } else if(event.type == google.maps.drawing.OverlayType.MARKER) {
-      if (trendy.App.markers.length > 0) {
-        trendy.App.markers[trendy.App.markers.length - 1].setMap(null);
-        trendy.App.markers.pop();
+      if (kwap.App.markers.length > 0) {
+        kwap.App.markers[kwap.App.markers.length - 1].setMap(null);
+        kwap.App.markers.pop();
       }
-      trendy.App.markers.push(event.overlay);
-      google.maps.event.addListener(trendy.App.markers[0], 'dragend', function (e) {
+      kwap.App.markers.push(event.overlay);
+      google.maps.event.addListener(kwap.App.markers[0], 'dragend', function (e) {
         menu.export_features();
       });
-      trendy.App.markers[0].setMap(trendy.App.map);
+      kwap.App.markers[0].setMap(kwap.App.map);
       // fire our earth engine reduce operation automatically on 'done'
       menu.export_features();
     }
   });
   // by default, the drawing manager is hidden -- let's show it
-  trendy.App.drawingManager.setMap(trendy.App.map);
+  kwap.App.drawingManager.setMap(kwap.App.map);
   if(show){
-    trendy.App.drawingManager.show();
+    kwap.App.drawingManager.show();
   }
 }
 
-trendy.App.removeAllFeatures = function(){
-  for (var i = 0; i < trendy.App.markers.length; i++) {
-     trendy.App.markers[i].setMap(null);
-     trendy.App.markers = []
+kwap.App.removeAllFeatures = function(){
+  for (var i = 0; i < kwap.App.markers.length; i++) {
+     kwap.App.markers[i].setMap(null);
+     kwap.App.markers = []
   }
-  for (var i = 0; i < trendy.App.polygons.length; i++) {
-     trendy.App.polygons[i].setMap(null);
-     trendy.App.polygons = []
+  for (var i = 0; i < kwap.App.polygons.length; i++) {
+     kwap.App.polygons[i].setMap(null);
+     kwap.App.polygons = [];
   }
 }
-trendy.App.searchByPlace = function(search_string, callback){
+kwap.App.searchByPlace = function(search_string, callback){
   var request = {
     query: search_string.toLowerCase(),
     fields: ['geometry']
   };
   if(!callback){
-  trendy.App.placesService.findPlaceFromQuery(
+  kwap.App.placesService.findPlaceFromQuery(
     request,
     function(pos){
       var me = new google.maps.LatLng(
         pos[0].geometry.location.lat(),
         pos[0].geometry.location.lng()
       );
-      trendy.App.map.panTo(me);
-      trendy.App.map.setZoom(14);
+      kwap.App.map.panTo(me);
+      kwap.App.map.setZoom(14);
     });
   } else {
-    trendy.App.placesService.findPlaceFromQuery(
+    kwap.App.placesService.findPlaceFromQuery(
       request,
       callback
     );
   }
   // drop the search value and hide the search box
-  trendy.App.search_textinput.value="";
+  kwap.App.search_textinput.value="";
   document.getElementById('geocoderSearchbox').style.display = "none";
   window.location.hash = '#map';
 }
@@ -327,7 +329,7 @@ trendy.App.searchByPlace = function(search_string, callback){
  * Create a marker from location services and pan the map to the user's current
  * location
  */
-trendy.App.addInfoboxControl = function(controlDiv){
+kwap.App.addInfoboxControl = function(controlDiv){
   var infoboxControl = document.createElement('div');
   myLocationControl.title = 'information';
   controlDiv.appendChild(infoboxControl);
@@ -336,7 +338,7 @@ trendy.App.addInfoboxControl = function(controlDiv){
   controlUI.appendChild(controlText);
 }
 
-trendy.App.toggleInfobox = function(id='instructionsPopout'){
+kwap.App.toggleInfobox = function(id='instructionsPopout'){
   // is the infobox currently displayed?
   if( document.getElementById(id).style.display === "" | document.getElementById(id).style.display === "block" ){
     // hide it
@@ -347,42 +349,42 @@ trendy.App.toggleInfobox = function(id='instructionsPopout'){
   }
 }
 
-trendy.App.addGeocoderControl = function(){
+kwap.App.addGeocoderControl = function(){
   geocoderSearchbox = window.document.querySelector(".geocoderSearchbox");
   // stylize our interface elements
-  trendy.App.search_textinput = document.createElement('input');
-    trendy.App.search_textinput.type = "text";
-    trendy.App.search_textinput.id = "search_textinput";
-    trendy.App.search_textinput.style.width = "74%";
-    trendy.App.search_textinput.style.float = "left";
-    trendy.App.search_textinput.style.height = "98%";
-    trendy.App.search_textinput.style.padding = "5px";
-    trendy.App.search_textinput.style.marginTop = "0.5px";
-    trendy.App.search_textinput.style.boxSizing = "border-box";
-  trendy.App.search_textinput.onkeydown = function(event) {
+  kwap.App.search_textinput = document.createElement('input');
+    kwap.App.search_textinput.type = "text";
+    kwap.App.search_textinput.id = "search_textinput";
+    kwap.App.search_textinput.style.width = "74%";
+    kwap.App.search_textinput.style.float = "left";
+    kwap.App.search_textinput.style.height = "98%";
+    kwap.App.search_textinput.style.padding = "5px";
+    kwap.App.search_textinput.style.marginTop = "0.5px";
+    kwap.App.search_textinput.style.boxSizing = "border-box";
+  kwap.App.search_textinput.onkeydown = function(event) {
     if (event.key == "Enter") {
-      trendy.App.searchByPlace(trendy.App.search_textinput.value)
+      kwap.App.searchByPlace(kwap.App.search_textinput.value)
     }
   };
-  trendy.App.search_button = document.createElement('input');
-    trendy.App.search_button.type = "button";
-    trendy.App.search_button.value = "search"
-    trendy.App.search_button.style.width = "24%";
-    trendy.App.search_button.style.float = "right";
-    trendy.App.search_button.style.height = "98%";
-    trendy.App.search_button.style.padding = "5px";
-    trendy.App.search_button.style.marginTop = "0.5px";
-    trendy.App.search_button.style.boxSizing = "border-box";
-  trendy.App.search_button.onclick = function() {
-    trendy.App.searchByPlace(trendy.App.search_textinput.value)
+  kwap.App.search_button = document.createElement('input');
+    kwap.App.search_button.type = "button";
+    kwap.App.search_button.value = "search"
+    kwap.App.search_button.style.width = "24%";
+    kwap.App.search_button.style.float = "right";
+    kwap.App.search_button.style.height = "98%";
+    kwap.App.search_button.style.padding = "5px";
+    kwap.App.search_button.style.marginTop = "0.5px";
+    kwap.App.search_button.style.boxSizing = "border-box";
+  kwap.App.search_button.onclick = function() {
+    kwap.App.searchByPlace(kwap.App.search_textinput.value)
   };
   // append elements to div
-  geocoderSearchbox.appendChild(trendy.App.search_textinput);
-  geocoderSearchbox.appendChild(trendy.App.search_button);
+  geocoderSearchbox.appendChild(kwap.App.search_textinput);
+  geocoderSearchbox.appendChild(kwap.App.search_button);
   geocoderSearchbox.style.display = "none";
 }
 
-trendy.App.toggleGeocoder = function(id='geocoderSearchbox', click_event='none'){
+kwap.App.toggleGeocoder = function(id='geocoderSearchbox', click_event='none'){
   // is the geocoder search box currently displayed?
   if( document.getElementById(id).style.display === "" | document.getElementById(id).style.display === "block" ){
     // hide it
@@ -402,18 +404,38 @@ trendy.App.toggleGeocoder = function(id='geocoderSearchbox', click_event='none')
     window.location.hash = '#search_textinput';
   }
 }
-trendy.App.lzCompress = function(string){
+/*
+ * downloadCSV()
+ * accepts a URI encoded string as text input and saves
+ * the result to disk as a CSV file using the browser's
+ * default download file dialog
+ */
+kwap.App.downloadCSV = function(filename, text){
+    var pom = document.createElement('a');
+    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    pom.setAttribute('download', filename);
+
+    if (document.createEvent) {
+        var event = document.createEvent('MouseEvents');
+        event.initEvent('click', true, true);
+        pom.dispatchEvent(event);
+    }
+    else {
+        pom.click();
+    }
+}
+kwap.App.lzCompress = function(string){
   // default : compressToEncodedURIComponent -- we lose a little bit of
   // shrinkage here, but we end-up with strings that are compatible with
   // our HTTP handlers
   return(LZString.compressToEncodedURIComponent(string))
 }
-trendy.App.lzDecompress = function(string){
+kwap.App.lzDecompress = function(string){
   return(LZString.decompressFromEncodedURIComponent(string))
 }
 // quick and dirty Google Maps Data -> GeoJSON converter that will dump
 // a MultiPoint or MultiPolygon object as a json string.
-trendy.App.featuresToJson = function(features, compress=false) {
+kwap.App.featuresToJson = function(features, compress=false) {
   if (typeof(features) == "string"){
     return(JSON.parse(features))
   }
@@ -446,11 +468,11 @@ trendy.App.featuresToJson = function(features, compress=false) {
   }
   // pack with lzstring for our URL handler if asked
   if (compress) {
-    _features_geojson = trendy.App.lzCompress(JSON.stringify(_features_geojson))
+    _features_geojson = kwap.App.lzCompress(JSON.stringify(_features_geojson))
   }
   return(_features_geojson)
 }
-trendy.App.unpackFeatureExtractions = function(features){
+kwap.App.unpackFeatureExtractions = function(features){
   _features = []
   for(i=0; i < features.length; i++){
     if(features[i]['properties'].length<2){
@@ -462,9 +484,9 @@ trendy.App.unpackFeatureExtractions = function(features){
   }
   return(_features)
 }
-trendy.App.processFeatures = function(features, assetId, callBack=null){
+kwap.App.processFeatures = function(features, assetId, callBack=null){
   // Asynchronously load and show details about the point feature
-  uuAssetId = trendy.App.lzCompress(assetId)
+  uuAssetId = kwap.App.lzCompress(assetId)
   $.get('/extract?features=' + features + '&assetId=' + uuAssetId).done((function(data) {
     if (data['error']) {
       //$('.panel .error').show().html(data['error']);
@@ -475,40 +497,40 @@ trendy.App.processFeatures = function(features, assetId, callBack=null){
       comp_str = data
     }
     if(assetId.includes('hist')){
-      trendy.App.historical_ext = trendy.App.featuresToJson(
-        trendy.App.lzDecompress(comp_str)
+      kwap.App.historical_ext = kwap.App.featuresToJson(
+        kwap.App.lzDecompress(comp_str)
       )
       // use our user-specified callback
       if (callBack != null){
-        callBack(trendy.App.historical_ext)
+        callBack(kwap.App.historical_ext)
       }
     } else {
-      trendy.App.lastWetScene_ext = trendy.App.featuresToJson(
-        trendy.App.lzDecompress(comp_str)
+      kwap.App.lastWetScene_ext = kwap.App.featuresToJson(
+        kwap.App.lzDecompress(comp_str)
       )
       // use our user-specified callback
       if (callBack != null){
-        callBack(trendy.App.lastWetScene_ext)
+        callBack(kwap.App.lastWetScene_ext)
       }
     }
   }).bind(this));
 }
-trendy.App.pointFeaturesCallback = function(features){
+kwap.App.pointFeaturesCallback = function(features){
   label = {
-    text: String(trendy.App.unpackFeatureExtractions(features)),
+    text: String(kwap.App.unpackFeatureExtractions(features)),
     fontWeight: 'bold',
     fontSize: '10px'
   }
-  trendy.App.markers[0].setLabel(label)
+  kwap.App.markers[0].setLabel(label)
 }
-trendy.App.polygonFeaturesCallback = function(features){
-  extraction = trendy.App.unpackFeatureExtractions(features)
-  label = trendy.App.infoWindow.getContent();
+kwap.App.polygonFeaturesCallback = function(features){
+  extraction = kwap.App.unpackFeatureExtractions(features)
+  label = kwap.App.infoWindow.getContent();
   label = label + "<br>Area Wet Frequency (Mean) : " + String(
           Math.round(extraction*100)/100)
-  trendy.App.infoWindow.setContent(label);
+  kwap.App.infoWindow.setContent(label);
 }
-trendy.App.addLocationMarker = function(panTo=true){
+kwap.App.addLocationMarker = function(panTo=true){
   // Add a marker and pan for the default 'go to my location' action
   var myLocationIcon = new google.maps.Marker({
     clickable: false,
@@ -519,14 +541,14 @@ trendy.App.addLocationMarker = function(panTo=true){
       ),
       shadow: null,
       zIndex: 999,
-      map: trendy.App.map
+      map: kwap.App.map
   });
   if (navigator.geolocation) navigator.geolocation.getCurrentPosition(function(pos) {
       var me = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
       myLocationIcon.setPosition(me);
       if(panTo){
-        trendy.App.map.panTo(me);
-        trendy.App.map.setZoom(14)
+        kwap.App.map.panTo(me);
+        kwap.App.map.setZoom(14)
       }
   }, function(error) {
       console.log(error)
@@ -548,10 +570,10 @@ trendy.App.addLocationMarker = function(panTo=true){
  * @return {google.maps.ImageMapType} A Google Maps ImageMapType object for the
  *     EE map with the given ID and token.
  */
-trendy.App.getEeMapType = function(eeMapId, eeToken) {
+kwap.App.getEeMapType = function(eeMapId, eeToken) {
   var eeMapOptions = {
     getTileUrl: function(tile, zoom) {
-      var url = trendy.App.EE_URL + '/map/';
+      var url = kwap.App.EE_URL + '/map/';
       url += [eeMapId, zoom, tile.x, tile.y].join('/');
       url += '?token=' + eeToken;
       return url;
@@ -563,22 +585,22 @@ trendy.App.getEeMapType = function(eeMapId, eeToken) {
 
 
 /** @type {string} The Earth Engine API URL. */
-trendy.App.EE_URL = 'https://earthengine.googleapis.com';
+kwap.App.EE_URL = 'https://earthengine.googleapis.com';
 
 
 /** @type {number} The default zoom level for the map. */
-trendy.App.DEFAULT_ZOOM = 9;
+kwap.App.DEFAULT_ZOOM = 9;
 
 
 /** @type {Object} The default center of the map. */
-trendy.App.DEFAULT_CENTER = {lng: -98.38, lat: 38.48};
+kwap.App.DEFAULT_CENTER = {lng: -98.38, lat: 38.48};
 
 /**
  * @type {Array} An array of Google Map styles. See:
  *     https://developers.google.com/maps/documentation/javascript/styling
  */
 
-trendy.App.BASE_MAP_STYLE = [
+kwap.App.BASE_MAP_STYLE = [
   {
     "elementType": "geometry",
     "stylers": [
@@ -1014,15 +1036,15 @@ susie.toggleEeLayerById = function(id) {
  var checkbox = document.getElementById(id);
  if(checkbox.checked){
    if(id.includes('historical')){
-     trendy.App.addLayer(trendy.App.historicalLayer, id='historical');
+     kwap.App.addLayer(kwap.App.historicalLayer, id='historical');
    } else {
-     trendy.App.addLayer(trendy.App.mostRecentLayer, id='most_recent');
+     kwap.App.addLayer(kwap.App.mostRecentLayer, id='most_recent');
    }
  } else {
    if(id.includes('historical')){
-     trendy.App.removeLayer(id='historical');
+     kwap.App.removeLayer(id='historical');
    } else {
-     trendy.App.removeLayer(id='most_recent');
+     kwap.App.removeLayer(id='most_recent');
    }
  }
 };
@@ -1067,18 +1089,18 @@ menu.toggle_help = function(){
 }
 /* GEE processing methods */
 menu.export_features = function(){
-  ft = trendy.App.featuresToJson(trendy.App.markers, true)
-  trendy.App.processFeatures(ft, trendy.App.historicalAssetId, trendy.App.pointFeaturesCallback)
+  ft = kwap.App.featuresToJson(kwap.App.markers, true)
+  kwap.App.processFeatures(ft, kwap.App.historicalAssetId, kwap.App.pointFeaturesCallback)
   // hide the menu
   if(menu.menuDisplayed == true){
       menu.menuBox.style.display = "none";
   }
 }
 menu.remove_all_features = function(){
-  trendy.App.removeAllFeatures();
+  kwap.App.removeAllFeatures();
   menu.hide();
 }
 menu.toggle_search = function(event){
-  trendy.App.toggleGeocoder(id='geocoderSearchbox', click_event=event)
+  kwap.App.toggleGeocoder(id='geocoderSearchbox', click_event=event)
   menu.hide();
 }

@@ -14,6 +14,7 @@ kwap = {};  // Our namespace.
  * @param {string} serializedPolygonIds A serialized array of the IDs of the
  *     polygons to show on the map. For example: "['poland', 'moldova']".
  */
+
 kwap.boot = function(historicalEeMapId, mostRecentEeMapId, historicalEeToken, mostRecentEeToken) {
   // Load external libraries.
   google.load('visualization', '1.0');
@@ -33,13 +34,13 @@ kwap.boot = function(historicalEeMapId, mostRecentEeMapId, historicalEeToken, mo
     kwap.App.addLayer(kwap.App.mostRecentLayer, id='mostRecent');
   });
   // set our default message for the information popout
-  carta.changeMessage("instructionsPopout",carta.DEFAULT_ABOUT_HTML);
+  carta.changeMessage("instructionsPopout", carta.DEFAULT_ABOUT_HTML);
   // initialize any lurking div elements for controls
   kwap.App.addGeocoderControl();
   // empty initialization for our polygons, points, and
   // drawing manager shape cache
   kwap.App.polygons = [];
-  kwap.App.points = [];
+  kwap.App.markers = [];
   kwap.App.shape_extractions = []
 };
 
@@ -58,6 +59,7 @@ kwap.boot = function(historicalEeMapId, mostRecentEeMapId, historicalEeToken, mo
  *     For example ['poland', 'moldova'].
  * @constructor
  */
+
 kwap.App = function(mapType, polygonIds) {
   // Create and display the map.
   kwap.App.createMap(mapType);
@@ -75,6 +77,7 @@ kwap.App = function(mapType, polygonIds) {
  * @param {google.maps.ImageMapType} mapType The map type to include on the map.
  * @return {google.maps.Map} A map instance with the map type rendered.
  */
+
 kwap.App.createMap = function(mapType) {
   // initialize our layers stack
   kwap.App.numLayers = 0;
@@ -116,9 +119,11 @@ kwap.App.createMap = function(mapType) {
   // initialize our places api service
   kwap.App.placesService = new google.maps.places.PlacesService(kwap.App.map);
 };
-/**
+
+/*
  * Add an additional layer to an existing map object
  */
+
  kwap.App.addLayer = function(mapType, id){
     kwap.App.map.overlayMapTypes.push(mapType);
     kwap.App.numLayers += 1
@@ -128,6 +133,9 @@ kwap.App.createMap = function(mapType) {
       kwap.App.mostRecentLayer.at = (kwap.App.numLayers-1)
     }
  }
+ /*
+  * Remove a EE Image layer by it's UI-ID
+  */
  kwap.App.removeLayer = function(id){
    if(id.includes("istor")){
      kwap.App.map.overlayMapTypes.removeAt(kwap.App.historicalLayer.at);
@@ -836,14 +844,16 @@ carta.DEFAULT_ABOUT_HTML =
     "<div class=\"scroll-box\">" +
     "Welcome to the Kansas Surface Water Map !" +
     "<br><br>" +
-    "This map displays the current and historic distribution of surface water in the state of Kansas, and is designed to help producers, private landowners, and biologists to identify and track" +
-    "recent and long-term patterns in surface water availability. You can explore surface water data here in your browser or download and work with the data directly in a GIS" +
-    "This project was developed by Playa Lakes Joint Venture, and made possible by a Conservation Innovation Grant from the U.S. Department of Agriculture’s Kansas Natural Resources Conservation Service." +
+    "This map displays the current and historic distribution of surface water in the state of Kansas, and is designed to help producers, private landowners, and biologists to identify and track " +
+    "recent and long-term patterns in surface water availability. You can explore surface water data here in your browser or download and work with the data directly in a GIS. " +
+    "This project was developed by Playa Lakes Joint Venture, and made possible by a Conservation Innovation Grant from the U.S. Department of Agriculture’s Kansas Natural Resources Conservation Service. " +
     "<br><br>" +
     "  • <a href=\"http://pljv.org/about-us/\" target=\"_blank\" rel=\"noopener\">About Playa Lakes Joint Venture</a> (External Site) <br>" +
     "  • <a href=\"https://www.nrcs.usda.gov/wps/portal/nrcs/main/national/about/\" target=\"_blank\" rel=\"noopener\">About NRCS</a> (External Site)<br><br>" +
+    "<hr width='95%'><center>" +
     "<img src=\"static/pljv_logo.jpg\" height=66></img>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
     "<img src=\"static/usda_logo.jpg\" height=58></img><br><br>" +
+    "</center><hr width='95%'>" +
     "Tips on usage :" +
     "<ul>" +
     "  <li>You can navigate the map by <b>left-clicking</b> and holding with your mouse and then moving the mouse. If"+
@@ -884,8 +894,9 @@ carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML =
     "PLJV provides static and dynamic copies of the imagery data as GeoTIFF files that you can use in a GIS at the following URLs<br><br>" +
     "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;<a target='_blank' href='https://drive.google.com/a/pljv.org/file/d/1DTNVtQEdwe8IgRgHWW38tcSqV50wky_1/view?usp=sharing'>Most Recent Wet Scene</a> (Google Drive)<br>" +
     "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;<a target='_blank' href='https://drive.google.com/a/pljv.org/file/d/1efkVeaf8PRt-YCKStTM1JZiYB9GEMVnF/view?usp=sharing'>30 Year Historical Surface Wetness</a> (Google Drive)<br><br>" +
+    "<hr width='95%'>" +
     "The source data for the web app are maintained as Google Earth Engine assets. If you use Google Earth Engine and you'd just like to <a target='_blank' href='https://developers.google.com/earth-engine/asset_manager#importing-assets-to-your-script'>import the assets</a> " + "directly into your code, here are the asset ID's:<br><br>" +
-    "<br><b>Most Recent Scene</b><br>&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;assetId='<a href='https://code.earthengine.google.com/?asset=users/kyletaylor/shared/LC8dynamicwater' target='_blank'>users/kyletaylor/shared/LC8dynamicwater</a>'<br>" +
+    "<b>Most Recent Scene</b><br>&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;assetId='<a href='https://code.earthengine.google.com/?asset=users/kyletaylor/shared/LC8dynamicwater' target='_blank'>users/kyletaylor/shared/LC8dynamicwater</a>'<br>" +
     "<br><b>30 Year Historical</b><br>&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;assetId='<a href='https://code.earthengine.google.com/?asset=users/adaniels/shared/LC5historicwetness_10m' target='_blank'>users/adaniels/shared/LC5historicwetness_10m</a>'<br>" +
     "</div>" +
     "<div class=\"bottom-buttons\">"+
@@ -905,7 +916,8 @@ carta.ABOUT_CONTACT_INFORMATION_HTML =
     "<br><br>"+
     "The water detection algorithm used utilizes the difference in reflectivity between the red and short-wave infrared bands. This " +
     "classifier is conservative and minimizes errors of commission. The overall accuracy of this algorithm in detecting surface " +
-    "water in Kansas is 86%;  the user’s accuracy is 92%" +
+    "water in Kansas is 86%;  the user’s accuracy is 92%. Note that the web viewer only displays historical wetness > 3%, but the " +
+    "drawing manager uses all values in estimating area means." +
     "<br><br>" +
     "The source code for this hydrology viewer is open source (<a href=\"https://github.com/PLJV/SurfaceHydrologyDST/blob/master/LICENSE\" target=\"_blank\" rel=\"noopener\">GPLv3</a>). If you are a developer and would like " +
     "to contribute to the project, report a bug, or fork it and make your own, you can get in touch with the " +

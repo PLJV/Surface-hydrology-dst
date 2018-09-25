@@ -32,6 +32,8 @@ kwap.boot = function(historicalEeMapId, mostRecentEeMapId, historicalEeToken, mo
     kwap.App(kwap.App.historicalLayer);
     kwap.App.addLayer(kwap.App.mostRecentLayer, id='mostRecent');
   });
+  // set our default message for the information popout
+  carta.changeMessage("instructionsPopout",carta.DEFAULT_ABOUT_HTML);
   // initialize any lurking div elements for controls
   kwap.App.addGeocoderControl();
   // empty initialization for our polygons, points, and
@@ -829,18 +831,22 @@ carta = { };
 
 carta.DEFAULT_ABOUT_HTML =
     "<div class=\"header-top\">" +
-    "  <h3>Surface Hydrology Viewer <sup><font color=\"#d89f22\">ALPHA</font></sup></h3>" +
+    "  <h3>Kansas Surface Water Map <sup><font color=\"#d89f22\">BETA</font></sup></h3>" +
     "</div>" +
     "<div class=\"scroll-box\">" +
-    "Welcome to the Surface Hydrology Viewer!" +
+    "Welcome to the Kansas Surface Water Map !" +
     "<br><br>" +
-    "This is a web application designed to help producers, private landowners, and biologists to identify and track" +
-    "long-term patterns in surface water availability across Kansas. This website allows you to explore surface water" +
-    "data in your browser or download and work with the data directly in a GIS." +
+    "This map displays the current and historic distribution of surface water in the state of Kansas, and is designed to help producers, private landowners, and biologists to identify and track" +
+    "recent and long-term patterns in surface water availability. You can explore surface water data here in your browser or download and work with the data directly in a GIS" +
+    "This project was developed by Playa Lakes Joint Venture, and made possible by a Conservation Innovation Grant from the U.S. Department of Agriculture’s Kansas Natural Resources Conservation Service." +
     "<br><br>" +
+    "  • <a href=\"http://pljv.org/about-us/\" target=\"_blank\" rel=\"noopener\">About Playa Lakes Joint Venture</a> (External Site) <br>" +
+    "  • <a href=\"https://www.nrcs.usda.gov/wps/portal/nrcs/main/national/about/\" target=\"_blank\" rel=\"noopener\">About NRCS</a> (External Site)<br><br>" +
+    "<img src=\"static/pljv_logo.jpg\" height=66></img>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+    "<img src=\"static/usda_logo.jpg\" height=58></img><br><br>" +
     "Tips on usage :" +
     "<ul>" +
-    "  <li>You can <b>navigate the map</b> by left-clicking and holding with your mouse and then moving the mouse. If"+
+    "  <li>You can navigate the map by <b>left-clicking</b> and holding with your mouse and then moving the mouse. If"+
     "  you are using a mobile device, you can accomplish the same gesture by pressing and drag the screen. You can"+
     "  also use the arrow keys on your keyboard.</li>" +
     "<li>You can <b>toggle the display layer(s)</b> for the “most recent wet scene” and the “long-term surface" +
@@ -858,7 +864,7 @@ carta.DEFAULT_ABOUT_HTML =
     "   to <b>add markers or shapes around an area of interest</b>. After you’ve delineated an area, you can export " +
     "   map information by right-clicking on the viewer and using the context-menu to <b>export features</b>. By " +
     "   default, this will generate a comma-separated file (CSV) with summary data that you can download and open " +
-    "   in spreadsheet software like LibreOffice, Excel, or ‘R’.</li>" +
+    "   in spreadsheet software like Excel, LibreOffice, or ‘R’.</li>" +
     " <li>You can also use the <b>right-click</b> context menu to remove all features on the map, as well as hide" +
     "   interface elements like the legend and this help window.</li>" +
     "</ul>" +
@@ -879,8 +885,8 @@ carta.GOOGLE_TEAM_DRIVE_DOWNLOAD_HTML =
     "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;<a target='_blank' href='https://drive.google.com/a/pljv.org/file/d/1DTNVtQEdwe8IgRgHWW38tcSqV50wky_1/view?usp=sharing'>Most Recent Wet Scene</a> (Google Drive)<br>" +
     "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;<a target='_blank' href='https://drive.google.com/a/pljv.org/file/d/1efkVeaf8PRt-YCKStTM1JZiYB9GEMVnF/view?usp=sharing'>30 Year Historical Surface Wetness</a> (Google Drive)<br><br>" +
     "The source data for the web app are maintained as Google Earth Engine assets. If you use Google Earth Engine and you'd just like to <a target='_blank' href='https://developers.google.com/earth-engine/asset_manager#importing-assets-to-your-script'>import the assets</a> " + "directly into your code, here are the asset ID's:<br><br>" +
-    "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;'<a href='https://code.earthengine.google.com/?asset=users/kyletaylor/shared/LC8dynamicwater' target='_blank'>users/kyletaylor/shared/LC8dynamicwater</a>' (Most Recent Scene)<br>" +
-    "&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;'<a href='https://code.earthengine.google.com/?asset=users/adaniels/shared/LC5historicwetness_10m' target='_blank'>users/adaniels/shared/LC5historicwetness_10m</a>' (30 Year Historical)<br>" +
+    "<br><b>Most Recent Scene</b><br>&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;assetId='<a href='https://code.earthengine.google.com/?asset=users/kyletaylor/shared/LC8dynamicwater' target='_blank'>users/kyletaylor/shared/LC8dynamicwater</a>'<br>" +
+    "<br><b>30 Year Historical</b><br>&nbsp;&nbsp;<b>&#8226;</b>&nbsp;&nbsp;assetId='<a href='https://code.earthengine.google.com/?asset=users/adaniels/shared/LC5historicwetness_10m' target='_blank'>users/adaniels/shared/LC5historicwetness_10m</a>'<br>" +
     "</div>" +
     "<div class=\"bottom-buttons\">"+
     "<button type='button' onclick='javascript:carta.hide(\"instructionsPopout\");'>hide</button>" +
@@ -893,19 +899,18 @@ carta.ABOUT_CONTACT_INFORMATION_HTML =
     "<h3>About</h3>" +
     "</div>" +
     "<div class='scroll-box'>" +
-    "This map displays the current and historic distribution of surface water in the State of Kansas. Data from the " +
-    "Landsat 8 satellite is used to map the current surface water extent in the state. Data from the Landsat 5 " +
-    "platform was used to map the frequency of historic wetness from 1985 to 2012." +
+    "The layers used in this map were created with Google Earth Engine by analyzing data from the Landsat 8 and Landsat 5 satellite " +
+    "platforms. Data from the Landsat 5 platform was used to map the frequency of historic wetness from 1985 to 2012. Data from " +
+    "the Landsat 8 platform is used to update the current wetness product." +
     "<br><br>"+
-    "All original source code contributions for this viewer are copyrighted by their respective authors. The viewer itself is released under an open source (<a href=\"https://github.com/PLJV/SurfaceHydrologyDST/blob/master/LICENSE\" target=\"_blank\" rel=\"noopener\">GPLv3</a>). If you are a developer and would like " +
+    "The water detection algorithm used utilizes the difference in reflectivity between the red and short-wave infrared bands. This " +
+    "classifier is conservative and minimizes errors of commission. The overall accuracy of this algorithm in detecting surface " +
+    "water in Kansas is 86%;  the user’s accuracy is 92%" +
+    "<br><br>" +
+    "The source code for this hydrology viewer is open source (<a href=\"https://github.com/PLJV/SurfaceHydrologyDST/blob/master/LICENSE\" target=\"_blank\" rel=\"noopener\">GPLv3</a>). If you are a developer and would like " +
     "to contribute to the project, report a bug, or fork it and make your own, you can get in touch with the " +
     "developers at PLJV using our GitHub project page.<br><br>" +
     "  • <a href=\"https://github.com/PLJV/SurfaceHydrologyDST/\" target=\"_blank\" rel=\"noopener\">GitHub Project Page</a> (External Site) <br>"+
-    "  • <a href=\"http://pljv.org/about-us/\" target=\"_blank\" rel=\"noopener\">About Playa Lakes Joint Venture</a> (External Site) <br>"+
-    "  • <a href=\"https://www.nrcs.usda.gov/wps/portal/nrcs/main/national/about/\" target=\"_blank\" rel=\"noopener\">About NRCS</a> (External Site)<br>"+
-    "<br><br>" +
-    "<img src=\"static/pljv_logo.jpg\" height=66></img>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
-    "<img src=\"static/usda_logo.jpg\" height=58></img>" +
     "</div>" +
     "<div class=\"bottom-buttons\">"+
     "<button type='button' onclick='javascript:carta.hide(\"instructionsPopout\");'>hide</button>" +

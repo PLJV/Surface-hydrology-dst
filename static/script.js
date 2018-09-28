@@ -839,14 +839,18 @@ carta = { };
 
 carta.DEFAULT_ABOUT_HTML =
     "<div class=\"header-top\">" +
-    "  <h3>Kansas Surface Water Map <sup><font color=\"#d89f22\">BETA</font></sup></h3>" +
+    "  <h3>Kansas Water Map</h3>" +
     "</div>" +
     "<div class=\"scroll-box\">" +
-    "Welcome to the Kansas Surface Water Map !" +
+    "Welcome to the Kansas Water Map !" +
     "<br><br>" +
     "This map displays the current and historic distribution of surface water in the state of Kansas, and is designed to help producers, private landowners, and biologists to identify and track " +
     "recent and long-term patterns in surface water availability. You can explore surface water data here in your browser or download and work with the data directly in a GIS. " +
-    "This project was developed by Playa Lakes Joint Venture, and made possible by a Conservation Innovation Grant from the U.S. Department of Agriculture’s Kansas Natural Resources Conservation Service. " +
+    "<br><br>" +
+    "This project was developed by the Playa Lakes Joint Venture and funded by the U.S. Department of Agriculture’s Kansas Natural Resources Conservation Service (NRCS) through a Conservation Innovation Grant. " +
+    "USDA is an equal opportunity provider, employer, and lender. " +
+    "Data from this site are intended for informational purposes only. The authors make no guarantee as to the accuracy of the data. Furthermore, the depiction of areas on this map as wet or previously wet " +
+    "does not constitute any determination of wetland status under section 404 of the Clean Water Act, nor does it guarantee eligibility for conservation programs under the Agricultural Act of 2014." +
     "<br><br>" +
     "  • <a href=\"http://pljv.org/about-us/\" target=\"_blank\" rel=\"noopener\">About Playa Lakes Joint Venture</a> (External Site) <br>" +
     "  • <a href=\"https://www.nrcs.usda.gov/wps/portal/nrcs/main/national/about/\" target=\"_blank\" rel=\"noopener\">About NRCS</a> (External Site)<br><br>" +
@@ -919,7 +923,7 @@ carta.ABOUT_CONTACT_INFORMATION_HTML =
     "water in Kansas is 86%;  the user’s accuracy is 92%. Note that the web viewer only displays historical wetness > 3%, but the " +
     "drawing manager uses all values in estimating area means." +
     "<br><br>" +
-    "The source code for this hydrology viewer is open source (<a href=\"https://github.com/PLJV/SurfaceHydrologyDST/blob/master/LICENSE\" target=\"_blank\" rel=\"noopener\">GPLv3</a>). If you are a developer and would like " +
+    "The source code for this hydrology viewer is released under a public license (<a href=\"https://github.com/PLJV/SurfaceHydrologyDST/blob/master/LICENSE\" target=\"_blank\" rel=\"noopener\">GPLv3</a>). If you are a developer and would like " +
     "to contribute to the project, report a bug, or fork it and make your own, you can get in touch with the " +
     "developers at PLJV using our GitHub project page.<br><br>" +
     "  • <a href=\"https://github.com/PLJV/SurfaceHydrologyDST/\" target=\"_blank\" rel=\"noopener\">GitHub Project Page</a> (External Site) <br>"+

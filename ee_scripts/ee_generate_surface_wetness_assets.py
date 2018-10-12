@@ -45,6 +45,9 @@ def image_from_ls8_collection(collection_id='LANDSAT/LC08/C01/T1_RT', cloud_mask
     # build a mosiac from the resulting collection using the most recent pixel
     return collection_qa_withtime.qualityMosaic('system:time_start')
 
+def get_datetime_qa_band(image):
+    return image.select('system:time_start')
+
 def water_ruiz2014(image):
     """ surface water detection from Ruiz et al. 2014 that just uses band 6
     and band 4 """
@@ -141,14 +144,27 @@ if __name__ == "__main__":
     kansas = ee.FeatureCollection('ft:1fRY18cjsHzDgGiJiS2nnpUU3v9JPDc2HNaR7Xk8').filter(ee.Filter.eq('Name','Kansas'))
 
     # define our time-series information
-    last_wet_scene = water_ruiz2014((image_from_ls8_collection('LANDSAT/LC08/C01/T1_RT')))
+    last_wet_scene = water_ruiz2014(
+        image_from_ls8_collection('LANDSAT/LC08/C01/T1_RT')
+    )
 
     # mask out pixels that have never been wet over a 30 year period
-    last_wet_scene = last_wet_scene.multiply(ee.Image("users/kyletaylor/shared/long_run_surface_wetness_mask"))
-
-    # export the resulting "water
+    last_wet_scene = last_wet_scene.multiply(
+        ee.Image("users/kyletaylor/shared/long_run_surface_wetness_mask")
+    )
+    datetime = get_datetime_qa_band(
+        image_from_ls8_collection('LANDSAT/LC08/C01/T1_RT')
+    )
+    # export the resulting surface wetness band
     status = exportImageToAsset(
         last_wet_scene,
         'users/kyletaylor/shared/LC8dynamicwater',
+        region=get_fc_coordinates(kansas)
+    )
+
+    # add add the
+    status = exportImageToAsset(
+        datetime,
+        'users/kyletaylor/shared/LC8dynamicwater_datetime',
         region=get_fc_coordinates(kansas)
     )

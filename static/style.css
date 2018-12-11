@@ -362,7 +362,7 @@ input:checked + .slider:before {
     min-height: 190px;
     max-height: 200px;
     width: 75%;
-    min-width: 300px;
+    min-width: 330px;
     max-width: 400px;
   }
 }
@@ -398,9 +398,10 @@ input:checked + .slider:before {
     position: relative;
     float: right;
     top: 0px;
-    left: -55px;
+    left: -28px;
+    min-width: 95%;
     max-height: 100%;
-    max-width: 95%;
+    max-width: 98%;
   }
 }
 

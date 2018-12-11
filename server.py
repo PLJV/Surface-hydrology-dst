@@ -61,6 +61,7 @@ requests more quickly.
 import os
 import lzstring
 import json
+import math
 
 import config
 import ee
@@ -223,8 +224,8 @@ def GetTrendyMapId(image_collection_id, options=None):
         'palette' : 'edf8b1, c7e9b4, 7fcdbb, 41b6c4, 1d91c0, 225ea8, 253494, 081d58',
         'opacity' : '0.95',
       }
-  collection = ee.Image(image_collection_id)
-  collection = collection.updateMask(collection.gte(0.03))
+  collection = ee.Image(image_collection_id).expression("log10()");
+  collection = collection.updateMask(collection.gte(0.03));
 
   return collection.getMapId(options)
 

@@ -978,7 +978,7 @@ carta.changeMessage = function(id='instructionsPopout', text){
 
 susie = { };
 
-susie.setLegendLinear = function(title=undefined, svgId='svg', domain=[0,1], labels=undefined, cells=2, startColor="rgba(237, 248, 177, 0.98)", endColor="rgba(8, 29, 88, 0.98)"){
+susie.setLegend = function(title=undefined, svgId='svg', domain=[0,1], labels=undefined, cells=2, startColor="rgba(237, 248, 177, 0.98)", endColor="rgba(8, 29, 88, 0.98)"){
   if(labels == null){
     labels = d3.range.apply(this, domain.concat(domain[1]/cells))
     labels = labels.concat(domain[1])
@@ -988,14 +988,14 @@ susie.setLegendLinear = function(title=undefined, svgId='svg', domain=[0,1], lab
       return Number(e.toFixed(2));
     });
   }
-  var linear = d3.scaleLinear()
+  var scale = d3.scaleLog()
     .domain(domain)
     .range([startColor, endColor]);
 
   var svg = d3.select(svgId);
 
   svg.append("g")
-    .attr("class", "legendLinear")
+    .attr("class", "legend")
     .attr("transform", "translate(20,20)")
     .style("font-size","13px")
     .style("font-weight", "300")
@@ -1004,15 +1004,15 @@ susie.setLegendLinear = function(title=undefined, svgId='svg', domain=[0,1], lab
   // determine a sane number of pixels for our legend SVG
   if ( window.matchMedia("(orientation:portrait)").matches ) {
     var shape_width = 15
-    var title_width = 250
+    var title_width = 255
   } else {
     var shape_width = 20
-    var title_width = 275
+    var title_width = 300
   }
 
   var legend = d3.legendColor()
     .shapeWidth(shape_width)
-    .shapePadding(5)
+    .shapePadding(8)
     .cells(cells)
     .shape("square")
     .orient('horizontal')
@@ -1021,9 +1021,9 @@ susie.setLegendLinear = function(title=undefined, svgId='svg', domain=[0,1], lab
     .labelWrap(30)
     .labels(labels)
     .labelAlign("middle")
-    .scale(linear);
+    .scale(scale);
 
-  svg.select(".legendLinear")
+  svg.select(".legend")
     .call(legend);
 };
 

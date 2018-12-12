@@ -840,16 +840,18 @@ carta = { };
 
 carta.DEFAULT_ABOUT_HTML =
     "<div class=\"header-top\">" +
-    "  <h3>Kansas Surface Water Map</h3>" +
+    "  <h3>Kansas Water Map</h3>" +
     "</div>" +
     "<div class=\"scroll-box\">" +
-    "Welcome to the Kansas Surface Water Map !" +
+    "Welcome to the Kansas Water Map !" +
     "<br><br>" +
     "This map displays the current and historic distribution of surface water in the state of Kansas, and is designed to help producers, private landowners, and biologists to identify and track " +
     "recent and long-term patterns in surface water availability. You can explore surface water data here in your browser or download and work with the data directly in a GIS. " +
     "<br><br>" +
-    "This project was developed by the Playa Lakes Joint Venture and funded by the U.S. Department of Agriculture’s Kansas Natural Resources Conservation Service (NRCS) through a Conservation Innovation Grant." +
-    "USDA is an equal opportunity provider, employer, and lender." +
+    "This project was developed by the Playa Lakes Joint Venture and funded by the U.S. Department of Agriculture’s Kansas Natural Resources Conservation Service (NRCS) through a Conservation Innovation Grant. " +
+    "USDA is an equal opportunity provider, employer, and lender. " +
+    "Data from this site are intended for informational purposes only. The authors make no guarantee as to the accuracy of the data. Furthermore, the depiction of areas on this map as wet or previously wet " +
+    "does not constitute any determination of wetland status under section 404 of the Clean Water Act, nor does it guarantee eligibility for conservation programs under the Agricultural Act of 2014." +
     "<br><br>" +
     "  • <a href=\"http://pljv.org/about-us/\" target=\"_blank\" rel=\"noopener\">About Playa Lakes Joint Venture</a> (External Site) <br>" +
     "  • <a href=\"https://www.nrcs.usda.gov/wps/portal/nrcs/site/ks/home/\" target=\"_blank\" rel=\"noopener\">About NRCS</a> (External Site)<br><br>" +
@@ -981,7 +983,7 @@ carta.changeMessage = function(id='instructionsPopout', text){
 
 susie = { };
 
-susie.setLegendLinear = function(title=undefined, svgId='svg', domain=[0,1], labels=undefined, cells=2, startColor="rgba(237, 248, 177, 0.98)", endColor="rgba(8, 29, 88, 0.98)"){
+susie.setLegend = function(title=undefined, svgId='svg', domain=[0,1], labels=undefined, cells=2, startColor="rgba(237, 248, 177, 0.98)", endColor="rgba(8, 29, 88, 0.98)"){
   if(labels == null){
     labels = d3.range.apply(this, domain.concat(domain[1]/cells))
     labels = labels.concat(domain[1])
@@ -991,14 +993,14 @@ susie.setLegendLinear = function(title=undefined, svgId='svg', domain=[0,1], lab
       return Number(e.toFixed(2));
     });
   }
-  var linear = d3.scaleLinear()
+  var scale = d3.scaleLog()
     .domain(domain)
     .range([startColor, endColor]);
 
   var svg = d3.select(svgId);
 
   svg.append("g")
-    .attr("class", "legendLinear")
+    .attr("class", "legend")
     .attr("transform", "translate(20,20)")
     .style("font-size","13px")
     .style("font-weight", "300")
@@ -1007,15 +1009,15 @@ susie.setLegendLinear = function(title=undefined, svgId='svg', domain=[0,1], lab
   // determine a sane number of pixels for our legend SVG
   if ( window.matchMedia("(orientation:portrait)").matches ) {
     var shape_width = 15
-    var title_width = 250
+    var title_width = 255
   } else {
     var shape_width = 20
-    var title_width = 275
+    var title_width = 300
   }
 
   var legend = d3.legendColor()
     .shapeWidth(shape_width)
-    .shapePadding(5)
+    .shapePadding(8)
     .cells(cells)
     .shape("square")
     .orient('horizontal')
@@ -1024,9 +1026,9 @@ susie.setLegendLinear = function(title=undefined, svgId='svg', domain=[0,1], lab
     .labelWrap(30)
     .labels(labels)
     .labelAlign("middle")
-    .scale(linear);
+    .scale(scale);
 
-  svg.select(".legendLinear")
+  svg.select(".legend")
     .call(legend);
 };
 

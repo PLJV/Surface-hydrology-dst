@@ -23,7 +23,7 @@
     <script src="/static/script.js"></script>
   </head>
   <body onload="
-    susie.setLegendLinear(
+    susie.setLegend(
         title='Surface wetness of most recent scene',
         svgId='#legendSvgLastScene',domain=[0,1],
         labels=['','wet'],
@@ -31,11 +31,11 @@
         startColor='rgba(8, 29, 88, 0.01)',
         endColor='rgba(8, 29, 88, 0.98)'
     );
-    susie.setLegendLinear(
+    susie.setLegend(
         title='Historic surface water frequency',
         svgId='#legendSvgHistorical',
-        domain=[0,10],
-        labels=['0.0','0.1','0.2','0.3','0.4','0.5','0.6','0.7','0.8','0.9','1.0'],
+        domain=[1,100],
+        labels=['0.01','0.02','0.03','0.04','0.05','0.06','0.07','0.10','0.15','0.50','1.0'],
         cells=11
     );">
     <!-- The DOM of our application. -->
@@ -48,7 +48,7 @@
       <div class="infoboxControl" id="infoboxControl" onclick="javascript:kwap.App.toggleInfobox()"></div>
       <!-- contextmenu contents -->
       <div class="menu">
-        <div class="menu-item" onclick="javascript:menu.export_features();">Export Features (Spreadsheet)</div>
+        <!-- <div class="menu-item" onclick="javascript:menu.export_features();">Export Features (Spreadsheet)</div> -->
         <div class="menu-item" onclick="javascript:menu.remove_all_features();">Remove All Features</div>
         <hr>
         <div class="menu-item" onclick="javascript:menu.toggle_search(event);">Search By Location</div>

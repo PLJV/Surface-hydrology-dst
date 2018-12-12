@@ -24,7 +24,7 @@ kwap.boot = function(historicalEeMapId, mostRecentEeMapId, historicalEeToken, mo
   // Create the web app.
   google.setOnLoadCallback(function() {
     /* note our image asset id's here -- we'll use them later */
-    kwap.App.historicalAssetId = 'users/adaniels/shared/LC5historicwetness_10m'
+    kwap.App.historicalAssetId = 'users/kyletaylor/shared/PLJVLC5historicwetness_10m'
     kwap.App.mostRecentAssetId = 'users/kyletaylor/shared/LC8dynamicwater'
     /* create layers for each asset */
     kwap.App.historicalLayer = kwap.App.getEeMapType(historicalEeMapId, historicalEeToken);
@@ -89,6 +89,7 @@ kwap.App.createMap = function(mapType) {
     minZoom: 4,
     maxZoom: 17,
     scaleControl: true,
+    streetViewControl: false, 
     drawingControl: false,
     mapTypeControlOptions: {
       style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
@@ -368,9 +369,9 @@ kwap.App.addGeocoderControl = function(){
     kwap.App.search_textinput.style.width = "74%";
     kwap.App.search_textinput.style.fontSize = "13px";
     kwap.App.search_textinput.style.float = "left";
-    kwap.App.search_textinput.style.height = "32px";
-    kwap.App.search_textinput.style.maxHeight = "32px";
-    kwap.App.search_textinput.style.lineHeight = "32px";
+    kwap.App.search_textinput.style.height = "40px";
+    kwap.App.search_textinput.style.maxHeight = "40px";
+    kwap.App.search_textinput.style.lineHeight = "40px";
     kwap.App.search_textinput.style.padding = "0";
     kwap.App.search_textinput.style.boxSizing = "border-box";
   kwap.App.search_textinput.onkeydown = function(event) {
@@ -383,8 +384,8 @@ kwap.App.addGeocoderControl = function(){
     kwap.App.search_button.value = "search"
     kwap.App.search_button.style.width = "24%";
     kwap.App.search_button.style.float = "right";
-    kwap.App.search_button.style.height = "32px";
-    kwap.App.search_button.style.maxHeight = "32px";
+    kwap.App.search_button.style.height = "40px";
+    kwap.App.search_button.style.maxHeight = "40px";
     kwap.App.search_button.style.padding = "0";
 
     kwap.App.search_button.style.boxSizing = "border-box";
@@ -839,17 +840,19 @@ carta = { };
 
 carta.DEFAULT_ABOUT_HTML =
     "<div class=\"header-top\">" +
-    "  <h3>Kansas Surface Water Map <sup><font color=\"#d89f22\">BETA</font></sup></h3>" +
+    "  <h3>Kansas Surface Water Map</h3>" +
     "</div>" +
     "<div class=\"scroll-box\">" +
     "Welcome to the Kansas Surface Water Map !" +
     "<br><br>" +
     "This map displays the current and historic distribution of surface water in the state of Kansas, and is designed to help producers, private landowners, and biologists to identify and track " +
     "recent and long-term patterns in surface water availability. You can explore surface water data here in your browser or download and work with the data directly in a GIS. " +
-    "This project was developed by Playa Lakes Joint Venture, and made possible by a Conservation Innovation Grant from the U.S. Department of Agriculture’s Kansas Natural Resources Conservation Service. " +
+    "<br><br>" +
+    "This project was developed by the Playa Lakes Joint Venture and funded by the U.S. Department of Agriculture’s Kansas Natural Resources Conservation Service (NRCS) through a Conservation Innovation Grant." +
+    "USDA is an equal opportunity provider, employer, and lender." +
     "<br><br>" +
     "  • <a href=\"http://pljv.org/about-us/\" target=\"_blank\" rel=\"noopener\">About Playa Lakes Joint Venture</a> (External Site) <br>" +
-    "  • <a href=\"https://www.nrcs.usda.gov/wps/portal/nrcs/main/national/about/\" target=\"_blank\" rel=\"noopener\">About NRCS</a> (External Site)<br><br>" +
+    "  • <a href=\"https://www.nrcs.usda.gov/wps/portal/nrcs/site/ks/home/\" target=\"_blank\" rel=\"noopener\">About NRCS</a> (External Site)<br><br>" +
     "<hr width='95%'><center>" +
     "<img src=\"static/pljv_logo.jpg\" height=66></img>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
     "<img src=\"static/usda_logo.jpg\" height=58></img><br><br>" +
@@ -919,7 +922,11 @@ carta.ABOUT_CONTACT_INFORMATION_HTML =
     "water in Kansas is 86%;  the user’s accuracy is 92%. Note that the web viewer only displays historical wetness > 3%, but the " +
     "drawing manager uses all values in estimating area means." +
     "<br><br>" +
-    "The source code for this hydrology viewer is open source (<a href=\"https://github.com/PLJV/SurfaceHydrologyDST/blob/master/LICENSE\" target=\"_blank\" rel=\"noopener\">GPLv3</a>). If you are a developer and would like " +
+    "The source code for the kansas water map are in the public domain. This " +
+    "program and it’s data are distributed in the hope that it will be useful, but without any warranty; without even the implied warranty of merchantability or fitness for a particular purpose." +
+    "See the <a href=\"https://github.com/PLJV/SurfaceHydrologyDST/blob/master/LICENSE\" target=\"_blank\">GNU General Public License (v.3)</a> for more details." +
+    "<br><br>" +
+    "If you are a developer and would like " +
     "to contribute to the project, report a bug, or fork it and make your own, you can get in touch with the " +
     "developers at PLJV using our GitHub project page.<br><br>" +
     "  • <a href=\"https://github.com/PLJV/SurfaceHydrologyDST/\" target=\"_blank\" rel=\"noopener\">GitHub Project Page</a> (External Site) <br>"+

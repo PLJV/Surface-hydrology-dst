@@ -176,6 +176,7 @@ body,
       margin-top: 11px;
   }
 }
+
 .switch {
   position: relative;
   display: inline-block;
@@ -276,7 +277,7 @@ input:checked + .slider:before {
   font-size: 13px;
   font-weight: 300;
   width: 350px;
-  height: 32px;
+  height: 40px;
   min-width: 200px;
   max-width: 350px;
   min-height: 30px;

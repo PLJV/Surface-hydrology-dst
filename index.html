@@ -25,18 +25,20 @@
   <body onload="
     susie.setLegend(
         title='Surface water in most recent Landsat image',
-        svgId='#legendSvgLastScene',domain=[0,1],
+        svgId='#legendSvgLastScene',domain=[0.01,1],
         labels=['','wet'],
         cells=2,
-        startColor='rgba(8, 29, 88, 0.01)',
+        startColor='rgba(255, 255, 255, 0.00)',
         endColor='rgba(8, 29, 88, 0.98)'
     );
     susie.setLegend(
         title='Historic surface water frequency (1986 - 2012)',
         svgId='#legendSvgHistorical',
-        domain=[Math.log10(1)/2,Math.log10(100)/2],
+        domain=[0.01, 1.0],
         labels=['0.01','0.02','0.03','0.04','0.05','0.06','0.07','0.10','0.15','0.50','1.0'],
-        cells=11
+        cells=11,
+        startColor='rgba(237, 248, 177, 0.98)',
+        endColor='rgba(8, 29, 88, 0.98)'
     );">
     <!-- The DOM of our application. -->
     <div class="kwap">

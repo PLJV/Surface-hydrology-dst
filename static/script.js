@@ -845,13 +845,9 @@ carta.DEFAULT_ABOUT_HTML =
     "<div class=\"scroll-box\">" +
     "Welcome to the Kansas Water Map !" +
     "<br><br>" +
-    "This map displays the current and historic distribution of surface water in the state of Kansas, and is designed to help producers, private landowners, and biologists to identify and track " +
-    "recent and long-term patterns in surface water availability. You can explore surface water data here in your browser or download and work with the data directly in a GIS. " +
+    "This map displays the current and historic distribution of surface water in the state of Kansas, and is designed to help producers, private landowners, and biologists to identify and track recent and long-term patterns in surface water availability. You can explore surface water data here in your browser or download and work with the data directly in a GIS." +
     "<br><br>" +
-    "This project was developed by the Playa Lakes Joint Venture and funded by the U.S. Department of Agriculture’s Kansas Natural Resources Conservation Service (NRCS) through a Conservation Innovation Grant. " +
-    "USDA is an equal opportunity provider, employer, and lender. " +
-    "Data from this site are intended for informational purposes only. The authors make no guarantee as to the accuracy of the data. Furthermore, the depiction of areas on this map as wet or previously wet " +
-    "does not constitute any determination of wetland status under section 404 of the Clean Water Act, nor does it guarantee eligibility for conservation programs under the Agricultural Act of 2014." +
+    "The layers used in this map were created with Google Earth Engine by analyzing data from the Landsat 8 and Landsat 5 satellite platforms. Data from the Landsat 5 platform was used to map the frequency of historic wetness from 1985 to 2012. Data from the Landsat 8 platform is used to update the current wetness product." +
     "<br><br>" +
     "  • <a href=\"http://pljv.org/about-us/\" target=\"_blank\" rel=\"noopener\">About Playa Lakes Joint Venture</a> (External Site) <br>" +
     "  • <a href=\"https://www.nrcs.usda.gov/wps/portal/nrcs/site/ks/home/\" target=\"_blank\" rel=\"noopener\">About NRCS</a> (External Site)<br><br>" +
@@ -915,22 +911,12 @@ carta.ABOUT_CONTACT_INFORMATION_HTML =
     "<h3>About</h3>" +
     "</div>" +
     "<div class='scroll-box'>" +
-    "The layers used in this map were created with Google Earth Engine by analyzing data from the Landsat 8 and Landsat 5 satellite " +
-    "platforms. Data from the Landsat 5 platform was used to map the frequency of historic wetness from 1985 to 2012. Data from " +
-    "the Landsat 8 platform is used to update the current wetness product." +
+    "This project was developed by the Playa Lakes Joint Venture and funded by the U.S. Department of Agriculture’s Kansas Natural Resources Conservation Service (NRCS) through a Conservation Innovation Grant. USDA is an equal opportunity provider, employer, and lender. Data from this site are intended for informational purposes only. The authors make no guarantee as to the accuracy of the data. Furthermore, the depiction of areas on this map as wet or previously wet does not constitute any determination of wetland status under section 404 of the Clean Water Act, nor does it guarantee eligibility for conservation programs under the Agricultural Act of 2014."+
     "<br><br>"+
-    "The water detection algorithm used utilizes the difference in reflectivity between the red and short-wave infrared bands. This " +
-    "classifier is conservative and minimizes errors of commission. The overall accuracy of this algorithm in detecting surface " +
-    "water in Kansas is 86%;  the user’s accuracy is 92%. Note that the web viewer only displays historical wetness > 3%, but the " +
-    "drawing manager uses all values in estimating area means." +
+    "The water detection algorithm used utilizes the difference in reflectivity between the red and short-wave infrared bands. This classifier is conservative and minimizes errors of commission. The overall accuracy of this algorithm in detecting surface water in Kansas is 86%; the user’s accuracy is 92%. Note that the web viewer only displays historical wetness > 3%, but the drawing manager uses all values in estimating area means."+
     "<br><br>" +
-    "The source code for the kansas water map are in the public domain. This " +
-    "program and it’s data are distributed in the hope that it will be useful, but without any warranty; without even the implied warranty of merchantability or fitness for a particular purpose." +
-    "See the <a href=\"https://github.com/PLJV/SurfaceHydrologyDST/blob/master/LICENSE\" target=\"_blank\">GNU General Public License (v.3)</a> for more details." +
+    "The source code for this hydrology viewer is released under a public license (<a href=\"https://github.com/PLJV/SurfaceHydrologyDST/blob/master/LICENSE\" target=\"_blank\">GPLv3</a>). If you are a developer and would like to contribute to the project, report a bug, or fork it and make your own, you can get in touch with the developers at PLJV using our GitHub project page." +
     "<br><br>" +
-    "If you are a developer and would like " +
-    "to contribute to the project, report a bug, or fork it and make your own, you can get in touch with the " +
-    "developers at PLJV using our GitHub project page.<br><br>" +
     "  • <a href=\"https://github.com/PLJV/SurfaceHydrologyDST/\" target=\"_blank\" rel=\"noopener\">GitHub Project Page</a> (External Site) <br>"+
     "</div>" +
     "<div class=\"bottom-buttons\">"+

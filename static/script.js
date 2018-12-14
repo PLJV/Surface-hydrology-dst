@@ -24,7 +24,7 @@ kwap.boot = function(historicalEeMapId, mostRecentEeMapId, historicalEeToken, mo
   // Create the web app.
   google.setOnLoadCallback(function() {
     /* note our image asset id's here -- we'll use them later */
-    kwap.App.historicalAssetId = 'users/kyletaylor/shared/PLJVLC5historicwetness_10m'
+    kwap.App.historicalAssetId = 'users/adaniels/shared/LC5historicwetness_10m'
     kwap.App.mostRecentAssetId = 'users/kyletaylor/shared/LC8dynamicwater'
     /* create layers for each asset */
     kwap.App.historicalLayer = kwap.App.getEeMapType(historicalEeMapId, historicalEeToken);

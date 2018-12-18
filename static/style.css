@@ -6,7 +6,7 @@
 
 /* Shared across all screen sizes. */
 
-.trendy h1 {
+.kwap h1 {
   font-family: 'Roboto Condensed', sans-serif;
   position: absolute;
   z-index: 1;
@@ -18,15 +18,15 @@
 
 html,
 body,
-.trendy,
-.trendy .map {
+.kwap,
+.kwap .map {
   height: 100%;
   margin: 0px;
   padding: 0px;
   overflow: hidden;
 }
 
-.trendy .panel {
+.kwap .panel {
   display: none;
   position: absolute;
   z-index: 1;
@@ -37,21 +37,21 @@ body,
   box-sizing: border-box;
 }
 
-.trendy .panel h2 {
+.kwap .panel h2 {
   margin: 0px;
   padding-bottom: 10px;
 }
 
-.trendy .panel .details {
+.kwap .panel .details {
   overflow: hidden;
   max-height: 500px;
 }
 
-.trendy .panel .error {
+.kwap .panel .error {
   display: none;
 }
 
-.trendy .powered-by-ee {
+.kwap .powered-by-ee {
   position: absolute;
   z-index: 1;
   bottom: 10px;
@@ -75,9 +75,9 @@ body,
       width: 25%;
       min-width: 340px;
       max-width: 440px;
-      height: 72%;
+      height: 560px;
       min-height: 500px;
-      max-height: 83%;
+      max-height: 580px;
       z-index: 999;
     }
 }
@@ -96,9 +96,9 @@ body,
       width: 90%;
       min-width: 340px;
       max-width: 440px;
-      height: 60%;
+      height: 350px;
       min-height: 30px;
-      max-height: 90%;
+      max-height: 450px;
       z-index: 999;
     }
 
@@ -127,9 +127,9 @@ body,
 }
 @media screen and (orientation:portrait) {
   .instructions .scroll-box {
-      height: 82%;
+      height: 250px;
       min-height: 20px;
-      max-height: 90%;
+      max-height: 260px;
       overflow-y: auto;
       margin-left: 0px;
       margin-right: 4px;
@@ -139,9 +139,9 @@ body,
 }
 @media screen and (orientation:landscape) {
   .instructions .scroll-box {
-      height: 85%;
+      height: 480px;
       min-height: 20px;
-      max-height: 90%;
+      max-height: 490px;
       overflow-y: auto;
       margin-top: 10px;
       margin-left: 0px;
@@ -173,9 +173,10 @@ body,
       max-height: 35px;
       min-width: 185px;
       vertical-align: bottom;
-      margin-top: 25px;
+      margin-top: 11px;
   }
 }
+
 .switch {
   position: relative;
   display: inline-block;
@@ -275,10 +276,10 @@ input:checked + .slider:before {
   font-family: 'Roboto', Arial, sans-serif;
   font-size: 13px;
   font-weight: 300;
-  width: 18%;
-  height: 2.5%;
-  min-width: 70px;
-  max-width: 300px;
+  width: 350px;
+  height: 40px;
+  min-width: 200px;
+  max-width: 350px;
   min-height: 30px;
   max-height: 40px;
   background-color: #FFFFFF;
@@ -362,7 +363,7 @@ input:checked + .slider:before {
     min-height: 190px;
     max-height: 200px;
     width: 75%;
-    min-width: 300px;
+    min-width: 330px;
     max-width: 400px;
   }
 }
@@ -398,9 +399,10 @@ input:checked + .slider:before {
     position: relative;
     float: right;
     top: 0px;
-    left: -55px;
+    left: -28px;
+    min-width: 95%;
     max-height: 100%;
-    max-width: 95%;
+    max-width: 98%;
   }
 }
 
@@ -490,44 +492,44 @@ input:checked + .slider:before {
     font-size: 9px;
   }
 
-  .trendy h1 {
+  .kwap h1 {
     top: 22px;
     font-size: 37px;
     left: 30px;
   }
 
-  .trendy .panel {
+  .kwap .panel {
     width: 100%;
     bottom: 0px;
     height: 50px;
   }
 
-  .trendy .panel .details {
+  .kwap .panel .details {
     visibility: hidden;
     max-height: 400px;
     padding-right: 10px;
   }
 
-  .trendy .panel .close {
+  .kwap .panel .close {
     display: none;
   }
 
-  .trendy .panel .toggler {
+  .kwap .panel .toggler {
     position: absolute;
     top: 10px;
     right: 10px;
     cursor: pointer;
   }
 
-  .trendy .panel.expanded .details  {
+  .kwap .panel.expanded .details  {
     visibility: visible;
   }
 
-  .trendy .panel.expanded {
+  .kwap .panel.expanded {
     height: 278px;
   }
 
-  .trendy .powered-by-ee {
+  .kwap .powered-by-ee {
     width: 180px;
   }
 
@@ -540,14 +542,14 @@ input:checked + .slider:before {
 /* Large screens. */
 
 @media (min-width: 900px) {
-  .trendy h1 {
+  .kwap h1 {
     left: 40px;
     top: 30px;
     font-size: 56px;
     opacity: .98;
   }
 
-  .trendy .panel {
+  .kwap .panel {
     width: 400px;
     left: 40px;
     top: 126px;
@@ -556,14 +558,14 @@ input:checked + .slider:before {
     border-radius: 4px;
   }
 
-  .trendy .panel .close {
+  .kwap .panel .close {
     position: absolute;
     top: 14px;
     right: 14px;
     cursor: pointer;
   }
 
-  .trendy .panel .toggler {
+  .kwap .panel .toggler {
     display: none;
   }
 

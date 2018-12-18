@@ -61,6 +61,7 @@ requests more quickly.
 import os
 import lzstring
 import json
+import math
 
 import config
 import ee
@@ -218,13 +219,13 @@ def GetTrendyMapId(image_collection_id, options=None):
   # if no pallet options were specified, assume some sane defaults
   if (options == None):
       options = {
-        'min': '0',
+        'min': '0.199',
         'max' : '1',
         'palette' : 'edf8b1, c7e9b4, 7fcdbb, 41b6c4, 1d91c0, 225ea8, 253494, 081d58',
         'opacity' : '0.95',
       }
-  collection = ee.Image(image_collection_id)
-  collection = collection.updateMask(collection.gte(0.03))
+  collection = ee.Image(image_collection_id);
+  collection = collection.updateMask(collection.gte(0.199))
 
   return collection.getMapId(options)
 
@@ -241,7 +242,7 @@ MEMCACHE_EXPIRATION = 60 * 60 * 24
 #IMAGE_COLLECTION_ID = 'NOAA/DMSP-OLS/NIGHTTIME_LIGHTS'
 #IMAGE_COLLECTION_ID = 'users/kyletaylor/published/ks_ls5_wetness_1985_2012'
 MOST_RECENT_IMAGE_COLLECTION_ID = 'users/kyletaylor/shared/LC8dynamicwater'
-HISTORICAL_IMAGE_COLLECTION_ID = 'users/adaniels/shared/LC5historicwetness_10m'
+HISTORICAL_IMAGE_COLLECTION_ID = 'users/kyletaylor/shared/PLJVLC5historicwetness_10m'
 
 
 ###############################################################################

@@ -1,5 +1,5 @@
-kansas = ee.FeatureCollection('ft:1fRY18cjsHzDgGiJiS2nnpUU3v9JPDc2HNaR7Xk8')
-    .filter(ee.Filter.eq('Name', 'Kansas'))
+kansas = ee.FeatureCollection('users/adaniels/tl_2014_us_state')
+    .filter(ee.Filter.eq('NAME', 'Kansas'));
 
 def water_ruiz2014(plandsatimage):
     return plandsatimage.expression('float(b("B3") > b("B5"))');

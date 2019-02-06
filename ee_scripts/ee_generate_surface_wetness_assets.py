@@ -51,10 +51,14 @@ def image_from_ls8_collection(collection_id='LANDSAT/LC08/C01/T1_RT', cloud_mask
         filterMetadata('CLOUD_COVER', 'less_than', cloud_mask). \
         filterMetadata('CLOUD_COVER', 'greater_than', -0.1). \
         filterBounds(ee.FeatureCollection('users/adaniels/tl_2014_us_state').filter(ee.Filter.eq('NAME', 'Kansas')));
-    # map the qa function over the collection to clean out snow, shadows, clouds
-    collection_qa = collection.map(qa)
+    
     # add a temporal band to the collection to sort by later
-    collection_qa_withtime = collection_qa.map(addQualityBands)
+    collection_withtime = collection.map(addQualityBands)
+    
+    # map the qa function over the collection to clean out snow, shadows, clouds
+    collection_qa_withtime = collection_withtime.map(qa)
+
+    
     # build a mosiac from the resulting collection using the most recent pixel
     return collection_qa_withtime.qualityMosaic('system:time_start')
 
@@ -101,6 +105,11 @@ def set_asset_globally_readable(assetId=None):
    acl['all_users_can_read'] = True
    acl.pop('owners')
    ee.data.setAssetAcl(assetId, json.dumps(acl))
+   test = ee.data.getAssetAcl(assetId)
+   if not test['all_users_can_read']:
+        time.sleep(5)
+        set_asset_globally_readable(assetId=assetId)
+        
 
 def exportImageToAsset(image=None, assetId=None, region=None, timeout_minutes=90):
     task = ee.batch.Export.image.toAsset(
@@ -164,10 +173,19 @@ if __name__ == "__main__":
 
     # mask out pixels that have never been wet over a 30 year period
     last_wet_scene = last_wet_scene.multiply(ee.Image("users/kyletaylor/shared/long_run_surface_wetness_mask"))
+    
+    #create time map
+    time_image = image_from_ls8_collection('LANDSAT/LC08/C01/T1_RT').select('system:time_start')
 
     # export the resulting "water
     status = exportImageToAsset(
         last_wet_scene,
         'users/kyletaylor/shared/LC8dynamicwater',
+        region=kansas.geometry().bounds().coordinates().getInfo()
+    )
+    
+    status = exportImageToAsset(
+        time_image,
+        'users/kyletaylor/shared/time_of_landsat_mosaic_pixel',
         region=kansas.geometry().bounds().coordinates().getInfo()
     )

@@ -111,14 +111,13 @@ def set_asset_globally_readable(assetId=None):
         set_asset_globally_readable(assetId=assetId)
         
 
-def exportImageToAsset(image=None, assetId=None, region=None, timeout_minutes=90):
+def exportImageToAsset(image=None, assetId=None, region=None, timeout_minutes=90, description='Generating LS8 last wet scene product'):
     task = ee.batch.Export.image.toAsset(
         image=image,
         assetId=assetId,
         scale=10,
         maxPixels=40000000000,
-        region=region,
-        description='Generating LS8 last wet scene product'
+        region=region
     )
     # delete the asset if it exists
     try:
@@ -181,11 +180,13 @@ if __name__ == "__main__":
     status = exportImageToAsset(
         last_wet_scene,
         'users/kyletaylor/shared/LC8dynamicwater',
-        region=kansas.geometry().bounds().coordinates().getInfo()
+        region=kansas.geometry().bounds().coordinates().getInfo(),
+        description='Generating LS8 last wet scene product'
     )
     
     status = exportImageToAsset(
         time_image,
         'users/kyletaylor/shared/time_of_landsat_mosaic_pixel',
-        region=kansas.geometry().bounds().coordinates().getInfo()
+        region=kansas.geometry().bounds().coordinates().getInfo(),
+        description='Generating landsat time product'
     )

@@ -879,7 +879,7 @@ carta.DEFAULT_ABOUT_HTML =
     " <li>You can also use the <b>right-click</b> context menu to remove all features on the map, as well as hide" +
     "   interface elements like the legend and this help window.</li>" +
     "</ul>" +
-    "For a demonstration walk-through on using this app, we’ve made you a handy YouTube video (see: external link)." +
+    "For a demonstration walk-through on using this app, we’ve made you a handy YouTube video (see: <a href='https://youtu.be/oQZhcnqNwWw'>external link</a>)." +
     "</div>" +
     "<div class=\"bottom-buttons\">"+
     "<button type=\"button\" onclick=\"javascript:carta.hide();\" >hide</button>" +

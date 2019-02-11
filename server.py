@@ -199,14 +199,6 @@ class BackendFeatureCollectionHandler(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'text'
         self.response.out.write(values)
 
-class LandsatSceneTimeHandler(BackendFeatureCollectionHandler):
-    def __init__(self, request, response):
-        self._ASSET = None
-        self._ASSET_ID = None
-        self._FEATURE_COLLECTION = None
-        # initialize our super
-        self.initialize(request, response)
-
 # Define webapp2 routing from URL paths to web request handlers. See:
 # http://webapp-improved.appspot.com/tutorials/quickstart.html
 app = webapp2.WSGIApplication(routes=[

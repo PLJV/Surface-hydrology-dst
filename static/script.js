@@ -552,22 +552,23 @@ kwap.App.pointFeaturesCallback = function(features){
   kwap.App.markers[0].setLabel(label)
 }
 kwap.App.acquisitionDateCallback = function(features){
-  if (document.getElementById("acquisition_date")) {
-    document.getElementById("acquisition_date").remove();
-  }
-  var floating_acquisition_el = document.createElement('div');
-  floating_acquisition_el.id = "acquisition_date";
+  var floating_acquisition_el = document.getElementById('acquisitionDate');
+  floating_acquisition_el.id = "acquisitionDate";
   floating_acquisition_el.style.display = "none";
-  floating_acquisition_el.style.position = 'fixed';
-  floating_acquisition_el.style.bottom = '5px';
-  floating_acquisition_el.style.right = '5px';
-  floating_acquisition_el.style.width = "100px";
-  floating_acquisition_el.style.fontSize = "13px";
-  floating_acquisition_el.style.height = "40px";
+  floating_acquisition_el.style.position = 'absolute';
+  floating_acquisition_el.style.bottom = '20px';
+  floating_acquisition_el.style.right = '20px';
+  floating_acquisition_el.style.width = "360px";
+  floating_acquisition_el.style.fontSize = "16px";
+  floating_acquisition_el.style.fontWeight = "300";
+  floating_acquisition_el.style.fontFamily = "Roboto";
+  floating_acquisition_el.style.height = "25px";
   floating_acquisition_el.style.padding = "0";
-  floating_acquisition_el.style.backgroundColor = 'rgba(255, 255, 255, 1)';
-  floating_acquisition_el.style.zIndex = 2147483647;
-  floating_acquisition_el.innerHTML = kwap.App.acquisition_date_str;
+  floating_acquisition_el.style.color = 'rgba(255, 255, 255, 0.95)';
+  floating_acquisition_el.style.textShadow = '1.5px 1.5px rgba(0, 0, 0, 0.95)';
+  floating_acquisition_el.style.backgroundColor = 'rgba(255, 255, 255, 0)';
+  floating_acquisition_el.style.zIndex = 2000000001;
+  floating_acquisition_el.innerHTML = "<b><big>Scene Acquisition Date: " + kwap.App.acquisition_date_str + "</big></b>";
   floating_acquisition_el.style.display = "block";
 }
 kwap.App.polygonFeaturesCallback = function(features){

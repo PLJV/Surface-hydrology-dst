@@ -67,10 +67,13 @@ kwap.App = function(mapType, polygonIds) {
   // Fix our default zoom levels
   // Add a move listener to restrict the bounds range
   kwap.App.map.addListener('center_changed', function() {
+    menu.hide(); // always hide the context menu on map events
     kwap.App.checkBounds();
   });
+  kwap.App.map.addListener('click', function(){
+    menu.hide(); // always hide the context menu on map events
+  })
 };
-
 
 /**
  * Creates a Google Map with a black background the given map type rendered.
@@ -338,18 +341,6 @@ kwap.App.searchByPlace = function(search_string, callback){
   document.getElementById('geocoderSearchbox').style.display = "none";
   window.location.hash = '#map';
 }
-/**
- * Create a marker from location services and pan the map to the user's current
- * location
- */
-kwap.App.addInfoboxControl = function(controlDiv){
-  var infoboxControl = document.createElement('div');
-  myLocationControl.title = 'information';
-  controlDiv.appendChild(infoboxControl);
-  var controlText = document.createElement('div');
-  controlText.innerHTML = 'information';
-  controlUI.appendChild(controlText);
-}
 
 kwap.App.toggleInfobox = function(id='instructionsPopout'){
   // is the infobox currently displayed?
@@ -488,6 +479,9 @@ kwap.App.featuresToJson = function(features, compress=false) {
   }
   return(_features_geojson)
 }
+/* the default response will be a json formatted object with a 'mean'
+ * property containing our reduce operation
+ */
 kwap.App.unpackFeatureExtractions = function(features){
   _features = []
   for(i=0; i < features.length; i++){
@@ -511,9 +505,11 @@ kwap.App.processAcquisitionDate = function(features, callBack=null){
         if (data['error']) {
           data = data['error']
         } else {
-          kwap.App.acquisition_date_str = kwap.App.featuresToJson(
-            kwap.App.lzDecompress(data)
-          )
+          // unpack our json response from the backend
+          date_str = new Date(Math.round(kwap.App.featuresToJson(
+              kwap.App.lzDecompress(data)
+            )[0]['properties']['mean']));
+          kwap.App.acquisition_date_str = date_str.toDateString().split(' ').splice(1,3).join(' ');
           callBack(kwap.App.acquisition_date_str)
         }
     }).bind(this));
@@ -523,11 +519,8 @@ kwap.App.processFeatures = function(features, assetId, callBack=null){
   uuAssetId = kwap.App.lzCompress(assetId)
   $.get('/extract?features=' + features + '&assetId=' + uuAssetId).done((function(data) {
     if (data['error']) {
-      //$('.panel .error').show().html(data['error']);
       comp_str = data['error']
     } else {
-      //$('.panel .wiki-url').show().attr('href', data['wikiUrl']);
-      // this.showChart(data['mean']);
       comp_str = data
     }
     if(assetId.includes('hist')){
@@ -557,7 +550,25 @@ kwap.App.pointFeaturesCallback = function(features){
   }
   // set our marker label
   kwap.App.markers[0].setLabel(label)
-  // set our floating div element with a date string
+}
+kwap.App.acquisitionDateCallback = function(features){
+  if (document.getElementById("acquisition_date")) {
+    document.getElementById("acquisition_date").remove();
+  }
+  var floating_acquisition_el = document.createElement('div');
+  floating_acquisition_el.id = "acquisition_date";
+  floating_acquisition_el.style.display = "none";
+  floating_acquisition_el.style.position = 'fixed';
+  floating_acquisition_el.style.bottom = '5px';
+  floating_acquisition_el.style.right = '5px';
+  floating_acquisition_el.style.width = "100px";
+  floating_acquisition_el.style.fontSize = "13px";
+  floating_acquisition_el.style.height = "40px";
+  floating_acquisition_el.style.padding = "0";
+  floating_acquisition_el.style.backgroundColor = 'rgba(255, 255, 255, 1)';
+  floating_acquisition_el.style.zIndex = 2147483647;
+  floating_acquisition_el.innerHTML = kwap.App.acquisition_date_str;
+  floating_acquisition_el.style.display = "block";
 }
 kwap.App.polygonFeaturesCallback = function(features){
   extraction = kwap.App.unpackFeatureExtractions(features)
@@ -1127,6 +1138,7 @@ menu.toggle_help = function(){
 /* GEE processing methods */
 menu.export_features = function(){
   ft = kwap.App.featuresToJson(kwap.App.markers, true)
+  kwap.App.processAcquisitionDate(ft, kwap.App.acquisitionDateCallback)
   kwap.App.processFeatures(ft, kwap.App.historicalAssetId, kwap.App.pointFeaturesCallback)
   // hide the menu
   if(menu.menuDisplayed == true){

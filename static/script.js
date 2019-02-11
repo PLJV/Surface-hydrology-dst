@@ -26,6 +26,7 @@ kwap.boot = function(historicalEeMapId, mostRecentEeMapId, historicalEeToken, mo
     /* note our image asset id's here -- we'll use them later */
     kwap.App.historicalAssetId = 'users/adaniels/shared/LC5historicwetness_10m'
     kwap.App.mostRecentAssetId = 'users/kyletaylor/shared/LC8dynamicwater'
+    kwap.App.acquisitionTimeAssetId = 'users/kyletaylor/shared/time_of_landsat_mosaic_pixel'
     /* create layers for each asset */
     kwap.App.historicalLayer = kwap.App.getEeMapType(historicalEeMapId, historicalEeToken);
     kwap.App.mostRecentLayer = kwap.App.getEeMapType(mostRecentEeMapId, mostRecentEeToken);
@@ -309,6 +310,7 @@ kwap.App.removeAllFeatures = function(){
      kwap.App.polygons = [];
   }
 }
+
 kwap.App.searchByPlace = function(search_string, callback){
   var request = {
     query: search_string.toLowerCase(),
@@ -498,6 +500,24 @@ kwap.App.unpackFeatureExtractions = function(features){
   }
   return(_features)
 }
+/* async handler for a point extraction for our landsat 8 acquisition time
+ * product. Note that the asset ID here is fixed and should never change
+ */
+kwap.App.processAcquisitionDate = function(features, callBack=null){
+    // Asynchronously load and show details about the point feature
+    uuAssetId = kwap.App.lzCompress(kwap.App.acquisitionTimeAssetId)
+    // extract unix time for our landsat 8 product
+    $.get('/extract?features=' + features + '&assetId=' + uuAssetId).done((function(data) {
+        if (data['error']) {
+          data = data['error']
+        } else {
+          kwap.App.acquisition_date_str = kwap.App.featuresToJson(
+            kwap.App.lzDecompress(data)
+          )
+          callBack(kwap.App.acquisition_date_str)
+        }
+    }).bind(this));
+}
 kwap.App.processFeatures = function(features, assetId, callBack=null){
   // Asynchronously load and show details about the point feature
   uuAssetId = kwap.App.lzCompress(assetId)
@@ -535,7 +555,9 @@ kwap.App.pointFeaturesCallback = function(features){
     fontWeight: 'bold',
     fontSize: '10px'
   }
+  // set our marker label
   kwap.App.markers[0].setLabel(label)
+  // set our floating div element with a date string
 }
 kwap.App.polygonFeaturesCallback = function(features){
   extraction = kwap.App.unpackFeatureExtractions(features)

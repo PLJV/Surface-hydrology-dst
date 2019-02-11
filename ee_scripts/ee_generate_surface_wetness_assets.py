@@ -33,7 +33,7 @@ def now_minus_n_months(*args):
         dst_month = dst_month + 12
     return str(dst_year) + '-' + str(dst_month) + '-' + str(dst_day)
 
-def add_qa_band(image):
+def apply_bitwise_qa_filter(image):
   """
   a function to mask out unwanted pixels using 5471 as a bitwise mask
   because it's binary equivalent is the inverse of what we want in the qa
@@ -68,7 +68,7 @@ def image_mosaic_from_ls8_collection(collection_id='LANDSAT/LC08/C01/T1_RT', clo
     # add a time band
     collection = collection.map(add_time_stamp_band)
     # map the qa function over the collection to mask out snow, shadows, clouds
-    collection = collection.map(add_qa_band)
+    collection = collection.map(apply_bitwise_qa_filter)
 
     # build a mosiac from the resulting collection using the most recent pixel
     return collection.qualityMosaic('time')
@@ -190,6 +190,7 @@ if __name__ == "__main__":
       .filterMetadata('CLOUD_COVER','greater_than',-0.1)\
       .filterBounds(kansas.geometry().bounds())\
       .map(add_time_stamp_band)\
+      .map(apply_bitwise_qa_filter)\
       .qualityMosaic('time')\
       .select('time')
 
@@ -204,7 +205,7 @@ if __name__ == "__main__":
         assetId='users/kyletaylor/shared/LC8dynamicwater',
         region=region_boundary,
         description='Generating LS8 last wet scene product',
-        scale=10
+        scale=30
       )
     
     status = export_as_asset(
